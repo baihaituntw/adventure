@@ -23,6 +23,9 @@ canvas{display:block;width:100%;height:100%;touch-action:none}
 #growth{flex:1;background:#FFFFFF80;border-radius:20px;height:26px;position:relative;overflow:hidden}
 #growthFill{position:absolute;left:0;top:0;bottom:0;width:0;background:var(--pink);border-radius:20px;transition:width .3s}
 #growthTxt{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:800}
+#progTxt{display:flex;align-items:center;gap:7px;font-size:10.5px;font-weight:800;
+  color:#fff;text-shadow:0 1px 4px rgba(0,0,0,.28);margin-top:-2px}
+#progTxt b{background:rgba(255,255,255,.72);color:#1F6E93;border-radius:10px;padding:2px 7px;text-shadow:none}
 #journey{background:#FFFFFF66;border-radius:20px;height:7px;position:relative;overflow:hidden}
 #journeyFill{position:absolute;left:0;top:0;bottom:0;width:0;background:#FFF;border-radius:20px}
 
@@ -193,6 +196,16 @@ font-family:var(--cjk);font-size:14.5px;font-weight:800;cursor:pointer;line-heig
 #shareCanvasWrap.on{display:block}
 #shareCanvasWrap img{width:100%;border-radius:18px;box-shadow:0 6px 18px rgba(0,0,0,.18)}
 #shareCanvasWrap p{font-size:11.5px;color:#8B7A69;margin-top:7px;font-weight:700}
+.grew{margin-top:14px;border-radius:22px;padding:16px 16px 14px;text-align:center}
+.grew .gt{font-size:12px;font-weight:800;letter-spacing:.1em;opacity:.7}
+.grew .gn{font-size:24px;font-weight:900;margin-top:4px}
+.grew .gd{font-size:13px;font-weight:700;line-height:1.7;margin-top:7px}
+.grew .gbar{margin-top:11px;height:10px;border-radius:10px;background:rgba(255,255,255,.6);overflow:hidden}
+.grew .gbar i{display:block;height:100%;border-radius:10px}
+.grew .gnum{font-size:11.5px;font-weight:800;margin-top:6px;opacity:.75}
+.g0{background:#EDF1F4;color:#5E6E7A}.g0 .gbar i{background:#8A99A5}
+.g1{background:#FAEEF2;color:#9A6A78}.g1 .gbar i{background:#C79CA9}
+.g2{background:#FFEFF4;color:#C9426B}.g2 .gbar i{background:#F79FB5}
 .tally{margin-top:14px;font-size:13px;line-height:2;background:#FFF1DE;border-radius:18px;padding:12px 16px;text-align:left}
 .tally i{font-style:normal;float:right;font-weight:800}
 
@@ -206,7 +219,8 @@ font-family:var(--cjk);font-size:14.5px;font-weight:800;cursor:pointer;line-heig
 .kb1{background:#FFF0F5}.kb1 .h{color:#C9426B}.kb1 li::before{background:#F79FB5}.kb1 b{color:#C9426B}
 .kb2{background:#FFF4E2}.kb2 .h{color:#C77A16}.kb2 li::before{background:#F5B942}.kb2 b{color:#C77A16}
 .kb3{background:#E9F5FB}.kb3 .h{color:#1F6E93}.kb3 li::before{background:#6BC6DE}.kb3 b{color:#1F6E93}
-.kb4{background:#F0F3E8}.kb4 .h{color:#5C7A2E}.kb4 li::before{background:#A8C36A}.kb4 b{color:#5C7A2E}
+.kb4{background:#EDE4E2;border-left:5px solid #8E3B2C}
+.kb4 .h{color:#7E3226}.kb4 li::before{background:#A8564A}.kb4 b{color:#8E3B2C}
 .kb .ico{font-size:22px;margin-right:2px}
 .captain{margin-top:16px;background:linear-gradient(160deg,#FFF6E0,#FFE7C2);border-radius:24px;
   padding:18px 16px;text-align:center;box-shadow:0 5px 0 #E8C98F}
@@ -226,6 +240,7 @@ font-family:var(--cjk);font-size:14.5px;font-weight:800;cursor:pointer;line-heig
     <div id="growth"><div id="growthFill"></div><div id="growthTxt">幼豚</div></div>
   </div>
   <div id="journey"><div id="journeyFill"></div></div>
+  <div id="progTxt"><b>0%</b><span id="progZone"></span></div>
 </div>
 <div id="place"></div>
 <div id="alert"></div>
@@ -272,11 +287,6 @@ font-family:var(--cjk);font-size:14.5px;font-weight:800;cursor:pointer;line-heig
     <p class="lead">陪一隻剛出生的<b>台灣白海豚</b><br>沿著西海岸的淺灘往南游</p>
     <p class="ask">是否能夠順利長大呢？</p>
 
-    <div class="route">
-      <b>苗栗</b><span class="arw">〜</span><b>雲林</b>
-      <small>白海豚重要棲息環境</small>
-    </div>
-
     <button class="goBtn big" id="startBtn">出發囉</button>
   </div>
 </div>
@@ -284,6 +294,7 @@ font-family:var(--cjk);font-size:14.5px;font-weight:800;cursor:pointer;line-heig
 <div class="screen hidden" id="over">
   <div class="card">
     <h1 id="ovT"></h1><div class="sub" id="ovS"></div>
+    <div class="grew" id="ovGrew"></div>
     <div class="tally" id="ovL"></div>
 
     <div class="scrollHint">往下滑，分享你的成績 ⌄</div>
@@ -361,7 +372,7 @@ font-family:var(--cjk);font-size:14.5px;font-weight:800;cursor:pointer;line-heig
 (function(){
 'use strict';
 
-const ANALYTICS_URL='https://script.google.com/macros/s/AKfycbz4qS1R_Py4-3pz_cGYxhiPILtvn_s0KsRGqAtc3zBb78Uzka409C025a3Gc1mI20M4lw/exec';
+const ANALYTICS_URL='';
 
 const SID=(function(){
   return Date.now().toString(36)+Math.random().toString(36).slice(2,9);
@@ -454,7 +465,7 @@ function reset(){Object.assign(S,{
   run:false,dist:0,spd:92,y:.45,life:MAXHP,inv:0,air:1,
   fish:0,gold:0,stage:0,deepTime:0,landT:0,fillPass:0,fillHit:0,noiseSec:0,plasticHit:0,netHit:0,propHit:0,
   land:.14,landTgt:.14,deep:.88,murk:0,murkTgt:0,
-  nAlert:0,airWarnCd:0,obs:[],hazT:2,fishT:1.2,fillT:8,pileT:11,goldT:14,pops:[],bub:[],spray:[],sonar:[],sonarT:0,
+  nAlert:0,airWarnCd:0,cheer:{},obs:[],hazT:2,fishT:1.2,fillT:8,pileT:11,goldT:14,pops:[],bub:[],spray:[],sonar:[],sonarT:0,
   zone:-1,phase:'tut',tut:0,tutT:0,moved:false,shake:0,
   surf:null,noise:0,tutTotal:0,jitter:0,breathed:false
 });for(let i=0;i<22;i++)S.bub.push({x:Math.random()*W,y:Math.random()*H,r:1+Math.random()*3,s:7+Math.random()*12});}
@@ -559,7 +570,15 @@ function update(dt){
     else S.murkTgt=.2;}
   S.land=lerp(S.land,S.landTgt,Math.min(dt*1.4,1));
   S.murk=lerp(S.murk,S.murkTgt,Math.min(dt*.9,1));
-  document.getElementById('journeyFill').style.width=Math.min(S.dist/GOAL*100,100)+'%';
+  const prog=Math.min(S.dist/GOAL*100,100);
+  document.getElementById('journeyFill').style.width=prog+'%';
+  document.getElementById('progTxt').firstElementChild.textContent=Math.round(prog)+'%';
+  document.getElementById('progZone').textContent=ZONES[Math.max(S.zone,0)].n;
+  
+  [[25,'已經游四分之一了，很棒！'],[50,'一半囉！繼續加油 💪'],
+   [75,'剩最後一段，撐住！'],[92,'快到家了，加油！']].forEach(function(m){
+    if(prog>=m[0]&&!S.cheer[m[0]]){S.cheer[m[0]]=1;tip(m[1],2.4);}
+  });
 
   if(S.phase==='tut'){
     S.tutT+=dt;S.tutTotal+=dt;
@@ -627,9 +646,10 @@ function update(dt){
 }
   }
 
-  S.noise=0;
   const px=PX(),py=S.y*H,pr=15;
   const fills=S.obs.filter(o=>o.t==='fill');
+
+  S.noise=0;
   for(let i=S.obs.length-1;i>=0;i--){
     const o=S.obs[i];o.x+=((o.vx||0)-S.spd)*dt;
     if(o.warn&&o.x<W-24)o.warn=0;
@@ -637,10 +657,17 @@ function update(dt){
       o.rt-=dt;
       if(o.rt<=0&&o.x<W+140&&o.x>-160){o.rt=.62;o.rings.push({r:10,a:1});if(Math.abs(px-(o.x+o.w/2))<PILE_R)SFX.pile();}
       for(let k=o.rings.length-1;k>=0;k--){const R=o.rings[k];R.r+=260*dt;R.a-=dt*.34;if(R.a<=0)o.rings.splice(k,1);}
+      
       const hd=Math.abs(px-(o.x+o.w/2));
+      const alive=o.rings.length>0;
       if(hd<PILE_R)S.noise=Math.max(S.noise,1-hd/PILE_R);
+      else if(alive&&hd<PILE_R*1.5)S.noise=Math.max(S.noise,.12);
     }
     if(o.x<-260){S.obs.splice(i,1);continue;}
+  }
+
+  for(let i=S.obs.length-1;i>=0;i--){
+    const o=S.obs[i];
     if((o.t==='fish'||o.t==='gold')&&fills.some(f=>o.x+o.w>f.x-16&&o.x<f.x+f.w+16&&o.y<S.land+f.ext+.02)){
       S.obs.splice(i,1);continue;}
 
@@ -1097,12 +1124,12 @@ function dolphin(x,y){
 }
 
 const E={
- home :{t:'太棒了！順利抵達雲林台西！',
-  s:'你陪著牠游完了最重要也最危險的家：<span class="em">苗栗、台中、彰化、雲林</span>這一段海岸。<br><br>這片海南北長大約 200 公里、離海岸不到 5 公里。全世界沒有其他鯨豚的家像牠們一樣這麼小——真實的白海豚，一輩子都只能在這條<span class="em">窄窄的海邊巷子</span>裡來回生活。<br><br>謝謝你，一路安全地陪著牠回到家！'},
+ home :{t:'太棒了！順利抵達雲林！',
+  s:'你陪牠游過了<span class="em">苗栗、台中、彰化到雲林</span>的最危險海岸。<br><br>這片海長約 200 公里、寬不到 5 公里，是<span class="em">全世界最小的鯨豚家園</span>。白海豚一輩子都只能在這條窄窄的海邊巷子裡生活。<br><br>謝謝你，安全送牠回家！'},
  hurt :{t:'體力用完了，無法再前進了',
   s:'一路上有太多<span class="em">塑膠垃圾、刺網和填海陸地</span>，根本來不及閃躲。<br><br>你知道嗎？真實的白海豚裡，<span class="em">每三隻就有一隻</span>身上發現被漁網纏繞或被船隻割傷的痕跡，這些傷口永遠不會好。<br><br>不過，科學家也是透過背鰭上這些獨一無二的缺角和傷痕，才能一隻一隻把牠們認出來，記錄牠們辛苦過生活的故事。'},
  drown:{t:'來不及浮上海面換氣',
-  s:'水下的噪音太吵了，讓牠<span class="em">迷失了方向</span>，忘記要浮出水面呼吸。<br><br>白海豚跟我們一樣用<span class="em">肺</span>呼吸，大約 <span class="em">1～2 分鐘</span>就得浮出海面換一次氣。<br><br>牠們是用聲音「聽」出路線的。但是施工打樁和船隻的引擎聲，會蓋掉牠們聽到的聲音。長期待在這麼吵的地方，海豚不只<span class="em">聽力會受傷</span>，還會迷路甚至擱淺上岸。'},
+  s:'水下的噪音太吵了，讓牠<span class="em">迷失了方向</span>，忘記要浮出水面呼吸。<br><br>白海豚跟我們一樣用<span class="em">肺</span>呼吸，每 <span class="em">1～3 分鐘</span>就要換一次氣。牠們是用聲音「聽」出路線的，但施工打樁和船隻的噪音太吵，蓋掉了聲音，讓牠迷失方向，甚至會<span class="em">聽力受傷、迷路擱淺</span>！'},
  deep :{t:'游進太深的海了……',
   s:'這裡不是牠熟悉的家。<br><br>白海豚最喜歡住在離岸邊 <span class="em">3～5 公里</span>、水深只有 <span class="em">15～30 公尺</span>的淺海與河口。如果游得太遠、太深，就沒有牠最愛吃的小魚，也找不到其他海豚同伴了。<br><br>牠不是不會潛水，只是深海裡……<span class="em">真的沒有牠的生活</span>。'}
 };
@@ -1132,6 +1159,17 @@ function end(k){
   S.lastKind=k;
   document.getElementById('ovT').innerHTML=e.t;
   document.getElementById('ovS').innerHTML=e.s;
+  const GD=[{n:'幼豚',d:'牠還是灰色的小寶寶，離不開媽媽，也還不太會自己找魚。'},
+            {n:'少年豚',d:'牠長出了藍灰色的斑點，開始學著自己找魚、認路。'},
+            {n:'成年豚',d:'牠變成粉紅色的大人了！這是白海豚最健康的模樣。'}][S.stage];
+  const lo=TH[S.stage],hi=S.stage>=2?TH[2]:TH[S.stage+1];
+  document.getElementById('ovGrew').className='grew g'+S.stage;
+  document.getElementById('ovGrew').innerHTML=
+    '<div class="gt">這一趟牠長成了</div><div class="gn">'+GD.n+'</div>'+
+    '<div class="gd">'+GD.d+'</div>'+
+    '<div class="gbar"><i style="width:'+
+      (S.stage>=2?100:Math.round((S.fish-lo)/(hi-lo)*100))+'%"></i></div>'+
+    '<div class="gnum">吃到 '+S.fish+' 隻小魚'+(S.stage>=2?'（已長大成人）':'　還差 '+(hi-S.fish)+' 隻就能再長大')+'</div>';
   document.getElementById('ovL').innerHTML=
     '死亡地點 <i>'+ZONES[Math.max(S.zone,0)].n+'</i><br>吃到的小魚 <i>'+S.fish+' / 350 隻</i><br>'+
     '吃到黃錫鯛 <i>'+S.gold+' 隻</i><br>成長階段 <i>'+STAGES[S.stage]+'</i><br>'+
@@ -1165,7 +1203,7 @@ function wrapText(g,txt,cx,y,maxW,lh){
   return yy;
 }
 function makeShareImage(){
-  const w=1000,h=1700,c=document.createElement('canvas');c.width=w;c.height=h;
+  const w=1000,h=1820,c=document.createElement('canvas');c.width=w;c.height=h;
   const g=c.getContext('2d');
   const F=(sz,wt)=>(wt||800)+' '+sz+'px "PingFang TC","Noto Sans TC",sans-serif';
   const RR=(x,y,ww,hh,r)=>{g.beginPath();g.roundRect?g.roundRect(x,y,ww,hh,r):g.rect(x,y,ww,hh);};
@@ -1175,16 +1213,16 @@ function makeShareImage(){
   g.fillStyle='rgba(255,255,255,.2)';
   for(let i=0;i<44;i++){g.beginPath();g.arc(Math.random()*w,Math.random()*h,3+Math.random()*9,0,7);g.fill();}
 
-  g.fillStyle='#F7DFAF';g.fillRect(0,0,w,178);
-  g.fillStyle='#E7CD9A';g.fillRect(0,168,w,14);
+  g.fillStyle='#F7DFAF';g.fillRect(0,0,w,268);
+  g.fillStyle='#E7CD9A';g.fillRect(0,256,w,14);
   g.textAlign='center';
-  g.fillStyle='#5B4636';g.font=F(52,900);g.fillText('台灣白海豚大冒險',w/2,80);
-  g.fillStyle='#8B7A69';g.font=F(26,700);
-  g.fillText('一款陪台灣白海豚游過西海岸的小遊戲',w/2,124);
-  g.fillStyle='#B08A5E';g.font=F(22,700);
-  g.fillText('苗栗龍鳳漁港 → 雲林台西 · 白海豚重要棲息環境',w/2,158);
+  g.fillStyle='#5B4636';g.font=F(54,900);g.fillText('台灣白海豚大冒險',w/2,104);
+  g.fillStyle='#B0743A';g.font=F(30,900);
+  g.fillText('從苗栗龍鳳漁港到雲林台西',w/2,164);
+  g.fillStyle='#8B7A69';g.font=F(25,700);
+  wrapText(g,'這是一段陪台灣白海豚游過西海岸的小遊戲。\n穿越重重危險，一起守護牠們最重要的家！',w/2,206,860,36);
 
-  g.save();g.translate(w/2,330);g.scale(5.2,5.2);
+  g.save();g.translate(w/2,420);g.scale(5.2,5.2);
   dolphinShape(g,{body:'#F9AEC1',dark:'#E0708D',belly:'#FEDCE4',line:'#C2647D',
                   fluke:'#E0708D',flukeFar:'#C9647E',fl:0});
   speckles(g,.42);
@@ -1192,15 +1230,16 @@ function makeShareImage(){
 
   const e2=E[S.lastKind]||E.hurt;
   g.textAlign='center';
-  g.fillStyle='#FFF';g.font=F(52,900);g.fillText(e2.t,w/2,552);
+  g.fillStyle='#FFF';g.font=F(52,900);g.fillText(e2.t,w/2,644);
   g.fillStyle='rgba(255,255,255,.94)';g.font=F(26,700);
-  const reasonEnd=wrapText(g,stripHTML(e2.s),w/2,604,820,40);
+  const reasonEnd=wrapText(g,stripHTML(e2.s),w/2,696,820,40);
 
   const bx=90,by=reasonEnd+34,bw=w-180,bh=436;
   g.fillStyle='rgba(255,249,240,.95)';RR(bx,by,bw,bh,40);g.fill();
   const rows=[['死亡地點',ZONES[Math.max(S.zone,0)].n],
               ['吃到的小魚',S.fish+' / 350 隻'],
               ['成長階段',STAGES[S.stage]],
+              ['吃到黃錫鯛',S.gold+' 隻'],
               ['撞到填海造陸',S.fillHit+' 次'],
               ['被水下噪音嚇到',S.noiseSec.toFixed(0)+' 秒'],
               ['誤食塑膠',S.plasticHit+' 次']];
@@ -1212,13 +1251,13 @@ function makeShareImage(){
 
   g.textAlign='center';
   g.fillStyle='#FFF';g.font=F(42,900);
-  g.fillText('台灣白海豚全球不到 50 隻',w/2,by+bh+72);
+  g.fillText('台灣白海豚，全球剩下不到 50 隻！',w/2,by+bh+76);
   g.fillStyle='rgba(255,255,255,.92)';g.font=F(27,700);
-  g.fillText('牠們游不遠也游不深，只有西海岸這片淺海可以去',w/2,by+bh+120);
-  g.fillText('我們與白海豚享用同一片海、空氣、水和漁獲',w/2,by+bh+162);
-  g.fillStyle='#FF8A6B';RR(w/2-280,by+bh+206,560,72,36);g.fill();
-  g.fillStyle='#fff';g.font=F(32,900);
-  g.fillText('加入連署 · 搶救極危白海豚',w/2,by+bh+252);
+  g.fillText('牠們游不遠也游不深，只有西海岸這片淺海可以去',w/2,by+bh+126);
+  g.fillText('我們與白海豚享用同一片海、空氣、水和漁獲',w/2,by+bh+168);
+  g.fillStyle='#FF8A6B';RR(w/2-300,by+bh+214,600,78,39);g.fill();
+  g.fillStyle='#fff';g.font=F(34,900);
+  g.fillText('立即連署　搶救極危白海豚',w/2,by+bh+264);
   return c;
 }
 document.getElementById('shareImg').onclick=function(){
@@ -1239,7 +1278,7 @@ document.getElementById('shareImg').onclick=function(){
 document.getElementById('shareLink').onclick=function(){
   SFX.tap();track('share',{what:'link'});
   const txt='我在《台灣白海豚大冒險》吃到 '+S.fish+' 隻小魚，游到「'+ZONES[Math.max(S.zone,0)].n+'」。台灣白海豚只剩不到 50 隻，你能游多遠？';
-  const url=location.href;
+  const url='https://lihi3.me/Bsby0/twbaihaitun';
   if(navigator.share){navigator.share({title:'台灣白海豚大冒險',text:txt,url:url}).catch(()=>{});}
   else if(navigator.clipboard){navigator.clipboard.writeText(txt+' '+url).then(()=>{
     this.textContent='✅ 已複製，貼給朋友吧！';setTimeout(()=>{this.textContent='🎯 找朋友來挑戰';},2200);});}
@@ -1288,11 +1327,19 @@ function noiseBurst(dur,vol,freq,q,delay){
 }
 const SFX={
   tap  (){tone(520,.07,'triangle',.2,720);},
-  eat  (){tone(680,.09,'sine',.22,1020);},
+  
+  eat  (){tone(1046,.09,'triangle',.16);tone(1568,.14,'sine',.10,null,.05);
+          noiseBurst(.05,.05,3200,4,.02);},
   gold (){[0,.07,.14].forEach((d,i)=>tone([740,930,1240][i],.14,'triangle',.22,null,d));},
-  breath(){noiseBurst(.28,.16,1500,.8);tone(300,.22,'sine',.14,620,.05);},
+  
+  breath(){tone(120,.12,'sine',.24,190);
+           noiseBurst(.22,.14,700,.6,.05);
+           noiseBurst(.10,.10,2600,3,.20);
+           tone(660,.10,'sine',.09,1180,.22);},
   bubble(){tone(900,.06,'sine',.08,1300);},
-  hit  (){tone(150,.26,'square',.22,70);noiseBurst(.2,.2,420,1.2);},
+  
+  hit  (){tone(98,.34,'sawtooth',.20,52);tone(104,.30,'sawtooth',.14,55,.01);
+          noiseBurst(.16,.14,240,.9);},
   grow (){[0,.1,.2,.3].forEach((d,i)=>tone([523,659,784,1046][i],.2,'triangle',.2,null,d));},
   pile (){tone(70,.32,'square',.3,40);noiseBurst(.26,.26,260,.7);},
   count(){tone(760,.12,'square',.18);},
