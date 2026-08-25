@@ -1,0 +1,1371 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover">
+<title>台灣白海豚大冒險</title>
+<style>
+:root{--sky:#BFE7F2;--sea:#7FCFE0;--sand:#F7DFAF;--sand-dark:#E0BF85;
+--pink:#F79FB5;--pink-deep:#E0708D;--coral:#FF8A6B;--cream:#FFF9F0;--brown:#5B4636;--gold:#F5C542;
+--cjk:"PingFang TC","Noto Sans TC","Microsoft JhengHei","Heiti TC",sans-serif;}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent;margin:0;padding:0}
+html,body{height:100%;overflow:hidden;background:#1F6E93;font-family:var(--cjk)}
+body{display:flex;align-items:center;justify-content:center;user-select:none;color:var(--brown)}
+#wrap{position:relative;width:100%;max-width:520px;height:100%;max-height:100dvh;overflow:hidden;background:var(--sea)}
+canvas{display:block;width:100%;height:100%;touch-action:none}
+
+#hud{position:absolute;inset:0;pointer-events:none;padding:calc(env(safe-area-inset-top) + 56px) 14px 14px;display:flex;flex-direction:column;gap:7px}
+.topbar{display:flex;gap:9px;align-items:center}
+#hp{display:flex;align-items:center;gap:4px;background:#FFFFFF80;border-radius:20px;padding:4px 10px 4px 8px;height:26px}
+#hp .lb{font-size:10.5px;font-weight:800;color:var(--brown)}
+#hp .pip{width:9px;height:9px;border-radius:50%;background:var(--coral);box-shadow:0 0 0 1.5px #fff8;transition:background .2s}
+#hp .pip.off{background:#FFFFFF9C;box-shadow:none}
+#growth{flex:1;background:#FFFFFF80;border-radius:20px;height:26px;position:relative;overflow:hidden}
+#growthFill{position:absolute;left:0;top:0;bottom:0;width:0;background:var(--pink);border-radius:20px;transition:width .3s}
+#growthTxt{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:800}
+#journey{background:#FFFFFF66;border-radius:20px;height:7px;position:relative;overflow:hidden}
+#journeyFill{position:absolute;left:0;top:0;bottom:0;width:0;background:#FFF;border-radius:20px}
+
+#place{position:absolute;left:50%;top:calc(env(safe-area-inset-top) + 116px);transform:translateX(-50%);
+background:rgba(91,70,54,.5);backdrop-filter:blur(3px);color:#FFF7EA;border-radius:16px;padding:7px 16px;
+font-size:13px;font-weight:800;white-space:nowrap;opacity:0;transition:opacity .4s}
+#place.show{opacity:1}
+#place.zone{background:rgba(37,120,90,.75)}
+
+#alert{position:absolute;left:50%;top:62%;transform:translate(-50%,-50%);
+background:rgba(232,69,47,.55);backdrop-filter:blur(2px);color:#fff;border-radius:18px;padding:12px 22px;
+font-size:15px;font-weight:900;white-space:nowrap;opacity:0;transition:opacity .16s;box-shadow:0 6px 20px rgba(0,0,0,.3)}
+#alert.show{opacity:1;animation:nz .3s infinite}
+@keyframes nz{50%{transform:translate(-50%,-50%) scale(1.06)}}
+
+#bubbleRing{position:absolute;left:16px;bottom:calc(env(safe-area-inset-bottom) + 20px);width:98px;height:98px;pointer-events:auto}
+#airArc{position:absolute;inset:0;pointer-events:none}
+#bubbleBtn{width:98px;height:98px;border-radius:50%;border:none;background:var(--cream);
+box-shadow:0 5px 0 var(--sand-dark),0 8px 16px rgba(0,0,0,.18);font-family:var(--cjk);font-size:14px;font-weight:800;color:var(--brown);
+display:flex;flex-direction:column;align-items:center;justify-content:center;line-height:1.2}
+#bubbleBtn{font-size:17px}
+#bubbleBtn small{font-size:12px;font-weight:900;opacity:.65;margin-top:2px}
+#bubbleBtn:active{transform:translateY(4px);box-shadow:0 1px 0 var(--sand-dark)}
+#bubbleBtn.urgent{background:#FFD9CE;color:#C1341F;animation:wob .45s infinite}
+#bubbleBtn.blocked{background:#E2D9CD;color:#A2957F}
+@keyframes wob{50%{transform:scale(1.07)}}
+#hint{position:absolute;inset:-22px;pointer-events:none;opacity:0;transition:opacity .3s}
+#hint.on{opacity:1}
+#hint .ring{position:absolute;inset:22px;border-radius:50%;border:3px solid var(--coral);animation:ring 1.3s infinite}
+#hint .ring.d{animation-delay:.65s}
+@keyframes ring{0%{transform:scale(1);opacity:.9}100%{transform:scale(1.55);opacity:0}}
+#hint .fing{position:absolute;left:124px;top:32px;font-size:30px;animation:poke 1.1s infinite}
+@keyframes poke{0%,100%{transform:translate(0,0)}50%{transform:translate(-16px,0)}}
+#hint .lbl{position:absolute;left:124px;top:-4px;background:var(--coral);color:#fff;font-size:12.5px;font-weight:800;
+padding:6px 12px;border-radius:14px;white-space:nowrap;box-shadow:0 3px 10px rgba(0,0,0,.2)}
+
+#sndBar{position:absolute;right:12px;top:calc(env(safe-area-inset-top) + 10px);z-index:30;display:flex;gap:7px}
+.sndBtn{width:38px;height:38px;border-radius:50%;border:none;cursor:pointer;font-size:17px;line-height:1;
+  background:rgba(255,255,255,.62);backdrop-filter:blur(3px);box-shadow:0 3px 8px rgba(0,0,0,.14);position:relative}
+.sndBtn:active{transform:translateY(2px)}
+.sndBtn.off{background:rgba(255,255,255,.32);filter:grayscale(1)}
+.sndBtn.off::after{content:"";position:absolute;left:7px;right:7px;top:50%;height:2.5px;border-radius:2px;
+  background:#E8452F;transform:rotate(-38deg)}
+
+#msg{position:absolute;left:50%;top:29%;transform:translate(-50%,-50%) scale(.88);
+background:rgba(255,249,240,.5);backdrop-filter:blur(2px);border-radius:22px;padding:12px 20px;max-width:84%;
+font-size:15px;font-weight:800;line-height:1.55;text-align:center;color:#4A382B;
+box-shadow:0 4px 14px rgba(0,0,0,.1);opacity:0;transition:opacity .18s,transform .18s cubic-bezier(.3,1.5,.5,1);pointer-events:none}
+#msg.show{opacity:1;transform:translate(-50%,-50%) scale(1)}
+#msg .em{color:#C9426B}
+#msg.teach{background:rgba(255,138,107,.68);color:#fff;font-size:16px}
+#msg.teach .em{color:#FFF3C4}
+#msg.say{background:rgba(255,239,214,.62)}
+#msg .who{display:block;font-size:11px;font-weight:800;color:#A97E4E;margin-bottom:3px}
+
+#count{position:absolute;inset:0;display:none;align-items:center;justify-content:center;
+background:rgba(31,110,147,.35);backdrop-filter:blur(2px);font-size:96px;font-weight:900;color:#fff;
+text-shadow:0 6px 24px rgba(0,0,0,.35);pointer-events:none}
+#count.on{display:flex}
+#count b{animation:pop .9s ease-out}
+@keyframes pop{0%{transform:scale(2.2);opacity:0}30%{transform:scale(1);opacity:1}100%{transform:scale(.85);opacity:.5}}
+
+.screen{position:absolute;inset:0;background:linear-gradient(180deg,var(--sky),var(--sea));display:block;
+padding:calc(env(safe-area-inset-top) + 20px) 16px calc(env(safe-area-inset-bottom) + 30px);
+overflow-y:auto;-webkit-overflow-scrolling:touch;text-align:center}
+.screen.hidden{display:none!important}
+.card{background:var(--cream);border-radius:28px;padding:24px 18px;box-shadow:0 6px 0 var(--sand-dark),0 14px 30px rgba(0,0,0,.15)}
+h1{font-size:28px;line-height:1.28}h1 .pk{color:var(--pink-deep)}
+.story{margin-top:14px;font-size:13.5px;line-height:1.95;text-align:left;background:#EAF6F2;border-radius:18px;padding:14px 15px}
+.story .em{color:#1E7A5C;font-weight:800}
+.sub{font-size:14px;line-height:1.8;margin-top:12px}.sub .em{color:var(--pink-deep);font-weight:800}
+.how{margin-top:14px;text-align:left;font-size:14px;line-height:2.05;background:#FFF1DE;border-radius:18px;padding:14px 15px}
+.how b{display:inline-block;width:28px}
+.goBtn{margin-top:18px;width:100%;padding:17px;border:none;border-radius:20px;background:var(--coral);color:#fff;
+font-family:var(--cjk);font-size:17px;font-weight:800;letter-spacing:.12em;box-shadow:0 5px 0 #D9694E}
+.goBtn:active{transform:translateY(4px);box-shadow:0 1px 0 #D9694E}
+.tagline{font-size:11.5px;font-weight:900;letter-spacing:.16em;color:#B08A5E}
+
+.screen.cover{background:linear-gradient(180deg,#CFF0F8 0%,#9FE0EE 34%,#6BC6DE 68%,#3E9BC0 100%);
+  padding:calc(env(safe-area-inset-top) + 20px) 18px calc(env(safe-area-inset-bottom) + 26px);
+  display:flex;flex-direction:column;justify-content:center}
+.cover .ask{margin-top:14px;font-size:20px;font-weight:900;color:#FFF3C4;letter-spacing:.04em;
+  text-shadow:0 3px 0 #C98B3E, 0 6px 14px rgba(0,0,0,.22);animation:sway 3s ease-in-out infinite}
+@keyframes sway{50%{transform:translateY(-3px)}}
+.cover .sun{position:absolute;top:-46px;right:-46px;width:190px;height:190px;border-radius:50%;
+  background:radial-gradient(circle,#FFF6D0 0%,rgba(255,246,208,.35) 55%,rgba(255,246,208,0) 72%);pointer-events:none}
+.cover .bb{position:absolute;bottom:-30px;width:14px;height:14px;border-radius:50%;
+  background:rgba(255,255,255,.45);animation:rise 9s linear infinite;pointer-events:none}
+@keyframes rise{0%{transform:translateY(0) scale(.6);opacity:0}
+  12%{opacity:.8}100%{transform:translateY(-105vh) scale(1.15);opacity:0}}
+.coverIn{position:relative;z-index:2}
+.cover .tag{display:inline-block;background:rgba(255,255,255,.75);color:#1F6E93;
+  font-size:11.5px;font-weight:900;letter-spacing:.12em;padding:6px 14px;border-radius:20px}
+.bigT{margin-top:18px;font-size:40px;line-height:1.05;font-weight:900;color:#fff;letter-spacing:.02em;
+  text-shadow:0 4px 0 #3E9BC0, 0 8px 18px rgba(0,0,0,.2)}
+.bigT em{font-style:normal;display:inline-block;color:#FFE08A;transform:rotate(-3deg);
+  text-shadow:0 4px 0 #D9944B, 0 8px 18px rgba(0,0,0,.2)}
+.stage{position:relative;margin-top:16px;height:186px}
+.stage canvas{width:100%;height:156px;display:block}
+.stage .wave{position:absolute;left:-20px;right:-20px;bottom:0;height:34px;
+  background:radial-gradient(ellipse at 50% 100%,rgba(255,255,255,.5) 0 40%,rgba(255,255,255,0) 70%);
+  border-radius:50%}
+.cover .lead b{color:#FFF3C4}
+.cover .lead{margin-top:6px;font-size:16px;line-height:1.7;font-weight:800;color:#fff;
+  text-shadow:0 2px 8px rgba(0,0,0,.18)}
+.cover .route{margin:20px auto 0;width:max-content;padding:12px 26px;border-radius:22px;
+  background:linear-gradient(135deg,#FFE7A8,#FFC97A);color:#7A4E12;
+  display:flex;align-items:center;justify-content:center;gap:10px;flex-wrap:wrap;
+  box-shadow:0 5px 0 #D99B4B, 0 10px 20px rgba(0,0,0,.16)}
+.cover .route b{font-size:22px;font-weight:900;letter-spacing:.06em}
+.cover .route .arw{font-size:18px;color:#C98B3E;font-weight:900}
+.cover .route small{flex-basis:100%;text-align:center;font-size:11.5px;font-weight:800;
+  color:#9A6B28;letter-spacing:.1em;margin-top:2px}
+.chips{margin-top:12px;display:grid;grid-template-columns:1fr 1fr;gap:9px}
+.chip{border-radius:20px;padding:12px 8px;text-align:center;box-shadow:0 4px 0 rgba(0,0,0,.1)}
+.chip span{font-size:24px;display:block;line-height:1.1}
+.chip b{display:block;font-size:14px;font-weight:900;margin-top:4px;color:#4A382B}
+.chip small{display:block;font-size:10.5px;font-weight:700;color:#7E6B58;margin-top:2px;line-height:1.35}
+.c1{background:#FFF1DE}.c2{background:#DFF3FB}.c3{background:#FFE9C9}.c4{background:#FFE0D8}
+.goBtn.big{margin-top:22px;padding:19px;font-size:19px;border-radius:24px;letter-spacing:.18em;
+  animation:jump 2.4s ease-in-out infinite}
+@keyframes jump{0%,88%,100%{transform:translateY(0)}92%{transform:translateY(-6px)}96%{transform:translateY(0)}}
+h1{margin-top:8px}
+.lead{margin-top:12px;font-size:15px;line-height:1.75;font-weight:700;color:#6B5544}
+.route{margin-top:16px;background:#EAF6F2;border-radius:16px;padding:12px 14px;
+  font-size:13.5px;font-weight:800;color:#1E7A5C;display:flex;align-items:center;justify-content:center;
+  gap:7px;flex-wrap:wrap}
+.route .dot{width:9px;height:9px;border-radius:50%;background:#1E7A5C;display:inline-block}
+.route .dot.end{background:#FF8A6B}
+.route .arw{color:#8FBFAC}
+.route small{flex-basis:100%;font-size:11px;font-weight:700;color:#7FA898;letter-spacing:.06em;margin-top:2px}
+.rules{margin-top:16px;display:flex;flex-direction:column;gap:8px}
+.rule{display:flex;align-items:center;gap:12px;background:#FFF1DE;border-radius:16px;padding:11px 14px;text-align:left}
+.rule .k{flex:0 0 auto;width:26px;height:26px;border-radius:50%;background:#FF8A6B;color:#fff;
+  font-size:13px;font-weight:900;display:flex;align-items:center;justify-content:center}
+.rule b{display:block;font-size:14px;font-weight:900;color:#4A382B;line-height:1.4}
+.rule small{display:block;font-size:11.5px;font-weight:700;color:#9C8873;margin-top:1px;line-height:1.4}
+.acts{margin-top:16px;display:flex;flex-direction:column;gap:9px}
+.lnk{display:flex;align-items:center;gap:10px;text-decoration:none;border-radius:18px;padding:13px 15px;
+font-size:14px;font-weight:800;line-height:1.35;text-align:left}
+.lnk .tx{flex:1}
+.lnk .tx small{display:block;font-size:11px;font-weight:700;opacity:.75;margin-top:2px}
+.lnk .go{font-size:15px;opacity:.6}
+.lnk:active{transform:translateY(2px)}
+.lnk1{background:#E8452F;color:#fff;box-shadow:0 4px 0 #B8331F}
+.lnk2{background:#fff;color:#4A382B;border:2px solid #E0BF85}
+.actHd{margin-top:20px;font-size:13px;font-weight:900;color:#8B7A69;letter-spacing:.08em}
+
+#cause{position:absolute;inset:0;display:none;align-items:center;justify-content:center;
+background:rgba(18,60,84,.9);backdrop-filter:blur(6px);padding:30px;text-align:center;z-index:20}
+#cause.on{display:flex}
+#cause .cb{max-width:360px;animation:cin .5s cubic-bezier(.2,1.3,.4,1)}
+@keyframes cin{0%{transform:scale(.7);opacity:0}100%{transform:scale(1);opacity:1}}
+#cause .ct{font-size:30px;font-weight:900;color:#fff}
+#cause .cs{font-size:15px;font-weight:700;color:#DCEFF7;margin-top:14px;line-height:1.85}
+#cause .ch{margin-top:26px;font-size:13px;font-weight:800;color:#fff;opacity:.75;animation:bob 1.2s infinite}
+@keyframes bob{50%{transform:translateY(5px)}}
+
+.scrollHint{margin-top:14px;font-size:13px;font-weight:800;color:#B08A5E;animation:bob 1.4s infinite}
+.shareRow{margin-top:10px;display:flex;gap:9px}
+.shBtn{flex:1;display:flex;align-items:center;justify-content:center;border:none;border-radius:18px;padding:15px 8px;
+font-family:var(--cjk);font-size:14.5px;font-weight:800;cursor:pointer;line-height:1.3}
+.divider{margin-top:22px;height:2px;background:#F0E2CE;border-radius:2px}
+.sh1{background:#5BC8E8;color:#fff;box-shadow:0 4px 0 #3FA3C0}
+.sh2{background:#FFE3B0;color:#7A5A2E;box-shadow:0 4px 0 #E0BF85}
+.shBtn:active{transform:translateY(3px);box-shadow:none}
+#shareCanvasWrap{margin-top:12px;display:none}
+#shareCanvasWrap.on{display:block}
+#shareCanvasWrap img{width:100%;border-radius:18px;box-shadow:0 6px 18px rgba(0,0,0,.18)}
+#shareCanvasWrap p{font-size:11.5px;color:#8B7A69;margin-top:7px;font-weight:700}
+.tally{margin-top:14px;font-size:13px;line-height:2;background:#FFF1DE;border-radius:18px;padding:12px 16px;text-align:left}
+.tally i{font-style:normal;float:right;font-weight:800}
+
+.kb{margin-top:12px;text-align:left;border-radius:24px;padding:16px 17px}
+.kb .h{font-weight:900;font-size:16.5px;margin-bottom:10px;display:flex;align-items:center;gap:7px;line-height:1.35}
+.kb ul{list-style:none;font-size:14px;line-height:1.85}
+.kb li{position:relative;padding-left:17px;margin-bottom:9px}
+.kb li:last-child{margin-bottom:0}
+.kb li::before{content:"";position:absolute;left:0;top:10px;width:7px;height:7px;border-radius:50%}
+.kb b{font-weight:900}
+.kb1{background:#FFF0F5}.kb1 .h{color:#C9426B}.kb1 li::before{background:#F79FB5}.kb1 b{color:#C9426B}
+.kb2{background:#FFF4E2}.kb2 .h{color:#C77A16}.kb2 li::before{background:#F5B942}.kb2 b{color:#C77A16}
+.kb3{background:#E9F5FB}.kb3 .h{color:#1F6E93}.kb3 li::before{background:#6BC6DE}.kb3 b{color:#1F6E93}
+.kb4{background:#F0F3E8}.kb4 .h{color:#5C7A2E}.kb4 li::before{background:#A8C36A}.kb4 b{color:#5C7A2E}
+.kb .ico{font-size:22px;margin-right:2px}
+.captain{margin-top:16px;background:linear-gradient(160deg,#FFF6E0,#FFE7C2);border-radius:24px;
+  padding:18px 16px;text-align:center;box-shadow:0 5px 0 #E8C98F}
+.captain .ct{font-size:17px;font-weight:900;color:#B4711A;letter-spacing:.02em}
+.captain p{font-size:13.5px;line-height:1.85;font-weight:700;color:#6B5232;margin-top:9px}
+.big{margin-top:10px;background:#fff;border-radius:14px;padding:9px 12px;font-size:13px;font-weight:900;color:#C9426B;text-align:center}
+.src{font-size:10.5px;line-height:1.8;color:#8B7A69;margin-top:14px}
+@media(prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+</style>
+</head>
+<body>
+<div id="wrap">
+<canvas id="c"></canvas>
+<div id="hud">
+  <div class="topbar">
+    <div id="hp"><span class="lb">體力</span></div>
+    <div id="growth"><div id="growthFill"></div><div id="growthTxt">幼豚</div></div>
+  </div>
+  <div id="journey"><div id="journeyFill"></div></div>
+</div>
+<div id="place"></div>
+<div id="alert"></div>
+<div id="bubbleRing">
+  <svg id="airArc" viewBox="0 0 100 100">
+    <circle cx="50" cy="50" r="45" fill="none" stroke="#ffffff70" stroke-width="6"/>
+    <circle id="airCircle" cx="50" cy="50" r="45" fill="none" stroke="#5BC8E8" stroke-width="6" stroke-linecap="round" transform="rotate(-90 50 50)"/>
+  </svg>
+  <button id="bubbleBtn">呼吸<small id="airPct">100%</small></button>
+  <div id="hint">
+    <div class="ring"></div><div class="ring d"></div>
+    <div class="fing">👈</div><div class="lbl">點這裡浮上去換氣！</div>
+  </div>
+</div>
+<div id="msg"></div>
+<div id="sndBar">
+  <button id="btnSfx" class="sndBtn on" aria-label="音效開關">🔊</button>
+  <button id="btnBgm" class="sndBtn on" aria-label="音樂開關">🎵</button>
+</div>
+<audio id="bgm" loop preload="auto"></audio>
+<div id="count"><b>3</b></div>
+<div id="cause"><div class="cb">
+  <div class="ct" id="cTitle"></div>
+  <div class="cs" id="cSub"></div>
+  <div class="ch">點一下看白海豚的故事 ›</div>
+</div></div>
+
+<div class="screen cover" id="intro">
+  <div class="sun"></div>
+  <i class="bb" style="left:8%;animation-delay:0s"></i>
+  <i class="bb" style="left:24%;animation-delay:2.4s;width:10px;height:10px"></i>
+  <i class="bb" style="left:46%;animation-delay:1.2s;width:16px;height:16px"></i>
+  <i class="bb" style="left:68%;animation-delay:3.1s"></i>
+  <i class="bb" style="left:86%;animation-delay:.7s;width:12px;height:12px"></i>
+
+  <div class="coverIn">
+    <h1 class="bigT">台灣白海豚<br><em>大冒險</em></h1>
+
+    <div class="stage">
+      <canvas id="coverCv"></canvas>
+      <div class="wave"></div>
+    </div>
+
+    <p class="lead">陪一隻剛出生的<b>台灣白海豚</b><br>沿著西海岸的淺灘往南游</p>
+    <p class="ask">是否能夠順利長大呢？</p>
+
+    <div class="route">
+      <b>苗栗</b><span class="arw">〜</span><b>雲林</b>
+      <small>白海豚重要棲息環境</small>
+    </div>
+
+    <button class="goBtn big" id="startBtn">出發囉</button>
+  </div>
+</div>
+
+<div class="screen hidden" id="over">
+  <div class="card">
+    <h1 id="ovT"></h1><div class="sub" id="ovS"></div>
+    <div class="tally" id="ovL"></div>
+
+    <div class="scrollHint">往下滑，分享你的成績 ⌄</div>
+
+    <div class="kb kb1">
+      <div class="h"><span class="ico">🍼</span>辛苦長大的白海豚寶寶</div>
+      <ul>
+        <li>白海豚媽媽要 <b>10〜13 歲</b>才能生寶寶，懷孕要等長長的一年，<b>一次只生一隻</b>。</li>
+        <li>寶寶要黏著媽媽<b>至少 2 年</b>，一邊喝奶，一邊學找魚吃、認路和躲危險，才有辦法自己長大。</li>
+      </ul>
+    </div>
+
+    <div class="kb kb2">
+      <div class="h"><span class="ico">😢</span>全球不到 50 隻的危機</div>
+      <ul>
+        <li>台灣白海豚非常稀有，全世界只剩下<b>不到 50 隻</b>。</li>
+        <li>現在死掉的海豚比新生的寶寶還要多，牠們<b>正快要永遠消失</b>。</li>
+      </ul>
+    </div>
+
+    <div class="kb kb3">
+      <div class="h"><span class="ico">🌊</span>和台灣共用一片海</div>
+      <ul>
+        <li>離岸 <b>3〜5 公里</b>、水深 <b>15〜30 公尺</b>的西岸淺海和河口，就是牠們<b>唯一的家</b>。</li>
+        <li>牠們只住在離海岸很近的淺海和河口，<b>游不遠也游不深</b>。</li>
+        <li>我們和白海豚吃一樣的魚、呼吸一樣的空氣、用一樣的水。<b>大海健康，我們才會健康！</b></li>
+      </ul>
+    </div>
+
+    <div class="kb kb4">
+      <div class="h"><span class="ico">🚧</span>台中港填海造陸的傷害</div>
+      <ul>
+        <li>填海工程把牠們<b>找食物、養寶寶</b>的海直接變成陸地，家一塊一塊消失了。</li>
+        <li><b>有毒的廢土</b>跑進海洋，不只害小魚變少，毒素最後也會透過海洋影響人類。</li>
+        <li>沒有做好環境評估的開發，會給大海與白海豚帶來<b>無法復原的傷害！</b></li>
+      </ul>
+    </div>
+
+    <div class="actHd">你可以幫牠做一件事</div>
+    <div class="acts">
+      <a class="lnk lnk1" href="https://forms.gle/EP53e3d9rTYg2j1U7" target="_blank" rel="noopener">
+        <span class="tx">加入連署 · 搶救極危白海豚<small>只要一分鐘，替牠們留下這片海</small></span>
+        <span class="go">›</span>
+      </a>
+      <a class="lnk lnk2" href="https://www.facebook.com/wildatheart.org?locale=zh_TW" target="_blank" rel="noopener">
+        <span class="tx">台灣蠻野心足生態協會<small>長期為白海豚棲地打環境訴訟</small></span>
+        <span class="go">›</span>
+      </a>
+      <a class="lnk lnk2" href="https://www.facebook.com/matzufish?locale=zh_TW" target="_blank" rel="noopener">
+        <span class="tx">台灣白海豚媽祖宮 · 粘錫麟紀念館<small>在地守護「媽祖魚」的行動基地</small></span>
+        <span class="go">›</span>
+      </a>
+    </div>
+
+    <div class="divider"></div>
+
+    <div class="captain">
+      <div class="ct">🏅 成為「白海豚守護隊長」</div>
+      <p>只有你一個人的力量還不夠，<br>白海豚需要更多好朋友的幫忙！</p>
+      <p>快把這款遊戲分享給同學和家人，看看誰能陪白海豚游得又安全又遠，一起加入守護台灣白海豚的行列吧！</p>
+      <div class="shareRow">
+        <button class="shBtn sh1" id="shareImg">分享我的成績</button>
+        <button class="shBtn sh2" id="shareLink">找朋友來挑戰</button>
+      </div>
+      <div id="shareCanvasWrap"><img id="shareImgEl" alt="成績圖"><p>長按圖片即可儲存或分享</p></div>
+    </div>
+
+    <button class="goBtn" id="againBtn">再次出發，守護白海豚</button>
+    <div class="src">資料來源：海洋委員會海洋保育署、林業保育署「中華白海豚野生動物重要棲息環境」（2020 年 9 月 1 日生效，範圍涵括苗栗、台中、彰化、雲林，面積 763 平方公里）；《台灣白海豚保育學堂》手冊。</div>
+  </div>
+</div>
+</div>
+
+<script>
+(function(){
+'use strict';
+
+const ANALYTICS_URL='';
+
+const SID=(function(){
+  return Date.now().toString(36)+Math.random().toString(36).slice(2,9);
+})();
+const T0=Date.now();
+
+const BASE=(function(){
+  const ua=navigator.userAgent||'';
+  const isTablet=/iPad|Tablet|PlayBook|Silk/i.test(ua)||(/Android/i.test(ua)&&!/Mobile/i.test(ua));
+  const isMobile=!isTablet&&/Mobi|Android|iPhone|iPod|Windows Phone/i.test(ua);
+  const os=/iPhone|iPad|iPod/i.test(ua)?'iOS':/Android/i.test(ua)?'Android':
+           /Windows/i.test(ua)?'Windows':/Mac OS X/i.test(ua)?'macOS':
+           /Linux/i.test(ua)?'Linux':'Other';
+  const br=/Edg\//i.test(ua)?'Edge':/OPR\//i.test(ua)?'Opera':/Chrome\//i.test(ua)?'Chrome':
+           /Safari\//i.test(ua)?'Safari':/Firefox\//i.test(ua)?'Firefox':'Other';
+  let tz='';
+  try{tz=Intl.DateTimeFormat().resolvedOptions().timeZone||'';}catch(e){}
+  const city=tz.includes('/')?tz.split('/').pop().replace(/_/g,' '):'';
+  return {dev:isTablet?'tablet':isMobile?'mobile':'desktop',os:os,browser:br,
+          tz:tz,city:city,tzOffset:-new Date().getTimezoneOffset(),
+          lang:navigator.language||'',sw:screen.width+'x'+screen.height,
+          ref:document.referrer||'',path:location.pathname};
+})();
+
+function track(type,extra){
+  if(!ANALYTICS_URL)return;
+  const d=Object.assign({type:type,sid:SID,ts:Date.now()},BASE,extra||{});
+  try{
+    const blob=new Blob([JSON.stringify(d)],{type:'text/plain;charset=UTF-8'});
+    if(navigator.sendBeacon){navigator.sendBeacon(ANALYTICS_URL,blob);}
+    else{fetch(ANALYTICS_URL,{method:'POST',body:blob,mode:'no-cors',keepalive:true});}
+  }catch(e){}
+}
+
+track('view');
+
+let depthSent={};
+function watchScroll(){
+  const el=document.getElementById('over');
+  el.addEventListener('scroll',function(){
+    const max=el.scrollHeight-el.clientHeight;if(max<40)return;
+    const pct=Math.min(100,Math.round(el.scrollTop/max*100));
+    [25,50,75,100].forEach(function(m){
+      if(pct>=m&&!depthSent[m]){depthSent[m]=1;track('scroll',{depth:m});}
+    });
+  },{passive:true});
+}
+
+function watchCards(){
+  if(!('IntersectionObserver' in window))return;
+  const seen={};
+  const io=new IntersectionObserver(function(es){
+    es.forEach(function(en){
+      if(en.isIntersecting){
+        const n=en.target.dataset.card;
+        if(n&&!seen[n]){seen[n]=1;track('read',{what:n});}
+      }
+    });
+  },{threshold:.5});
+  ['kb1','kb2','kb3','kb4','captain'].forEach(function(c,i){
+    const el=document.querySelector('.'+c);
+    if(el){el.dataset.card=c;io.observe(el);}
+  });
+}
+
+const cv=document.getElementById('c'),ctx=cv.getContext('2d'),wrap=document.getElementById('wrap');
+let W,H,DPR;
+function resize(){DPR=Math.min(devicePixelRatio||1,2);W=wrap.clientWidth;H=wrap.clientHeight;cv.width=W*DPR;cv.height=H*DPR;ctx.setTransform(DPR,0,0,DPR,0,0);}
+addEventListener('resize',resize);resize();
+const clamp=(v,a,b)=>v<a?a:v>b?b:v, lerp=(a,b,t)=>a+(b-a)*t;
+const PX=()=>W*.28, FF=()=>'"PingFang TC","Noto Sans TC",sans-serif';
+
+const SEG=2200;
+const ZONES=[
+ {n:'苗栗 · 龍鳳漁港',k:'port',hab:'in',land:.15},
+ {n:'苗栗 · 後龍溪口',k:'river',land:.19},
+ {n:'台中 · 大甲溪口 · 高美濕地',k:'river',land:.23},
+ {n:'台中港 · 填海造陸工程',k:'ind',big:true,land:.36},
+ {n:'彰化 · 大肚溪口保護區',k:'river',land:.30},
+ {n:'彰化 · 彰濱工業區',k:'ind',land:.33},
+ {n:'彰化 · 濁水溪口',k:'river',land:.29},
+ {n:'雲林 · 麥寮六輕',k:'ind',land:.32},
+ {n:'雲林 · 台西海岸',k:'wet',land:.28}];
+const GOAL=SEG*ZONES.length, MAXD=38, SAFE=30, DEEP_TRIG=34, DEEP_LIMIT=4;
+const TH=[0,200,350], STAGES=['幼豚','少年豚','成年豚'], MAXHP=5;
+const PILE_R=250, PILE_EXT=.17;
+
+const S={};
+function reset(){Object.assign(S,{
+  run:false,dist:0,spd:92,y:.45,life:MAXHP,inv:0,air:1,
+  fish:0,gold:0,stage:0,deepTime:0,landT:0,fillPass:0,fillHit:0,noiseSec:0,plasticHit:0,netHit:0,propHit:0,
+  land:.14,landTgt:.14,deep:.88,murk:0,murkTgt:0,
+  nAlert:0,airWarnCd:0,obs:[],hazT:2,fishT:1.2,fillT:8,pileT:11,goldT:14,pops:[],bub:[],spray:[],sonar:[],sonarT:0,
+  zone:-1,phase:'tut',tut:0,tutT:0,moved:false,shake:0,
+  surf:null,noise:0,tutTotal:0,jitter:0,breathed:false
+});for(let i=0;i<22;i++)S.bub.push({x:Math.random()*W,y:Math.random()*H,r:1+Math.random()*3,s:7+Math.random()*12});}
+reset();
+
+let drag=null;
+cv.addEventListener('pointerdown',e=>{drag={y:e.clientY,by:S.y};});
+cv.addEventListener('pointermove',e=>{
+  if(!drag||!S.run||S.surf)return;
+  const ny=clamp(drag.by+(e.clientY-drag.y)/H,0,1);
+  if(Math.abs(ny-S.y)>.004)S.moved=true;S.y=ny;});
+['pointerup','pointercancel'].forEach(t=>cv.addEventListener(t,()=>drag=null));
+document.getElementById('bubbleBtn').addEventListener('pointerdown',e=>{e.preventDefault();breathe();});
+
+const msgEl=document.getElementById('msg');
+let msgT=0,msgKey='',msgLv=0;
+
+function msg(h,d,lv,cls){
+  lv=lv||1;
+  if(msgKey===h&&msgT>0)return;
+  if(msgT>0&&lv<msgLv)return;
+  msgKey=h;msgLv=lv;msgT=d||2.4;
+  msgEl.className='show'+(cls?' '+cls:'');
+  msgEl.innerHTML=(cls==='say'?'<span class="who">🎙 政府發言人（虛構）</span>':'')+h;
+}
+function hideMsg(){msgT=0;msgKey='';msgLv=0;msgEl.className='';}
+const tip=(h,d,say)=>msg(h,d,1,say?'say':'');
+const warn=(h,d,teach)=>msg(h,d,teach?3:2,teach?'teach':'');
+const hideTip=hideMsg, hideWarn=hideMsg;
+const placeEl=document.getElementById('place');let placeT=0;
+const alertEl=document.getElementById('alert');
+function showAlert(t){alertEl.textContent=t;alertEl.classList.add('show');}
+function hideAlert(){alertEl.classList.remove('show');}
+const hintEl=document.getElementById('hint');
+
+function surfaceY(){return S.land+.045;}
+function blockedAbove(){const px=PX();
+  return S.obs.some(o=>(o.t==='fill'||o.t==='pile')&&px+16>o.x&&px-16<o.x+o.w);}
+function breathe(){
+  if(!S.run||S.surf)return;
+  SFX.tap();
+  if(S.noise>0){warn('太吵了，不敢浮上去',2);return;}
+  if(blockedAbove()){warn('上面被擋住了',2);return;}
+  SFX.breath();S.surf={ph:0,t:0,from:S.y};S.breathed=true;hintEl.classList.remove('on');
+  if(S.phase==='tut'&&S.tut===1){S.tut=2;S.tutT=0;spawnSchool(6,'river');}
+}
+
+function corridorY(m){return clamp(depthToY(m),S.land+.07,S.deep-.07);}
+function fishY(z){return z==='river'?corridorY(8+Math.random()*8):corridorY(6+Math.random()*20);}
+function laneY(){return S.land+.10+Math.random()*(S.deep-S.land-.20);}
+function spawnSchool(n,z){
+  const c=n||(5+Math.floor(Math.random()*5)),b=fishY(z||'wet'),amp=.018+Math.random()*.022,ph=Math.random()*6;
+  for(let i=0;i<c;i++){const col=Math.floor(i/2),row=i%2;
+    S.obs.push({t:'fish',x:W+30+col*26+row*12,
+      y:clamp(b+Math.sin(ph+col*.7)*amp+row*.02,S.land+.07,S.deep-.07),w:20,h:.042,ph:Math.random()*6});}
+}
+function spawnGold(){S.obs.push({t:'gold',x:W+40,y:corridorY(10+Math.random()*10),w:30,h:.058,ph:Math.random()*6});}
+function spawnHaz(){
+  const z=ZONES[Math.max(S.zone,0)].k,r=Math.random();
+  const p=(z==='ind')?(r<.55?'net':'plastic'):(r<.48?'net':'plastic');
+  if(p==='net')S.obs.push({t:'net',x:W+50,y:clamp(laneY(),S.land+.06,S.deep-.26),w:22,h:.17,warn:1,ph:Math.random()*6});
+  else S.obs.push({t:'plastic',x:W+40,y:laneY(),w:34,h:.062,vx:-6,warn:1,ph:Math.random()*6,kind:Math.floor(Math.random()*3)});
+}
+function spawnPile(){S.obs.push({t:'pile',x:W+120,w:104,rings:[],rt:0});warn('前方在打樁，先換好氣！',2.4);}
+function spawnFill(big){
+  const base=.09+Math.min(S.dist/GOAL,1)*.12;
+  S.obs.push({t:'fill',x:W+40,w:big?190+Math.random()*80:110+Math.random()*60,
+    ext:big?base+.07:base,warn:1,said:false,big:!!big});
+}
+
+const countEl=document.getElementById('count');
+function countdown(cb){
+  const seq=['3','2','1','出發！'];let i=0;countEl.classList.add('on');
+  const step=()=>{if(i>=seq.length){countEl.classList.remove('on');cb();return;}
+    countEl.innerHTML='<b>'+seq[i]+'</b>';
+    (i===seq.length-1?SFX.go:SFX.count)();
+    countEl.style.fontSize=(seq[i]==='出發！'?'56px':'96px');i++;setTimeout(step,800);};
+  step();
+}
+
+let last=0;
+requestAnimationFrame(t=>{last=t;requestAnimationFrame(loop);});
+function loop(t){const dt=Math.min((t-last)/1000||0,.05);last=t;if(S.run)update(dt);draw();requestAnimationFrame(loop);}
+
+function update(dt){
+  S.dist+=S.spd*dt;
+  if(S.phase==='play')S.spd=Math.min(92+S.dist*.0016,130);
+  if(S.shake>0)S.shake-=dt;
+  if(msgT>0){msgT-=dt;if(msgT<=0)hideMsg();}
+  if(placeT>0){placeT-=dt;if(placeT<=0)placeEl.classList.remove('show');}
+
+  const zi=Math.min(Math.floor(S.dist/SEG),ZONES.length-1);
+  if(zi!==S.zone){S.zone=zi;const z=ZONES[zi];
+    if(z.hab==='in'){placeEl.textContent='🛡 白海豚重要棲息環境';placeEl.classList.add('zone');}
+    else{placeEl.textContent='📍 '+z.n;placeEl.classList.remove('zone');}
+    placeEl.classList.add('show');placeT=3.4;
+    if(z.land!==undefined)S.landTgt=z.land;
+    if(z.big){S.murkTgt=.62;S.shake=.7;S.fillT=2.2;S.pileT=5;
+      tip('台中港正在<span class="em">填海造陸</span>，家變小了',3);}
+    else if(z.k==='ind'){S.murkTgt=.55;S.shake=.45;S.pileT=Math.min(S.pileT,4);}
+    else if(z.k==='river'){S.murkTgt=.12;tip('河口！這裡小魚最多',2.2);}
+    else S.murkTgt=.2;}
+  S.land=lerp(S.land,S.landTgt,Math.min(dt*1.4,1));
+  S.murk=lerp(S.murk,S.murkTgt,Math.min(dt*.9,1));
+  document.getElementById('journeyFill').style.width=Math.min(S.dist/GOAL*100,100)+'%';
+
+  if(S.phase==='tut'){
+    S.tutT+=dt;S.tutTotal+=dt;
+    if(S.tut===0){warn('手指<span class="em">上下滑動</span>看看',9,true);
+      if(S.moved&&S.tutT>1.1){S.tut=1;S.tutT=0;hideWarn();S.air=Math.min(S.air,.42);}}
+    else if(S.tut===1){hintEl.classList.add('on');
+      warn('牠快沒空氣了！<br>點<span class="em">左下角的圓鈕</span>浮上去換氣',9,true);}
+    else if(S.tut===2){hintEl.classList.remove('on');
+      warn('空氣快沒了就要換氣',2.6,true);
+      S.fishT-=dt;if(S.fishT<=0){S.fishT=2;spawnSchool(6,'river');}
+      if(S.fish>=3){S.tut=3;S.tutT=0;}}
+    else{hideTip();hideWarn();hintEl.classList.remove('on');warn('前面開始有危險，小心！',2.4);
+      S.phase='play';S.hazT=1.6;S.fishT=1.5;S.fillT=8;S.pileT=9;S.goldT=12;}
+    if(S.tutTotal>60){S.phase='play';S.hazT=1.6;S.fillT=8;S.pileT=9;}
+  } else {
+    const Z=ZONES[S.zone],z=Z.k;
+    S.fishT-=dt;
+    if(S.fishT<=0){S.fishT=(z==='river'?2:z==='ind'?4:3)+Math.random();
+      spawnSchool(z==='river'?9+Math.floor(Math.random()*5):5+Math.floor(Math.random()*4),z);}
+    S.hazT-=dt;
+    if(S.hazT<=0){S.hazT=(z==='ind'?1.2:1.7)+Math.random()*.9;
+      spawnHaz();if(z==='ind'&&Math.random()<.4)spawnHaz();}
+    S.fillT-=dt;
+    if(S.fillT<=0){S.fillT=Z.big?4.5+Math.random()*2:(z==='ind'?7:11)+Math.random()*4;spawnFill(Z.big);}
+    S.pileT-=dt;
+    if(S.pileT<=0&&!S.obs.some(o=>o.t==='pile')){S.pileT=(Z.big?9:z==='ind'?11:24)+Math.random()*5;spawnPile();}
+    S.goldT-=dt;
+    if(S.goldT<=0){S.goldT=(S.life<MAXHP?12:22)+Math.random()*8;spawnGold();}
+  }
+  if(!S.breathed&&S.air<.6&&!S.surf)hintEl.classList.add('on');
+
+  if(S.surf){
+    const s=S.surf;s.t+=dt;const sy=surfaceY();
+    if(s.ph===0){S.y=lerp(s.from,sy,Math.min(s.t/.5,1));
+      if(s.t>=.5){s.ph=1;s.t=0;S.air=1;
+        for(let i=0;i<10;i++)S.spray.push({x:PX()+8,y:sy*H,vx:20+Math.random()*70,vy:-70-Math.random()*90,a:1});}}
+    else if(s.ph===1){S.y=sy;if(s.t>=.4){s.ph=2;s.t=0;}}
+    else{S.y=lerp(sy,s.from,Math.min(s.t/.5,1));if(s.t>=.5)S.surf=null;}
+  } else S.air-=dt/(S.noise>0?14:48);
+
+  const ac=document.getElementById('airCircle'),C=2*Math.PI*45;
+  ac.style.strokeDasharray=C;ac.style.strokeDashoffset=C*(1-Math.max(S.air,0));
+  document.getElementById('airPct').textContent=Math.max(0,Math.round(S.air*100))+'%';
+  const bb=document.getElementById('bubbleBtn'),blk=S.noise>0||blockedAbove();
+  bb.classList.toggle('blocked',blk);bb.classList.toggle('urgent',S.air<.5&&!blk);
+  if(S.phase==='play'&&!blk&&S.air<.25&&!S.surf)hintEl.classList.add('on');
+  else if(S.phase==='play'&&(S.air>.45||blk))hintEl.classList.remove('on');
+  
+  if(S.air<.45&&!S.surf&&Math.random()<dt*(1-S.air)*14)
+    S.spray.push({x:PX()+8,y:S.y*H-9,vx:6+Math.random()*10,vy:-46-Math.random()*26,a:1,up:1});
+  S.airWarnCd=Math.max(0,S.airWarnCd-dt);
+  if(!S.surf&&S.air<.26&&!blk&&S.airWarnCd<=0){warn('快換氣！白海豚用<span class="em">肺</span>呼吸',2);S.airWarnCd=8;}
+  if(S.air<=0){ if(S.phase==='tut'){S.air=.06;} else return end('drown'); }
+
+  if(!S.surf){
+    if(S.y<S.land+.05){S.y=S.land+.05;S.landT++;
+      if(S.landT===1)tip('太靠岸了',2);}
+    if(depth()>=DEEP_TRIG){
+      S.y=depthToY(DEEP_TRIG);const before=S.deepTime;S.deepTime+=dt;
+      if(before<=0)warn('水太深了！白海豚<span class="em">感覺不舒服</span>',2.6);
+      if(S.deepTime>1.2)showAlert('⚠️ 快回淺水！'+Math.max(0,Math.ceil(DEEP_LIMIT-S.deepTime))+' 秒');
+      if(S.deepTime>=DEEP_LIMIT)return end('deep');
+    } else if(depth()<DEEP_TRIG-3){S.deepTime=Math.max(0,S.deepTime-dt*2);
+      if(S.deepTime<=0&&S.noise<=0)hideAlert();
+}
+  }
+
+  S.noise=0;
+  const px=PX(),py=S.y*H,pr=15;
+  const fills=S.obs.filter(o=>o.t==='fill');
+  for(let i=S.obs.length-1;i>=0;i--){
+    const o=S.obs[i];o.x+=((o.vx||0)-S.spd)*dt;
+    if(o.warn&&o.x<W-24)o.warn=0;
+    if(o.t==='pile'){
+      o.rt-=dt;
+      if(o.rt<=0&&o.x<W+140&&o.x>-160){o.rt=.62;o.rings.push({r:10,a:1});if(Math.abs(px-(o.x+o.w/2))<PILE_R)SFX.pile();}
+      for(let k=o.rings.length-1;k>=0;k--){const R=o.rings[k];R.r+=260*dt;R.a-=dt*.34;if(R.a<=0)o.rings.splice(k,1);}
+      const hd=Math.abs(px-(o.x+o.w/2));
+      if(hd<PILE_R)S.noise=Math.max(S.noise,1-hd/PILE_R);
+    }
+    if(o.x<-260){S.obs.splice(i,1);continue;}
+    if((o.t==='fish'||o.t==='gold')&&fills.some(f=>o.x+o.w>f.x-16&&o.x<f.x+f.w+16&&o.y<S.land+f.ext+.02)){
+      S.obs.splice(i,1);continue;}
+
+    let hit,oy,oh;
+    if(o.t==='fill'){oy=0;oh=(S.land+o.ext)*H;
+      hit=px+pr>o.x&&px-pr<o.x+o.w&&py-pr<oh;
+      if(!o.said&&o.x<W*.75){o.said=true;S.fillPass++;
+        if(S.fillPass===1)tip('牠會轉彎啦，自己會<span class="em">繞過去</span>。',3,true);
+        else if(S.fillPass===5)tip('整條海岸都在填 ——<br><span class="em">牠還能繞去哪？</span>',3.2);}
+    } else if(o.t==='pile'){oy=0;oh=(S.land+PILE_EXT)*H;
+      hit=px+pr>o.x&&px-pr<o.x+o.w&&py-pr<oh;}
+    else{oy=o.y*H;oh=o.h*H;hit=px+pr>o.x&&px-pr<o.x+o.w&&py+pr>oy&&py-pr<oy+oh;}
+
+    if(hit){
+      if(o.t==='fish'||o.t==='gold'){
+        if(S.noise>0){tip('聲波被蓋住了，吃不到魚',3.5);}
+        else if(o.t==='gold'){
+          SFX.gold();S.obs.splice(i,1);S.gold++;S.pops.push({x:o.x,y:oy,r:5,a:1,g:1});
+          if(S.life<MAXHP){S.life++;tip('黃錫鯛！<span class="em">體力回復</span>',2.4);}
+          else tip('黃錫鯛！好好吃',2);
+          updHUD();
+        } else {
+          SFX.eat();S.obs.splice(i,1);S.fish++;S.pops.push({x:o.x,y:oy,r:4,a:1});
+          const st=S.fish>=TH[2]?2:S.fish>=TH[1]?1:0;
+          if(st>S.stage){S.stage=st;SFX.grow();
+            tip(st===1?'長大了！身上長出<span class="em">斑點</span>':'長成<span class="em">大人</span>了！',2.8);}
+          updHUD();
+        }
+      } else if(o.t==='plastic'&&S.noise>0){
+        
+      } else if(S.inv<=0){
+        SFX.hit();S.life--;S.inv=1.5;S.shake=.4;updHUD();
+        if(o.t!=='fill'&&o.t!=='pile')S.obs.splice(i,1);
+        if(o.t==='plastic')S.plasticHit++;
+        if(o.t==='net')S.netHit++;
+        if(o.t==='fill')S.fillHit++;
+        if(o.t==='boat')S.propHit++;
+        if(o.t==='fill')S.y=Math.max(S.y,S.land+o.ext+.06);
+        if(o.t==='pile')S.y=Math.max(S.y,S.land+PILE_EXT+.06);
+        msg(o.t==='net'?'被<span class="em">刺網</span>纏住！':
+            o.t==='boat'?'被<span class="em">螺旋槳</span>割到！':
+            o.t==='plastic'?'誤食<span class="em">塑膠垃圾</span>！':
+            o.t==='pile'?'撞到<span class="em">打樁平台</span>！':'撞上<span class="em">填出來的陸地</span>！',1.8,3);
+        if(S.life<=0)return end('hurt');
+      }
+    }
+  }
+
+  if(S.noise>.08){
+    S.nAlert+=dt;
+    if(S.nAlert<2.5)showAlert('🔊 打樁噪音！聲波被蓋住了');
+    else if(S.deepTime<=0)hideAlert();
+  } else {S.nAlert=0;if(S.deepTime<=0)hideAlert();}
+  if(S.noise>0){
+    S.noiseSec+=dt;S.shake=Math.max(S.shake,.18+S.noise*.5);
+    if(!S.surf){S.jitter=lerp(S.jitter,(Math.random()-.5)*.02*S.noise,.35);S.y=clamp(S.y+S.jitter,0,1);}
+  } else S.jitter=0;
+
+  S.sonarT-=dt;
+  if(S.sonarT<=0){S.sonarT=S.noise>0?.35:1.1;S.sonar.push({r:6,a:1,bad:S.noise>.15});}
+  for(let i=S.sonar.length-1;i>=0;i--){const s=S.sonar[i];s.r+=(s.bad?150:110)*dt;s.a-=dt*(s.bad?1.6:.85);
+    if(s.a<=0)S.sonar.splice(i,1);}
+
+  if(S.inv>0)S.inv-=dt;
+  for(let i=S.pops.length-1;i>=0;i--){const p=S.pops[i];p.r+=70*dt;p.a-=dt*1.7;if(p.a<=0)S.pops.splice(i,1);}
+  for(let i=S.spray.length-1;i>=0;i--){const s=S.spray[i];s.x+=s.vx*dt;s.y+=s.vy*dt;
+    if(!s.up)s.vy+=260*dt;s.a-=dt*(s.up?.9:1.3);if(s.a<=0)S.spray.splice(i,1);}
+  S.bub.forEach(b=>{b.y-=b.s*dt;if(b.y<-6){b.y=H+6;b.x=Math.random()*W;}});
+  if(S.dist>=GOAL)return end('home');
+}
+function depth(){return (S.y-S.land)/(S.deep-S.land)*MAXD;}
+function depthToY(m){return S.land+m/MAXD*(S.deep-S.land);}
+function updHUD(){
+  const hp=document.getElementById('hp');hp.innerHTML='<span class="lb">體力</span>';
+  for(let i=0;i<MAXHP;i++){const d=document.createElement('span');
+    d.className='pip'+(i<S.life?'':' off');hp.appendChild(d);}
+  const lo=TH[S.stage],hi=S.stage>=2?TH[2]:TH[S.stage+1];
+  document.getElementById('growthFill').style.width=clamp(S.stage>=2?100:(S.fish-lo)/(hi-lo)*100,0,100)+'%';
+  document.getElementById('growthTxt').textContent=STAGES[S.stage]+'　🐟 '+S.fish+' / '+(S.stage>=2?350:hi);
+}
+
+function draw(){
+  const sh=S.shake>0?(Math.random()-.5)*9*S.shake:0;
+  const sv=S.noise>0?(Math.random()-.5)*6*S.noise:0;
+  ctx.save();ctx.translate(sh,sv);
+  const g=ctx.createLinearGradient(0,S.land*H,0,H);
+  g.addColorStop(0,'#A5E2EF');g.addColorStop(.55,'#6BC6DE');g.addColorStop(1,'#3E9BC0');
+  ctx.fillStyle=g;ctx.fillRect(-10,-10,W+20,H+20);
+  if(S.murk>.02){ctx.fillStyle='rgba(140,150,120,'+(S.murk*.34).toFixed(3)+')';ctx.fillRect(-10,-10,W+20,H+20);}
+  if(ZONES[Math.max(S.zone,0)].k==='river'){
+    const y1=corridorY(6)*H,y2=corridorY(16)*H;
+    const fg=ctx.createLinearGradient(0,y1,0,y2);
+    fg.addColorStop(0,'rgba(180,235,205,0)');fg.addColorStop(.5,'rgba(180,235,205,.28)');
+    fg.addColorStop(1,'rgba(180,235,205,0)');
+    ctx.fillStyle=fg;ctx.fillRect(-10,y1,W+20,y2-y1);
+  }
+  ctx.save();ctx.globalAlpha=.12;ctx.fillStyle='#fff';
+  for(let i=0;i<5;i++){const x=((i*150-S.dist*.3)%(W+300))-150;
+    ctx.beginPath();ctx.moveTo(x,S.land*H);ctx.lineTo(x+38,S.land*H);ctx.lineTo(x+118,H);ctx.lineTo(x+28,H);ctx.closePath();ctx.fill();}
+  ctx.restore();
+  ctx.fillStyle='rgba(255,255,255,.32)';
+  S.bub.forEach(b=>{ctx.beginPath();ctx.arc(b.x,b.y,b.r,0,7);ctx.fill();});
+  drawDeep();drawLand();
+  S.obs.forEach(drawObs);
+  S.pops.forEach(p=>{ctx.strokeStyle=p.g?'rgba(245,197,66,'+p.a.toFixed(2)+')':'rgba(255,255,255,'+p.a.toFixed(2)+')';
+    ctx.lineWidth=2.5;ctx.beginPath();ctx.arc(p.x,p.y,p.r,0,7);ctx.stroke();});
+  S.spray.forEach(s=>{ctx.fillStyle='rgba(255,255,255,'+s.a.toFixed(2)+')';
+    ctx.beginPath();ctx.arc(s.x,s.y,2.4,0,7);ctx.fill();});
+  drawSonar(PX(),S.y*H);
+  dolphin(PX(),S.y*H);
+  if(S.noise>0){
+    ctx.fillStyle='rgba(255,255,255,'+(S.noise*.3).toFixed(3)+')';ctx.fillRect(0,0,W,H);
+    ctx.strokeStyle='rgba(255,255,255,'+(S.noise*.55).toFixed(2)+')';ctx.lineWidth=1;
+    for(let i=0;i<28;i++){const yy=Math.random()*H;
+      ctx.beginPath();ctx.moveTo(0,yy);ctx.lineTo(W,yy+(Math.random()-.5)*6);ctx.stroke();}
+    ctx.fillStyle='rgba(232,69,47,'+(S.noise*.14).toFixed(3)+')';ctx.fillRect(0,0,W,H);
+  }
+  ctx.restore();
+  drawGauge();
+}
+function drawSonar(x,y){
+  S.sonar.forEach(s=>{
+    ctx.save();ctx.translate(x+36,y+4);
+    const a=Math.max(s.a,0);
+    ctx.strokeStyle=s.bad?'rgba(232,69,47,'+(a*.6).toFixed(2)+')':'rgba(255,255,255,'+(a*.55).toFixed(2)+')';
+    ctx.lineWidth=2;
+    if(s.bad){for(let k=0;k<3;k++){const off=(Math.random()-.5)*.5;
+      ctx.beginPath();ctx.arc(0,0,s.r+k*3,-0.55+off,0.55+off);ctx.stroke();}}
+    else{for(let k=0;k<2;k++){ctx.beginPath();ctx.arc(0,0,s.r+k*7,-0.5,0.5);ctx.stroke();}}
+    ctx.restore();
+  });
+}
+function drawDeep(){
+  const dy=S.deep*H;
+  ctx.fillStyle='#2C82AC';ctx.fillRect(-10,dy,W+20,H-dy+16);
+  ctx.fillStyle='#1F6E93';ctx.beginPath();ctx.moveTo(-10,dy);
+  for(let x=-10;x<W+20;x+=28)ctx.quadraticCurveTo(x+14,dy-10,x+28,dy);
+  ctx.lineTo(W+20,H+16);ctx.lineTo(-10,H+16);ctx.fill();
+  ctx.fillStyle='rgba(255,255,255,.62)';ctx.font='700 12px '+FF();ctx.textAlign='center';
+  ctx.fillText('水太深了！白海豚感覺不舒服',W/2,dy+28);ctx.textAlign='left';
+}
+function rrect(x,y,w,h,r){ctx.beginPath();ctx.moveTo(x+r,y);ctx.arcTo(x+w,y,x+w,y+h,r);
+  ctx.arcTo(x+w,y+h,x,y+h,r);ctx.arcTo(x,y+h,x,y,r);ctx.arcTo(x,y,x+w,y,r);ctx.closePath();}
+function rrectP(x,y,w,h,r){ctx.moveTo(x+r,y);ctx.arcTo(x+w,y,x+w,y+h,r);
+  ctx.arcTo(x+w,y+h,x,y+h,r);ctx.arcTo(x,y+h,x,y,r);ctx.arcTo(x,y,x+w,y,r);ctx.closePath();}
+function drawLand(){
+  const ly=S.land*H;
+  ctx.fillStyle='#F7DFAF';ctx.fillRect(-10,-10,W+20,ly+10);
+  ctx.fillStyle='#E7CD9A';ctx.beginPath();ctx.moveTo(-10,ly);
+  for(let x=-10;x<W+20;x+=32)ctx.quadraticCurveTo(x+16,ly+7,x+32,ly);
+  ctx.lineTo(W+20,-10);ctx.lineTo(-10,-10);ctx.fill();
+  for(let i=0;i<ZONES.length;i++){
+    const sx=PX()+(i*SEG-S.dist);
+    if(sx>W+80||sx+SEG<-80)continue;
+    const z=ZONES[i];drawSkyline(z.k,sx,Math.min(sx+SEG,W+40),ly);
+    if(sx>-360&&sx<W){ctx.save();ctx.font='800 11px '+FF();
+      const tw=ctx.measureText(z.n).width,bx=clamp(sx+14,8,W-tw-24);
+      ctx.fillStyle='rgba(91,70,54,.62)';rrect(bx,ly-24,tw+16,17,8);ctx.fill();
+      ctx.fillStyle='#FFF6E8';ctx.fillText(z.n,bx+8,ly-11.5);ctx.restore();}
+  }
+}
+function drawSkyline(kind,x0,x1,ly){
+  const step=64;
+  for(let x=Math.floor(x0/step)*step;x<x1;x+=step){
+    if(x<-70||x>W+70)continue;
+    const seed=Math.abs(Math.sin(x*.021))*1000%1;
+    if(kind==='ind'){const bh=ly*.42+seed*ly*.2,bw=24;
+      ctx.fillStyle='#C9A97A';ctx.fillRect(x,ly-bh-6,bw,bh);ctx.fillRect(x+bw*.32,ly-bh-24,6,20);
+      ctx.fillStyle='rgba(255,255,255,.6)';
+      ctx.beginPath();ctx.arc(x+bw*.32+3,ly-bh-30,7,0,7);ctx.fill();
+      ctx.beginPath();ctx.arc(x+bw*.32+9,ly-bh-38,5,0,7);ctx.fill();}
+    else if(kind==='port'){ctx.strokeStyle='#C9A97A';ctx.lineWidth=4;ctx.lineCap='round';
+      ctx.beginPath();ctx.moveTo(x+8,ly-6);ctx.lineTo(x+8,ly-ly*.4);ctx.lineTo(x+34,ly-ly*.4+8);ctx.stroke();
+      ctx.fillStyle='#C9A97A';ctx.fillRect(x+2,ly-14,26,8);}
+    else if(kind==='river'){ctx.fillStyle='#8FD4B0';
+      for(let k=0;k<3;k++){ctx.beginPath();ctx.arc(x+10+k*18,ly-9,8+seed*4,0,7);ctx.fill();}
+      ctx.fillStyle='rgba(150,210,180,.5)';
+      ctx.beginPath();ctx.moveTo(x+16,ly);ctx.lineTo(x+42,ly);ctx.lineTo(x+52,ly+26);ctx.lineTo(x+6,ly+26);ctx.fill();}
+    else{ctx.strokeStyle='#B9D98C';ctx.lineWidth=2.4;ctx.lineCap='round';
+      for(let k=0;k<7;k++){const gx=x+k*8+4;
+        ctx.beginPath();ctx.moveTo(gx,ly-4);ctx.quadraticCurveTo(gx+3,ly-13,gx+1+seed*4,ly-19);ctx.stroke();}
+      ctx.fillStyle='#F3E2B8';
+      for(let k=0;k<3;k++){ctx.beginPath();ctx.ellipse(x+12+k*20,ly-3,9,4,0,0,7);ctx.fill();}}
+  }
+}
+function drawObs(o){
+  const T=performance.now()/1000;
+  if(o.warn&&o.t!=='fill'&&o.t!=='pile'){ctx.fillStyle='#FF8A6B';
+    const wy=o.y*H+o.h*H/2;
+    ctx.beginPath();ctx.moveTo(W-8,wy);ctx.lineTo(W-21,wy-9);ctx.lineTo(W-21,wy+9);ctx.fill();}
+  if(o.t==='fill'){
+    const bot=(S.land+o.ext)*H;
+    ctx.fillStyle='#F7DFAF';ctx.beginPath();ctx.moveTo(o.x-16,-10);ctx.lineTo(o.x-16,S.land*H);
+    ctx.quadraticCurveTo(o.x+4,bot-8,o.x+22,bot-4);ctx.lineTo(o.x+o.w-22,bot-4);
+    ctx.quadraticCurveTo(o.x+o.w-4,bot-8,o.x+o.w+16,S.land*H);ctx.lineTo(o.x+o.w+16,-10);ctx.closePath();ctx.fill();
+    ctx.fillStyle=o.big?'#D9B478':'#E0BF85';ctx.beginPath();ctx.moveTo(o.x-16,S.land*H);
+    ctx.quadraticCurveTo(o.x+4,bot-8,o.x+22,bot-4);ctx.lineTo(o.x+o.w-22,bot-4);
+    ctx.quadraticCurveTo(o.x+o.w-4,bot-8,o.x+o.w+16,S.land*H);
+    ctx.lineTo(o.x+o.w+16,S.land*H-9);ctx.lineTo(o.x-16,S.land*H-9);ctx.closePath();ctx.fill();
+    if(o.big){ctx.fillStyle='rgba(150,130,90,.28)';
+      ctx.beginPath();ctx.ellipse(o.x+o.w/2,bot+10,o.w*.55,20,0,0,7);ctx.fill();}
+    ctx.fillStyle='#A89680';
+    for(let k=0;k<Math.floor(o.w/26);k++){const bx=o.x+14+k*26;
+      ctx.save();ctx.translate(bx,bot-3);
+      for(let a=0;a<3;a++){ctx.rotate(2.1);ctx.beginPath();rrectP(-2.6,-9,5.2,9,2.4);ctx.fill();}
+      ctx.restore();}
+    for(let k=0;k<Math.floor(o.w/44);k++){const bx=o.x+10+k*44,bh=18+((k*37)%14);
+      ctx.fillStyle='#C9A97A';ctx.fillRect(bx,S.land*H-bh-4,26,bh);ctx.fillRect(bx+8,S.land*H-bh-20,6,17);
+      ctx.fillStyle='rgba(255,255,255,.55)';ctx.beginPath();ctx.arc(bx+11,S.land*H-bh-26,6,0,7);ctx.fill();}
+    ctx.fillStyle='rgba(255,138,107,.95)';ctx.font='800 11px '+FF();ctx.textAlign='center';
+    ctx.fillText(o.big?'台中港 · 填海造陸':'填海造陸',o.x+o.w/2,bot+16);ctx.textAlign='left';return;
+  }
+  if(o.t==='pile'){
+    const cx=o.x+o.w/2,bot=(S.land+PILE_EXT)*H,deck=S.land*H;
+    o.rings.forEach(R=>{
+      ctx.strokeStyle='rgba(255,255,255,'+(R.a*.85).toFixed(2)+')';ctx.lineWidth=4;
+      ctx.beginPath();ctx.arc(cx,bot,R.r,0,7);ctx.stroke();
+      ctx.strokeStyle='rgba(232,69,47,'+(R.a*.5).toFixed(2)+')';ctx.lineWidth=1.8;
+      ctx.beginPath();ctx.arc(cx,bot,R.r-8,0,7);ctx.stroke();});
+    ctx.fillStyle='#6E6252';ctx.fillRect(cx-7,deck-10,14,bot-deck+8);
+    ctx.strokeStyle='#7C6B58';ctx.lineWidth=5;ctx.lineCap='round';
+    ctx.beginPath();ctx.moveTo(o.x+12,deck-6);ctx.lineTo(cx-6,bot-4);
+    ctx.moveTo(o.x+o.w-12,deck-6);ctx.lineTo(cx+6,bot-4);ctx.stroke();
+    ctx.fillStyle='#8C7A62';ctx.fillRect(o.x,deck-26,o.w,16);
+    const punch=Math.abs(Math.sin(T*4.2))*10;
+    ctx.fillStyle='#4E5B63';ctx.fillRect(cx-5,deck-74,10,48);
+    ctx.fillStyle='#E8452F';ctx.fillRect(cx-12,deck-58+punch,24,20);
+    ctx.fillStyle='#FFF';ctx.font='800 12px '+FF();ctx.textAlign='center';
+    ctx.fillText('🔊 打樁中',cx,deck-82);ctx.textAlign='left';return;
+  }
+  const y=o.y*H,h=o.h*H;
+  if(o.t==='fish'||o.t==='gold'){
+    const bob=Math.sin(T*3+o.ph)*2,G=o.t==='gold';
+    ctx.save();ctx.translate(o.x+(G?14:10),y+h/2+bob);
+    if(S.noise>0)ctx.globalAlpha=.4;
+    if(G){const sc=1+Math.sin(T*4+o.ph)*.06;ctx.scale(sc,sc);
+      ctx.strokeStyle='rgba(245,197,66,.5)';ctx.lineWidth=2;
+      ctx.beginPath();ctx.arc(0,0,17,0,7);ctx.stroke();}
+    ctx.fillStyle=G?'#F5C542':'#F2FAFF';ctx.strokeStyle=G?'#B8860B':'#1E5A78';ctx.lineWidth=1.7;
+    const s=G?1.4:1;
+    ctx.beginPath();ctx.moveTo(10*s,0);ctx.quadraticCurveTo(2*s,-6*s,-6*s,-3*s);
+    ctx.quadraticCurveTo(-10*s,0,-6*s,3*s);ctx.quadraticCurveTo(2*s,6*s,10*s,0);ctx.fill();ctx.stroke();
+    if(!G)ctx.fillStyle='#FF7F5C';
+    ctx.beginPath();ctx.moveTo(-6*s,0);ctx.lineTo(-13*s,-4.5*s);ctx.lineTo(-13*s,4.5*s);ctx.closePath();ctx.fill();ctx.stroke();
+    if(!G){ctx.fillStyle='#FF7F5C';ctx.beginPath();ctx.moveTo(0,-4.4);ctx.lineTo(4,-7.4);ctx.lineTo(6,-3.8);ctx.closePath();ctx.fill();}
+    if(G){ctx.fillStyle='#E8A317';ctx.beginPath();ctx.moveTo(0,-4.2);ctx.lineTo(4,-8);ctx.lineTo(6,-4);ctx.closePath();ctx.fill();}
+    ctx.fillStyle='#5B4636';ctx.beginPath();ctx.arc(5*s,-1.3*s,1.4*s,0,7);ctx.fill();
+    ctx.restore();
+    if(G){ctx.fillStyle='rgba(255,255,255,.9)';ctx.font='800 10px '+FF();ctx.textAlign='center';
+      ctx.fillText('黃錫鯛',o.x+14,y-8);ctx.textAlign='left';}
+    return;
+  }
+  if(o.t==='net'){
+    const sway=Math.sin(T*1.4+o.ph)*3;
+    ctx.strokeStyle='rgba(255,255,255,.55)';ctx.lineWidth=1;
+    const cols=4,rows=Math.max(4,Math.round(h/9));
+    for(let r=0;r<=rows;r++){const yy=y+h*r/rows,off=Math.sin(T*1.4+o.ph+r*.4)*3;
+      ctx.beginPath();ctx.moveTo(o.x+off,yy);ctx.lineTo(o.x+o.w+off,yy);ctx.stroke();}
+    for(let c=0;c<=cols;c++){ctx.beginPath();
+      for(let r=0;r<=rows;r++){const yy=y+h*r/rows,off=Math.sin(T*1.4+o.ph+r*.4)*3,xx=o.x+o.w*c/cols+off;
+        r===0?ctx.moveTo(xx,yy):ctx.lineTo(xx,yy);}ctx.stroke();}
+    ctx.strokeStyle='#F2F2F2';ctx.lineWidth=2;
+    ctx.beginPath();ctx.moveTo(o.x-4+sway,y-2);ctx.lineTo(o.x+o.w+4+sway,y-2);ctx.stroke();
+    ctx.fillStyle='#FF8A6B';
+    for(let c=0;c<=2;c++){ctx.beginPath();ctx.arc(o.x+o.w*c/2+sway,y-2,3.4,0,7);ctx.fill();}
+    const sb=Math.sin(T*1.4+o.ph+rows*.4)*3;
+    ctx.strokeStyle='#7C6B58';ctx.lineWidth=2.4;
+    ctx.beginPath();ctx.moveTo(o.x-3+sb,y+h+2);ctx.lineTo(o.x+o.w+3+sb,y+h+2);ctx.stroke();return;
+  }
+  if(o.t==='boat'){
+    const cy=y+h/2;ctx.save();
+    ctx.fillStyle='rgba(255,255,255,.5)';
+    for(let k=0;k<9;k++){const wx=o.x+o.w+6+k*11,ww=3+k*1.3;ctx.globalAlpha=.42-k*.04;
+      ctx.beginPath();ctx.ellipse(wx,cy+Math.sin(T*7+k)*2,ww,ww*.62,0,0,7);ctx.fill();}
+    ctx.globalAlpha=1;
+    ctx.strokeStyle='rgba(255,255,255,.55)';ctx.lineWidth=2;
+    ctx.beginPath();ctx.moveTo(o.x-2,cy);ctx.lineTo(o.x-16,cy-14);ctx.moveTo(o.x-2,cy);ctx.lineTo(o.x-16,cy+14);ctx.stroke();
+    ctx.fillStyle='#8C6E52';ctx.beginPath();ctx.moveTo(o.x,cy);
+    ctx.quadraticCurveTo(o.x+o.w*.35,y-1,o.x+o.w*.86,y+1);
+    ctx.lineTo(o.x+o.w,y+2.5);ctx.lineTo(o.x+o.w,y+h-2.5);ctx.lineTo(o.x+o.w*.86,y+h-1);
+    ctx.quadraticCurveTo(o.x+o.w*.35,y+h+1,o.x,cy);ctx.fill();
+    ctx.fillStyle='#6E5541';ctx.fillRect(o.x+o.w*.42,y+h*.18,o.w*.3,h*.64);
+    ctx.fillStyle='#FFF3DC';ctx.fillRect(o.x+o.w*.46,y+h*.3,o.w*.1,h*.4);
+    const pxp=o.x+o.w+5;ctx.save();ctx.translate(pxp,cy);ctx.rotate(T*22);
+    ctx.fillStyle='#4E5B63';
+    for(let b=0;b<3;b++){ctx.rotate(Math.PI*2/3);ctx.beginPath();ctx.ellipse(0,-7,3.4,7.5,0,0,7);ctx.fill();}
+    ctx.restore();
+    ctx.fillStyle='#38424A';ctx.beginPath();ctx.arc(pxp,cy,3,0,7);ctx.fill();
+    ctx.strokeStyle='rgba(255,138,107,.75)';ctx.lineWidth=2;ctx.setLineDash([4,4]);
+    ctx.beginPath();ctx.arc(pxp,cy,12,0,7);ctx.stroke();ctx.setLineDash([]);ctx.restore();return;
+  }
+  if(o.t==='plastic'){
+    const bob=Math.sin(T*1.6+o.ph)*3,rot=Math.sin(T*.8+o.ph)*.3;
+    ctx.save();ctx.translate(o.x+o.w/2,y+h/2+bob);ctx.rotate(rot);
+    if(S.noise>0)ctx.globalAlpha=.4;
+    if(o.kind===0){ctx.fillStyle='rgba(236,246,250,.75)';ctx.strokeStyle='rgba(255,255,255,.95)';ctx.lineWidth=1.4;
+      ctx.beginPath();ctx.moveTo(-13,-8);ctx.quadraticCurveTo(-4,-14,4,-9);ctx.quadraticCurveTo(14,-4,11,6);
+      ctx.quadraticCurveTo(4,15,-4,10);ctx.quadraticCurveTo(-15,4,-13,-8);ctx.fill();ctx.stroke();
+      ctx.beginPath();ctx.moveTo(-9,-9);ctx.quadraticCurveTo(-7,-15,-2,-13);ctx.stroke();
+      ctx.beginPath();ctx.moveTo(2,-10);ctx.quadraticCurveTo(6,-16,9,-11);ctx.stroke();}
+    else if(o.kind===1){ctx.fillStyle='rgba(210,240,235,.85)';ctx.strokeStyle='rgba(255,255,255,.95)';ctx.lineWidth=1.3;
+      ctx.beginPath();rrectP(-14,-6,24,12,5);ctx.fill();ctx.stroke();
+      ctx.fillStyle='#7FD0C4';ctx.beginPath();rrectP(10,-3.5,7,7,2);ctx.fill();
+      ctx.fillStyle='#FF8A6B';ctx.beginPath();rrectP(-8,-4,9,8,2);ctx.fill();}
+    else{ctx.strokeStyle='rgba(255,255,255,.9)';ctx.lineWidth=2.2;
+      for(let a=0;a<3;a++)for(let b=0;b<2;b++){ctx.beginPath();ctx.arc(-9+a*9,-4+b*8,4.2,0,7);ctx.stroke();}}
+    ctx.restore();return;
+  }
+}
+function drawGauge(){
+  const x=W-30,top=S.land*H,bot=S.deep*H;
+  ctx.save();
+  ctx.fillStyle='rgba(255,255,255,.26)';rrect(x-5,top,10,bot-top,5);ctx.fill();
+  ctx.fillStyle='rgba(255,255,255,.5)';
+  const y15=depthToY(15)*H,y30=depthToY(SAFE)*H;
+  rrect(x-5,y15,10,y30-y15,5);ctx.fill();
+  ctx.font='700 9px '+FF();ctx.textAlign='right';
+  [0,15,30].forEach(m=>{const yy=depthToY(m)*H;
+    ctx.strokeStyle='rgba(255,255,255,.6)';ctx.lineWidth=1;
+    ctx.beginPath();ctx.moveTo(x-8,yy);ctx.lineTo(x-5,yy);ctx.stroke();
+    ctx.fillStyle=m>SAFE?'#FFD9CE':'rgba(255,255,255,.85)';ctx.fillText(m+'m',x-10,yy+3);});
+  ctx.fillStyle=depth()>SAFE?'#FF8A6B':'#FFF';
+  ctx.beginPath();ctx.arc(x,clamp(S.y,0,1)*H,5.5,0,7);ctx.fill();
+  ctx.fillStyle='#FFF';ctx.font='800 11px '+FF();ctx.textAlign='center';
+  ctx.fillText(Math.max(0,Math.round(depth()))+'m',x,top-8);ctx.textAlign='left';ctx.restore();
+}
+
+function dolphinShape(g,C){
+  const body=C.body,dark=C.dark,belly=C.belly,line=C.line,fluke=C.fluke,flukeFar=C.flukeFar;
+
+  g.save();g.translate(-32,.6);g.rotate(C.fl||0);
+  g.beginPath();
+  g.moveTo(1.5,-1.5);                          
+  g.quadraticCurveTo(-4,-3.4,-10,-5.2);        
+  g.quadraticCurveTo(-17,-7,-23,-6.6);         
+  g.lineTo(-24.5,-5.6);                        
+  g.quadraticCurveTo(-18,-2.6,-11,.4);         
+  g.quadraticCurveTo(-5,1.9,1.5,2.1);          
+  g.closePath();
+  g.fillStyle=fluke;g.fill();
+  g.strokeStyle=line;g.lineWidth=.85;g.lineJoin='round';g.stroke();
+  
+  g.fillStyle=flukeFar;g.globalAlpha=.45;
+  g.beginPath();
+  g.moveTo(0,-.4);
+  g.quadraticCurveTo(-8,-1.4,-15,-3.2);
+  g.quadraticCurveTo(-20,-4.4,-23.5,-4.4);
+  g.quadraticCurveTo(-17,-1.6,-10,.9);
+  g.quadraticCurveTo(-5,2,0,2);
+  g.closePath();g.fill();
+  g.globalAlpha=1;
+  g.restore();
+
+  const outline=()=>{
+    g.beginPath();
+    g.moveTo(43,5.2);                               
+    g.quadraticCurveTo(37,3.4,30,2.2);              
+    g.lineTo(27.5,1.6);                             
+    g.quadraticCurveTo(23,-.6,20,-4.6);             
+    g.quadraticCurveTo(17,-6.4,13,-7.4);            
+    g.quadraticCurveTo(6,-9.4,1,-11.6);             
+    g.quadraticCurveTo(-3,-13.2,-7,-13.4);          
+    g.quadraticCurveTo(-14,-13.2,-20,-9.8);         
+    g.quadraticCurveTo(-27,-6.4,-31.5,-2.6);        
+    g.lineTo(-32,1.8);                              
+    g.quadraticCurveTo(-27,4.2,-21,7);              
+    g.quadraticCurveTo(-12,11,-2,12.4);             
+    g.quadraticCurveTo(10,13.4,20,10.6);
+    g.quadraticCurveTo(29,8.4,35,6.8);
+    g.quadraticCurveTo(39,6.2,43,5.2);              
+    g.closePath();
+  };
+  outline();g.fillStyle=body;g.fill();
+
+  g.save();outline();g.clip();
+  
+  g.fillStyle=belly;
+  g.beginPath();
+  g.moveTo(32,5.4);
+  g.quadraticCurveTo(16,10.4,-2,10.6);
+  g.quadraticCurveTo(-16,10.8,-28,3.6);
+  g.lineTo(-34,18);g.lineTo(46,18);g.closePath();g.fill();
+  
+  g.fillStyle=dark;g.globalAlpha=.2;
+  g.beginPath();
+  g.moveTo(21,-4.2);
+  g.quadraticCurveTo(6,-11,-7,-13);
+  g.quadraticCurveTo(-20,-12.6,-32,-2.4);
+  g.lineTo(-34,-18);g.lineTo(22,-18);g.closePath();g.fill();
+  g.globalAlpha=1;
+  g.restore();
+
+  g.fillStyle=dark;
+  g.beginPath();
+  g.moveTo(-.5,-12.4);
+  g.quadraticCurveTo(-3.5,-19.4,-9,-21);
+  g.quadraticCurveTo(-8.6,-16.2,-12.4,-13.2);
+  g.closePath();g.fill();
+  g.strokeStyle=line;g.lineWidth=.8;g.stroke();
+
+  g.fillStyle=dark;
+  g.beginPath();
+  g.moveTo(17,7.6);
+  g.quadraticCurveTo(12,17,1.5,20.4);
+  g.quadraticCurveTo(7,13.6,9.5,8.2);
+  g.closePath();g.fill();
+  g.strokeStyle=line;g.lineWidth=.8;g.stroke();
+
+  outline();g.strokeStyle=line;g.lineWidth=1.1;g.lineJoin='round';g.stroke();
+
+  g.strokeStyle=line;g.lineWidth=1;
+  g.beginPath();g.moveTo(41,5.6);g.quadraticCurveTo(34,6,28,4.6);g.stroke();
+  g.globalAlpha=.55;
+  g.beginPath();g.moveTo(27.5,1.6);g.quadraticCurveTo(27,3.4,27.6,4.9);g.stroke();
+  g.globalAlpha=1;
+
+  g.fillStyle=line;g.globalAlpha=.5;
+  g.beginPath();g.ellipse(11,-8.6,2.2,1.1,-.15,0,7);g.fill();g.globalAlpha=1;
+
+  g.fillStyle='#3F3128';g.beginPath();g.arc(23.6,1.6,2,0,7);g.fill();
+  g.fillStyle='#fff';g.beginPath();g.arc(24.4,.8,.8,0,7);g.fill();
+}
+
+const SPECK=[[19,-3.4],[15,-5.6],[11,-7.2],[7,-8.8],[3,-10.2],[-1,-11.4],[-6,-11.8],[-11,-11.2],
+ [-16,-9.6],[-21,-7.4],[-25,-5.2],[16,-2.2],[12,-4],[8,-5.4],[4,-6.8],[0,-8],[-4,-8.6],[-9,-8.4],
+ [-14,-7],[-19,-5],[-23,-3],[13,-.8],[9,-2.2],[5,-3.4],[1,-4.6],[-3,-5.2],[-8,-5],[-13,-3.8],
+ [-18,-2.2],[6,-.4],[2,-1.4],[-2,-2],[-7,-1.8],[-12,-1],[10,.6],[-16,.4]];
+function speckles(g,alpha){
+  g.fillStyle='rgba(96,118,146,'+alpha+')';
+  SPECK.forEach(p=>{g.beginPath();g.arc(p[0],p[1],.95,0,7);g.fill();});
+}
+function dolphin(x,y){
+  const blink=S.inv>0&&Math.floor(S.inv*12)%2===0,up=!!S.surf;
+  ctx.save();ctx.translate(x,y+Math.sin(performance.now()/280)*3);
+  if(up)ctx.rotate(-.28);
+  if(S.noise>.2)ctx.rotate((Math.random()-.5)*.12*S.noise);
+  ctx.globalAlpha=blink?.4:1;
+  ctx.scale(.76,.76);
+  const P=[
+   {body:'#B3C0C9',dark:'#8A99A5',belly:'#D2DBE1',line:'#6E7C87',fluke:'#8A99A5',flukeFar:'#75838F'},
+   {body:'#E3C4CD',dark:'#C79CA9',belly:'#F2DEE4',line:'#A67C8A',fluke:'#C79CA9',flukeFar:'#B28894'},
+   {body:'#F9AEC1',dark:'#E0708D',belly:'#FEDCE4',line:'#C2647D',fluke:'#E0708D',flukeFar:'#C9647E'}
+  ][S.stage];
+  dolphinShape(ctx,Object.assign({fl:Math.sin(performance.now()/230)*.13},P));
+
+  if(S.stage>=1)speckles(ctx,S.stage===1?.30:.42);
+
+  ctx.strokeStyle='#3F3128';ctx.lineWidth=1.3;ctx.lineCap='round';
+  ctx.beginPath();
+  if(S.noise>.2){ctx.moveTo(32,6.6);ctx.quadraticCurveTo(35,4.6,38,6.2);}
+  else{ctx.moveTo(32,6);ctx.quadraticCurveTo(35,7.8,38,5.8);}
+  ctx.stroke();
+  ctx.restore();ctx.globalAlpha=1;
+}
+
+const E={
+ home :{t:'太棒了！順利抵達雲林台西！',
+  s:'你陪著牠游完了最重要也最危險的家：<span class="em">苗栗、台中、彰化、雲林</span>這一段海岸。<br><br>這片海南北長大約 200 公里、離海岸不到 5 公里。全世界沒有其他鯨豚的家像牠們一樣這麼小——真實的白海豚，一輩子都只能在這條<span class="em">窄窄的海邊巷子</span>裡來回生活。<br><br>謝謝你，一路安全地陪著牠回到家！'},
+ hurt :{t:'體力用完了，無法再前進了',
+  s:'一路上有太多<span class="em">塑膠垃圾、刺網和填海陸地</span>，根本來不及閃躲。<br><br>你知道嗎？真實的白海豚裡，<span class="em">每三隻就有一隻</span>身上發現被漁網纏繞或被船隻割傷的痕跡，這些傷口永遠不會好。<br><br>不過，科學家也是透過背鰭上這些獨一無二的缺角和傷痕，才能一隻一隻把牠們認出來，記錄牠們辛苦過生活的故事。'},
+ drown:{t:'來不及浮上海面換氣',
+  s:'水下的噪音太吵了，讓牠<span class="em">迷失了方向</span>，忘記要浮出水面呼吸。<br><br>白海豚跟我們一樣用<span class="em">肺</span>呼吸，大約 <span class="em">1～2 分鐘</span>就得浮出海面換一次氣。<br><br>牠們是用聲音「聽」出路線的。但是施工打樁和船隻的引擎聲，會蓋掉牠們聽到的聲音。長期待在這麼吵的地方，海豚不只<span class="em">聽力會受傷</span>，還會迷路甚至擱淺上岸。'},
+ deep :{t:'游進太深的海了……',
+  s:'這裡不是牠熟悉的家。<br><br>白海豚最喜歡住在離岸邊 <span class="em">3～5 公里</span>、水深只有 <span class="em">15～30 公尺</span>的淺海與河口。如果游得太遠、太深，就沒有牠最愛吃的小魚，也找不到其他海豚同伴了。<br><br>牠不是不會潛水，只是深海裡……<span class="em">真的沒有牠的生活</span>。'}
+};
+const COMFORT='你已經很努力了！<br>白海豚每天都要面對這些挑戰。<br><br>再試一次，一定能游得更遠！';
+const CAUSE={
+ home :{t:'順利抵達雲林台西！',s:'你一路安全地陪著牠回到家。<br>謝謝你，守護隊長！'},
+ hurt :{t:'體力用完了',s:COMFORT},
+ drown:{t:'來不及浮上海面換氣',s:COMFORT},
+ deep :{t:'游進太深的海了',s:COMFORT}
+};
+const causeEl=document.getElementById('cause');
+let pendingResult=null;
+function showResult(){
+  if(!pendingResult)return;
+  causeEl.classList.remove('on');
+  document.getElementById('over').classList.remove('hidden');
+  document.getElementById('shareCanvasWrap').classList.remove('on');
+  document.getElementById('over').scrollTop=0;
+  pendingResult=null;
+}
+causeEl.addEventListener('click',showResult);
+
+function end(k){
+  S.run=false;
+  (k==='home'?SFX.win:SFX.lose)();const e=E[k],c=CAUSE[k];
+  hideAlert();hintEl.classList.remove('on');hideTip();hideWarn();placeEl.classList.remove('show');
+  S.lastKind=k;
+  document.getElementById('ovT').innerHTML=e.t;
+  document.getElementById('ovS').innerHTML=e.s;
+  document.getElementById('ovL').innerHTML=
+    '死亡地點 <i>'+ZONES[Math.max(S.zone,0)].n+'</i><br>吃到的小魚 <i>'+S.fish+' / 350 隻</i><br>'+
+    '吃到黃錫鯛 <i>'+S.gold+' 隻</i><br>成長階段 <i>'+STAGES[S.stage]+'</i><br>'+
+    '撞到填海造陸 <i>'+S.fillHit+' 次</i><br>被水下噪音嚇到 <i>'+S.noiseSec.toFixed(0)+' 秒</i><br>'+
+    '被漁網纏住 <i>'+S.netHit+' 次</i><br>誤食塑膠 <i>'+S.plasticHit+' 次</i>';
+  document.getElementById('cTitle').textContent=c.t;
+  document.getElementById('cSub').innerHTML=c.s;
+  track('end',{kind:k,fish:S.fish,gold:S.gold,stage:S.stage,
+    zone:ZONES[Math.max(S.zone,0)].n,zoneIdx:Math.max(S.zone,0),
+    netHit:S.netHit,plasticHit:S.plasticHit,fillHit:S.fillHit,
+    noiseSec:Math.round(S.noiseSec),durSec:Math.round((Date.now()-T0)/1000)});
+  causeEl.classList.add('on');
+  pendingResult=k;
+  setTimeout(showResult,3600);
+}
+
+function stripHTML(h){
+  return h.replace(/<br\s*\/?>/gi,'\n').replace(/<[^>]+>/g,'').replace(/\n{2,}/g,'\n');
+}
+function wrapText(g,txt,cx,y,maxW,lh){
+  let yy=y;
+  txt.split('\n').forEach(para=>{
+    if(!para.trim()){yy+=lh*.4;return;}
+    let line='';
+    for(const ch of para){
+      if(g.measureText(line+ch).width>maxW&&line){g.fillText(line,cx,yy);yy+=lh;line=ch;}
+      else line+=ch;
+    }
+    if(line){g.fillText(line,cx,yy);yy+=lh;}
+  });
+  return yy;
+}
+function makeShareImage(){
+  const w=1000,h=1700,c=document.createElement('canvas');c.width=w;c.height=h;
+  const g=c.getContext('2d');
+  const F=(sz,wt)=>(wt||800)+' '+sz+'px "PingFang TC","Noto Sans TC",sans-serif';
+  const RR=(x,y,ww,hh,r)=>{g.beginPath();g.roundRect?g.roundRect(x,y,ww,hh,r):g.rect(x,y,ww,hh);};
+  const bg=g.createLinearGradient(0,0,0,h);
+  bg.addColorStop(0,'#BFE7F2');bg.addColorStop(.45,'#6BC6DE');bg.addColorStop(1,'#2C82AC');
+  g.fillStyle=bg;g.fillRect(0,0,w,h);
+  g.fillStyle='rgba(255,255,255,.2)';
+  for(let i=0;i<44;i++){g.beginPath();g.arc(Math.random()*w,Math.random()*h,3+Math.random()*9,0,7);g.fill();}
+
+  g.fillStyle='#F7DFAF';g.fillRect(0,0,w,178);
+  g.fillStyle='#E7CD9A';g.fillRect(0,168,w,14);
+  g.textAlign='center';
+  g.fillStyle='#5B4636';g.font=F(52,900);g.fillText('台灣白海豚大冒險',w/2,80);
+  g.fillStyle='#8B7A69';g.font=F(26,700);
+  g.fillText('一款陪台灣白海豚游過西海岸的小遊戲',w/2,124);
+  g.fillStyle='#B08A5E';g.font=F(22,700);
+  g.fillText('苗栗龍鳳漁港 → 雲林台西 · 白海豚重要棲息環境',w/2,158);
+
+  g.save();g.translate(w/2,330);g.scale(5.2,5.2);
+  dolphinShape(g,{body:'#F9AEC1',dark:'#E0708D',belly:'#FEDCE4',line:'#C2647D',
+                  fluke:'#E0708D',flukeFar:'#C9647E',fl:0});
+  speckles(g,.42);
+  g.restore();
+
+  const e2=E[S.lastKind]||E.hurt;
+  g.textAlign='center';
+  g.fillStyle='#FFF';g.font=F(52,900);g.fillText(e2.t,w/2,552);
+  g.fillStyle='rgba(255,255,255,.94)';g.font=F(26,700);
+  const reasonEnd=wrapText(g,stripHTML(e2.s),w/2,604,820,40);
+
+  const bx=90,by=reasonEnd+34,bw=w-180,bh=436;
+  g.fillStyle='rgba(255,249,240,.95)';RR(bx,by,bw,bh,40);g.fill();
+  const rows=[['死亡地點',ZONES[Math.max(S.zone,0)].n],
+              ['吃到的小魚',S.fish+' / 350 隻'],
+              ['成長階段',STAGES[S.stage]],
+              ['撞到填海造陸',S.fillHit+' 次'],
+              ['被水下噪音嚇到',S.noiseSec.toFixed(0)+' 秒'],
+              ['誤食塑膠',S.plasticHit+' 次']];
+  rows.forEach((r,i)=>{
+    const y=by+68+i*66;
+    g.textAlign='left';g.fillStyle='#8B7A69';g.font=F(30,700);g.fillText(r[0],bx+44,y);
+    g.textAlign='right';g.fillStyle='#5B4636';g.font=F(34,900);g.fillText(r[1],bx+bw-44,y);
+  });
+
+  g.textAlign='center';
+  g.fillStyle='#FFF';g.font=F(42,900);
+  g.fillText('台灣白海豚全球不到 50 隻',w/2,by+bh+72);
+  g.fillStyle='rgba(255,255,255,.92)';g.font=F(27,700);
+  g.fillText('牠們游不遠也游不深，只有西海岸這片淺海可以去',w/2,by+bh+120);
+  g.fillText('我們與白海豚享用同一片海、空氣、水和漁獲',w/2,by+bh+162);
+  g.fillStyle='#FF8A6B';RR(w/2-280,by+bh+206,560,72,36);g.fill();
+  g.fillStyle='#fff';g.font=F(32,900);
+  g.fillText('加入連署 · 搶救極危白海豚',w/2,by+bh+252);
+  return c;
+}
+document.getElementById('shareImg').onclick=function(){
+  SFX.tap();track('share',{what:'image'});
+  const c=makeShareImage(),url=c.toDataURL('image/png');
+  document.getElementById('shareImgEl').src=url;
+  document.getElementById('shareCanvasWrap').classList.add('on');
+  document.getElementById('shareCanvasWrap').scrollIntoView({behavior:'smooth',block:'center'});
+  if(navigator.canShare&&c.toBlob){
+    c.toBlob(b=>{
+      if(!b)return;
+      const f=new File([b],'台灣白海豚大冒險.png',{type:'image/png'});
+      if(navigator.canShare({files:[f]}))
+        navigator.share({files:[f],title:'台灣白海豚大冒險',text:'台灣白海豚只剩不到 50 隻，你能陪牠游多遠？'}).catch(()=>{});
+    },'image/png');
+  }
+};
+document.getElementById('shareLink').onclick=function(){
+  SFX.tap();track('share',{what:'link'});
+  const txt='我在《台灣白海豚大冒險》吃到 '+S.fish+' 隻小魚，游到「'+ZONES[Math.max(S.zone,0)].n+'」。台灣白海豚只剩不到 50 隻，你能游多遠？';
+  const url=location.href;
+  if(navigator.share){navigator.share({title:'台灣白海豚大冒險',text:txt,url:url}).catch(()=>{});}
+  else if(navigator.clipboard){navigator.clipboard.writeText(txt+' '+url).then(()=>{
+    this.textContent='✅ 已複製，貼給朋友吧！';setTimeout(()=>{this.textContent='🎯 找朋友來挑戰';},2200);});}
+};
+
+function start(){
+  audioInit();if(AUDIO.ctx&&AUDIO.ctx.state==='suspended')AUDIO.ctx.resume();
+  bgmPlay();SFX.tap();
+  reset();updHUD();
+  causeEl.classList.remove('on');pendingResult=null;
+  document.getElementById('intro').classList.add('hidden');
+  document.getElementById('over').classList.add('hidden');
+  document.getElementById('shareCanvasWrap').classList.remove('on');
+  track('start');
+  countdown(()=>{S.run=true;});
+}
+
+const AUDIO={sfx:true,bgm:true,ctx:null,master:null};
+function audioInit(){
+  if(AUDIO.ctx)return;
+  const AC=window.AudioContext||window.webkitAudioContext;if(!AC)return;
+  AUDIO.ctx=new AC();
+  AUDIO.master=AUDIO.ctx.createGain();
+  AUDIO.master.gain.value=.5;AUDIO.master.connect(AUDIO.ctx.destination);
+}
+function tone(freq,dur,type,vol,slideTo,delay){
+  if(!AUDIO.sfx||!AUDIO.ctx)return;
+  const c=AUDIO.ctx,t0=c.currentTime+(delay||0);
+  const o=c.createOscillator(),g=c.createGain();
+  o.type=type||'sine';o.frequency.setValueAtTime(freq,t0);
+  if(slideTo)o.frequency.exponentialRampToValueAtTime(slideTo,t0+dur);
+  g.gain.setValueAtTime(0,t0);
+  g.gain.linearRampToValueAtTime(vol||.25,t0+.012);
+  g.gain.exponentialRampToValueAtTime(.0008,t0+dur);
+  o.connect(g);g.connect(AUDIO.master);o.start(t0);o.stop(t0+dur+.03);
+}
+function noiseBurst(dur,vol,freq,q,delay){
+  if(!AUDIO.sfx||!AUDIO.ctx)return;
+  const c=AUDIO.ctx,t0=c.currentTime+(delay||0),len=Math.max(1,Math.floor(c.sampleRate*dur));
+  const buf=c.createBuffer(1,len,c.sampleRate),d=buf.getChannelData(0);
+  for(let i=0;i<len;i++)d[i]=(Math.random()*2-1)*(1-i/len);
+  const src=c.createBufferSource();src.buffer=buf;
+  const bp=c.createBiquadFilter();bp.type='bandpass';bp.frequency.value=freq||900;bp.Q.value=q||1;
+  const g=c.createGain();g.gain.value=vol||.2;
+  src.connect(bp);bp.connect(g);g.connect(AUDIO.master);src.start(t0);
+}
+const SFX={
+  tap  (){tone(520,.07,'triangle',.2,720);},
+  eat  (){tone(680,.09,'sine',.22,1020);},
+  gold (){[0,.07,.14].forEach((d,i)=>tone([740,930,1240][i],.14,'triangle',.22,null,d));},
+  breath(){noiseBurst(.28,.16,1500,.8);tone(300,.22,'sine',.14,620,.05);},
+  bubble(){tone(900,.06,'sine',.08,1300);},
+  hit  (){tone(150,.26,'square',.22,70);noiseBurst(.2,.2,420,1.2);},
+  grow (){[0,.1,.2,.3].forEach((d,i)=>tone([523,659,784,1046][i],.2,'triangle',.2,null,d));},
+  pile (){tone(70,.32,'square',.3,40);noiseBurst(.26,.26,260,.7);},
+  count(){tone(760,.12,'square',.18);},
+  go   (){[0,.09].forEach((d,i)=>tone([880,1320][i],.18,'square',.2,null,d));},
+  lose (){[0,.14,.28].forEach((d,i)=>tone([440,350,260][i],.3,'triangle',.22,null,d));},
+  win  (){[0,.1,.2,.3,.45].forEach((d,i)=>tone([523,659,784,1046,1319][i],.3,'triangle',.22,null,d));}
+};
+const bgmEl=document.getElementById('bgm');
+function bgmPlay(){ if(AUDIO.bgm&&bgmEl.getAttribute('src'))bgmEl.play().catch(()=>{}); }
+function bgmStop(){ bgmEl.pause(); }
+document.getElementById('btnSfx').onclick=function(){
+  audioInit();AUDIO.sfx=!AUDIO.sfx;this.classList.toggle('on',AUDIO.sfx);this.classList.toggle('off',!AUDIO.sfx);
+  if(AUDIO.sfx)SFX.tap();track('toggle',{what:'sfx',on:AUDIO.sfx?1:0});
+};
+document.getElementById('btnBgm').onclick=function(){
+  audioInit();AUDIO.bgm=!AUDIO.bgm;this.classList.toggle('on',AUDIO.bgm);this.classList.toggle('off',!AUDIO.bgm);
+  AUDIO.bgm?bgmPlay():bgmStop();track('toggle',{what:'bgm',on:AUDIO.bgm?1:0});
+};
+
+(function(){
+  const cc=document.getElementById('coverCv');if(!cc)return;
+  const g=cc.getContext('2d');
+  const fishes=[];for(let i=0;i<7;i++)fishes.push({x:Math.random(),y:.2+Math.random()*.6,sp:.05+Math.random()*.07,ph:Math.random()*6});
+  function frame(t){
+    if(document.getElementById('intro').classList.contains('hidden')){requestAnimationFrame(frame);return;}
+    const dpr=Math.min(devicePixelRatio||1,2),w=cc.clientWidth,h=cc.clientHeight;
+    if(cc.width!==w*dpr||cc.height!==h*dpr){cc.width=w*dpr;cc.height=h*dpr;}
+    g.setTransform(dpr,0,0,dpr,0,0);g.clearRect(0,0,w,h);
+    
+    fishes.forEach(f=>{
+      f.x-=f.sp/60;if(f.x<-.12)f.x=1.12;
+      const fx=f.x*w,fy=f.y*h+Math.sin(t/600+f.ph)*5;
+      g.save();g.translate(fx,fy);
+      g.fillStyle='rgba(255,255,255,.75)';g.strokeStyle='rgba(31,110,147,.35)';g.lineWidth=1.2;
+      g.beginPath();g.moveTo(8,0);g.quadraticCurveTo(1,-5,-5,-2.5);
+      g.quadraticCurveTo(-8,0,-5,2.5);g.quadraticCurveTo(1,5,8,0);g.fill();g.stroke();
+      g.fillStyle='#FF7F5C';g.beginPath();g.moveTo(-5,0);g.lineTo(-11,-4);g.lineTo(-11,4);g.closePath();g.fill();
+      g.restore();
+    });
+    
+    const bob=Math.sin(t/700)*7, tilt=Math.sin(t/900)*.06;
+    g.save();g.translate(w*.5,h*.52+bob);g.rotate(tilt);
+    g.scale(Math.min(w/230,1.28),Math.min(w/230,1.28));
+    dolphinShape(g,{body:'#F9AEC1',dark:'#E0708D',belly:'#FEDCE4',line:'#C2647D',
+                    fluke:'#E0708D',flukeFar:'#C9647E',fl:Math.sin(t/320)*.14});
+    speckles(g,.4);
+    g.strokeStyle='#3F3128';g.lineWidth=1.3;g.lineCap='round';
+    g.beginPath();g.moveTo(32,6);g.quadraticCurveTo(35,7.8,38,5.8);g.stroke();
+    g.restore();
+    
+    g.fillStyle='rgba(255,255,255,.6)';
+    for(let i=0;i<3;i++){
+      const pt=((t/900)+i/3)%1;
+      g.beginPath();g.arc(w*.5+10,h*.52+bob-14-pt*46,2.5+pt*2,0,7);g.fill();
+    }
+    requestAnimationFrame(frame);
+  }
+  requestAnimationFrame(frame);
+})();
+
+document.getElementById('startBtn').onclick=start;
+document.getElementById('againBtn').onclick=start;
+
+[['lnk1','petition'],['lnk2','partner']].forEach(function(){});
+document.querySelectorAll('.acts .lnk').forEach(function(a,i){
+  a.addEventListener('click',function(){
+    track('outbound',{what:['petition','wildatheart','matzufish'][i]||'other',href:a.href});
+  });
+});
+
+watchScroll();watchCards();
+updHUD();
+})();
+</script>
+</body>
+</html>
