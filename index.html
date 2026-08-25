@@ -103,9 +103,10 @@ text-shadow:0 6px 24px rgba(0,0,0,.35);pointer-events:none}
 .dxHd small{display:block;font-size:12px;font-weight:800;color:#155C7C;margin-top:2px}
 .dxHd button{border:0;border-radius:16px;padding:9px 15px;font-family:var(--cjk);font-size:13px;
   font-weight:900;background:#fff;color:#155C7C;cursor:pointer}
-.dxGrid{flex:1;overflow-y:auto;display:grid;grid-template-columns:repeat(auto-fill,minmax(88px,1fr));
+.dxGrid{flex:1;overflow-y:auto;display:grid;grid-template-columns:repeat(auto-fill,minmax(96px,1fr));
   gap:8px;padding:14px}
 .dxCell{border-radius:14px;padding:9px 4px;text-align:center;background:#E5EDF1;color:#9DAFB9}
+.dxPic{display:block;width:100%;height:46px;margin-bottom:2px}
 .dxCell b{display:block;font-size:11px;font-weight:900;letter-spacing:.02em}
 .dxCell span{display:block;font-size:13px;font-weight:900;margin-top:2px}
 .dxCell.got{background:#FFE7EE;color:#C9426B}
@@ -389,8 +390,21 @@ font-family:var(--cjk);font-size:14.5px;font-weight:800;cursor:pointer;line-heig
     <p class="lead">陪一隻剛出生的<b>台灣白海豚</b><br>沿著西海岸的淺灘往南游</p>
     <p class="ask">是否能夠順利長大呢？</p>
 
+    <div class="missions">
+      <div class="ms">
+        <span class="mi">🐟</span>
+        <div class="mt"><b>吃小魚，慢慢長大</b><small>金色的黃錫鯛可以補回體力</small></div>
+      </div>
+      <div class="ms tap" id="dexBtn2">
+        <span class="mi">🐬</span>
+        <div class="mt"><b>救出被漁網纏住的同伴</b><small>大家一起收集 50 隻救援圖鑑</small>
+          <div class="mbar"><i id="dexBar"></i></div>
+        </div>
+        <span class="mn" id="dexCount">0/50</span>
+      </div>
+    </div>
+
     <button class="goBtn big" id="startBtn">出發囉</button>
-    <button class="coverDex" id="dexBtn2">救援圖鑑　<b id="dexCount">0 / 50</b></button>
   </div>
 </div>
 
@@ -704,8 +718,13 @@ function update(dt){
   if(msgT>0){msgT-=dt;if(msgT<=0)hideMsg();}
   if(placeT>0){placeT-=dt;if(placeT<=0)placeEl.classList.remove('show');}
 
-  const zi=Math.min(Math.floor(S.dist/SEG),ZONES.length-1);
-  if(zi!==S.zone){S.zone=zi;const z=ZONES[zi];
+  if(S.phase==='tut'){
+    document.getElementById('journeyFill').style.width='0%';
+    document.getElementById('progTxt').firstElementChild.textContent='教學中';
+    document.getElementById('progZone').textContent='';
+  }
+  const zi=S.phase==='tut'?-1:Math.min(Math.floor(S.dist/SEG),ZONES.length-1);
+  if(zi>=0&&zi!==S.zone){S.zone=zi;const z=ZONES[zi];
     if(z.hab==='in'){placeEl.textContent='🛡 白海豚重要棲息環境';placeEl.classList.add('zone');}
     else{placeEl.textContent='📍 '+z.n;placeEl.classList.remove('zone');}
     placeEl.classList.add('show');placeT=3.4;
@@ -717,10 +736,12 @@ function update(dt){
     else S.murkTgt=.2;}
   S.land=lerp(S.land,S.landTgt,Math.min(dt*1.4,1));
   S.murk=lerp(S.murk,S.murkTgt,Math.min(dt*.9,1));
-  const prog=Math.min(S.dist/GOAL*100,100);
-  document.getElementById('journeyFill').style.width=prog+'%';
-  document.getElementById('progTxt').firstElementChild.textContent=Math.round(prog)+'%';
-  document.getElementById('progZone').textContent=ZONES[Math.max(S.zone,0)].n;
+  const prog=S.phase==='tut'?0:Math.min(S.dist/GOAL*100,100);
+  if(S.phase!=='tut'){
+    document.getElementById('journeyFill').style.width=prog+'%';
+    document.getElementById('progTxt').firstElementChild.textContent=Math.round(prog)+'%';
+    document.getElementById('progZone').textContent=ZONES[Math.max(S.zone,0)].n;
+  }
   
   [[25,'已經游四分之一了，很棒！'],[50,'一半囉！繼續加油 💪'],
    [75,'剩最後一段，撐住！'],[92,'快到家了，加油！']].forEach(function(m){
@@ -743,8 +764,9 @@ function update(dt){
       if(S.fish>=3){S.tut=3;S.tutT=0;}}
     else{hideTip();hideWarn();hintEl.classList.remove('on');warn('前面開始有危險，小心！',2.4);
       document.getElementById('swipeHint').classList.remove('on');
+      S.dist=0;S.zone=-1;S.obs=[];   
       S.phase='play';S.hazT=1.6;S.fishT=1.5;S.fillT=8;S.pileT=9;S.goldT=12;}
-    if(S.tutTotal>60){S.phase='play';S.hazT=1.6;S.fillT=8;S.pileT=9;}
+    if(S.tutTotal>60){S.dist=0;S.zone=-1;S.obs=[];S.phase='play';S.hazT=1.6;S.fillT=8;S.pileT=9;}
   } else {
     const Z=ZONES[S.zone],z=Z.k;
     const EV=S.ev||{};
@@ -1462,7 +1484,7 @@ function makeShareImage(){
   const e2=E[S.lastKind]||E.hurt;
   g.fillStyle='#FFF';g.font=F(48,900);g.fillText(e2.t,w/2,558);
 
-  const cards=[['成長階段',STAGES[S.stage]],
+  const cards=[['救到同伴',S.rescued.length+' 隻'],
                ['吃到小魚',S.fish+' 隻'],
                ['游到',ZONES[Math.max(S.zone,0)].n.split(' · ')[0]]];
   const cw=280,gap=25,x0=(w-(cw*3+gap*2))/2;
@@ -1476,7 +1498,9 @@ function makeShareImage(){
   g.fillStyle='#FFF';g.font=F(44,900);
   g.fillText('台灣白海豚，全球剩下不到 50 隻！',w/2,884);
   g.fillStyle='rgba(255,255,255,.92)';g.font=F(27,700);
-  wrapText(g,'牠們游不遠也游不深，只有西海岸這片淺海可以去。',w/2,944,860,42);
+  const dexGot=ROSTER.filter(function(r){return DEX.counts[r.id];}).length;
+  wrapText(g,'牠們游不遠也游不深，只有西海岸這片淺海可以去。\n'+
+             '大家已經一起救到 '+dexGot+' / 50 隻，一起把救援圖鑑補完吧！',w/2,944,860,42);
 
   g.fillStyle='#FF8A6B';RR(w/2-300,1030,600,84,42);g.fill();
   g.fillStyle='#fff';g.font=F(36,900);g.fillText('邀請您連署！搶救極危白海豚',w/2,1083);
@@ -1503,10 +1527,12 @@ document.getElementById('shareLink').onclick=function(){
   SFX.tap();track('share',{what:'link'});
   const self=this;
   const url='https://lihi3.me/Bsby0/twbaihaitun';
+  const dexGot=ROSTER.filter(function(r){return DEX.counts[r.id];}).length;
   const txt='我在《台灣白海豚大冒險》'+
-    (S.rescued.length?('救了 '+S.rescued.length+' 隻同伴，'):'')+
+    (S.rescued.length?('救了 '+S.rescued.length+' 隻被漁網纏住的同伴，'):'')+
     '吃到 '+S.fish+' 隻小魚，游到「'+ZONES[Math.max(S.zone,0)].n+'」。'+
-    '台灣白海豚全球剩不到 50 隻，你能游多遠？';
+    '台灣白海豚全球剩不到 50 隻，救援圖鑑目前 '+dexGot+'/50，'+
+    '一起來把牠們全部救回來！';
   const full=txt+' '+url;
   function done(msg){
     const old=self.textContent;self.textContent=msg;
@@ -1672,17 +1698,70 @@ document.querySelectorAll('.acts .lnk').forEach(function(a,i){
   });
 });
 
+function seedOf(id){let h=0;for(let i=0;i<id.length;i++)h=(h*31+id.charCodeAt(i))>>>0;return h;}
+function rngOf(seed){let x=seed||1;return function(){x^=x<<13;x^=x>>>17;x^=x<<5;x>>>=0;return x/4294967296;};}
+
+function drawDexDolphin(cv,r,found){
+  const g=cv.getContext('2d'),dpr=Math.min(devicePixelRatio||1,2);
+  const w=cv.clientWidth||78,h=cv.clientHeight||46;
+  cv.width=w*dpr;cv.height=h*dpr;g.setTransform(dpr,0,0,dpr,0,0);g.clearRect(0,0,w,h);
+  const rnd=rngOf(seedOf(r.id));
+  const hue=rnd(), pale=rnd();
+  const body  = found?'hsl('+(338+hue*14).toFixed(0)+','+(58+pale*22).toFixed(0)+'%,'+(78+pale*8).toFixed(0)+'%)':'#D3DDE3';
+  const dark  = found?'hsl('+(338+hue*14).toFixed(0)+',52%,'+(62+pale*6).toFixed(0)+'%)':'#B8C6CE';
+  const belly = found?'#FEE6EC':'#E4EBEF';
+  const line  = found?'#C2647D':'#AAB9C1';
+
+  g.save();g.translate(w*.5,h*.55);g.scale(.66,.66);
+  dolphinShape(g,{body:body,dark:dark,belly:belly,line:line,fluke:dark,flukeFar:dark,fl:0});
+
+  if(found){
+    
+    g.fillStyle='rgba(96,118,146,.45)';
+    const n=8+Math.floor(rnd()*10);
+    for(let i=0;i<n;i++){
+      const x=-24+rnd()*44, y=-11+rnd()*11;
+      g.beginPath();g.arc(x,y,.9,0,7);g.fill();
+    }
+    
+    if(rnd()>.45){
+      g.strokeStyle='rgba(150,90,100,.5)';g.lineWidth=1;
+      const sx=-16+rnd()*28,sy=-6+rnd()*8;
+      g.beginPath();g.moveTo(sx,sy);g.lineTo(sx+4+rnd()*5,sy+3);g.stroke();
+    }
+  }
+  g.restore();
+
+  g.save();g.translate(w*.5,h*.55);g.scale(.66,.66);
+  g.globalCompositeOperation='destination-out';
+  const nick=1+Math.floor(rnd()*3);
+  for(let i=0;i<nick;i++){
+    const t=.25+rnd()*.6;
+    const x=-.5+(-9)*t, y=-12.4+(-8.6)*t;
+    g.beginPath();g.arc(x-1.2,y,1+rnd()*1.1,0,7);g.fill();
+  }
+  g.restore();
+}
+
 function renderDex(){
   const got=ROSTER.filter(function(r){return DEX.counts[r.id];}).length;
   const dc=document.getElementById('dexCount');
-  if(dc)dc.textContent=got+' / '+ROSTER.length;
+  if(dc)dc.textContent=got+'/'+ROSTER.length;
   document.getElementById('dxSum').textContent='全部玩家已救到 '+got+' / '+ROSTER.length+' 隻'+
     (S.rescued&&S.rescued.length?'　（你這局救了 '+S.rescued.length+' 隻）':'');
-  document.getElementById('dxGrid').innerHTML=ROSTER.map(function(r){
-    const got=!!DEX.counts[r.id],mine=!!DEX.mine[r.id];
-    return '<div class="dxCell'+(got?' got':'')+(mine?' mine':'')+'">'+
-      '<b>'+r.id+'</b><span>'+(got?r.name:'？')+'</span></div>';
+  const grid=document.getElementById('dxGrid');
+  grid.innerHTML=ROSTER.map(function(r){
+    const g2=!!DEX.counts[r.id],mine=!!DEX.mine[r.id];
+    return '<div class="dxCell'+(g2?' got':'')+(mine?' mine':'')+'">'+
+      '<canvas class="dxPic" data-id="'+r.id+'"></canvas>'+
+      '<b>'+r.id+'</b><span>'+(g2?r.name:'？')+'</span></div>';
   }).join('');
+  grid.querySelectorAll('.dxPic').forEach(function(cv){
+    const r=ROSTER.find(function(x){return x.id===cv.dataset.id;});
+    drawDexDolphin(cv,r,!!DEX.counts[r.id]);
+  });
+  const bar=document.getElementById('dexBar');
+  if(bar)bar.style.width=(got/ROSTER.length*100)+'%';
 }
 
 function loadDex(){
