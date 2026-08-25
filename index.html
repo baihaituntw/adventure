@@ -39,6 +39,7 @@ font-size:13px;font-weight:800;white-space:nowrap;opacity:0;transition:opacity .
 background:rgba(232,69,47,.55);backdrop-filter:blur(2px);color:#fff;border-radius:18px;padding:12px 22px;
 font-size:15px;font-weight:900;white-space:nowrap;opacity:0;transition:opacity .16s;box-shadow:0 6px 20px rgba(0,0,0,.3)}
 #alert.show{opacity:1;animation:nz .3s infinite}
+#alert.cd{font-size:21px;padding:13px 30px;letter-spacing:.05em;background:rgba(232,69,47,.9)}
 @keyframes nz{50%{transform:translate(-50%,-50%) scale(1.06)}}
 
 #bubbleRing{position:absolute;left:16px;bottom:calc(env(safe-area-inset-bottom) + 20px);width:98px;height:98px;pointer-events:auto}
@@ -72,7 +73,8 @@ padding:6px 12px;border-radius:14px;white-space:nowrap;box-shadow:0 3px 10px rgb
 
 #msg{position:absolute;left:50%;top:29%;transform:translate(-50%,-50%) scale(.88);
 background:rgba(255,249,240,.5);backdrop-filter:blur(2px);border-radius:22px;padding:12px 20px;max-width:84%;
-font-size:15px;font-weight:800;line-height:1.55;text-align:center;color:#4A382B;
+font-size:15px;font-weight:800;line-height:1.5;text-align:center;color:#4A382B;
+  display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;
 box-shadow:0 4px 14px rgba(0,0,0,.1);opacity:0;transition:opacity .18s,transform .18s cubic-bezier(.3,1.5,.5,1);pointer-events:none}
 #msg.show{opacity:1;transform:translate(-50%,-50%) scale(1)}
 #msg .em{color:#C9426B}
@@ -175,11 +177,21 @@ font-size:14px;font-weight:800;line-height:1.35;text-align:left}
 .actHd{margin-top:20px;font-size:13px;font-weight:900;color:#8B7A69;letter-spacing:.08em}
 
 #cause{position:absolute;inset:0;display:none;align-items:center;justify-content:center;
-background:rgba(18,60,84,.9);backdrop-filter:blur(6px);padding:30px;text-align:center;z-index:20}
+background:linear-gradient(180deg,#12496B 0%,#0E3A57 55%,#0A2C43 100%);
+padding:28px 22px;text-align:center;z-index:20;overflow:hidden}
+#cause.win{background:linear-gradient(180deg,#2E86AE 0%,#4FB3C9 45%,#8FD8DE 100%)}
+#cause .cbb{position:absolute;bottom:-24px;width:12px;height:12px;border-radius:50%;
+  background:rgba(255,255,255,.28);animation:rise 8s linear infinite;pointer-events:none}
+#cause canvas{width:210px;height:112px;display:block;margin:0 auto 6px}
+#cause .cbtn{margin-top:22px;border:0;border-radius:24px;padding:14px 32px;cursor:pointer;
+  font-family:var(--cjk);font-size:16px;font-weight:900;letter-spacing:.08em;
+  background:linear-gradient(135deg,#FFD86B,#FFB43F);color:#6B3E06;
+  box-shadow:0 5px 0 #D98F1E, 0 10px 20px rgba(0,0,0,.25);animation:jump 2.6s ease-in-out infinite}
+#cause .cbtn:active{transform:translateY(4px);box-shadow:0 1px 0 #D98F1E}
 #cause.on{display:flex}
 #cause .cb{max-width:360px;animation:cin .5s cubic-bezier(.2,1.3,.4,1)}
 @keyframes cin{0%{transform:scale(.7);opacity:0}100%{transform:scale(1);opacity:1}}
-#cause .ct{font-size:30px;font-weight:900;color:#fff}
+#cause .ct{font-size:27px;font-weight:900;color:#fff;line-height:1.35;text-shadow:0 3px 12px rgba(0,0,0,.3)}
 #cause .cs{font-size:15px;font-weight:700;color:#DCEFF7;margin-top:14px;line-height:1.85}
 #cause .ch{margin-top:26px;font-size:13px;font-weight:800;color:#fff;opacity:.75;animation:bob 1.2s infinite}
 @keyframes bob{50%{transform:translateY(5px)}}
@@ -193,6 +205,7 @@ font-family:var(--cjk);font-size:14.5px;font-weight:800;cursor:pointer;line-heig
 .sh2{background:#FFE3B0;color:#7A5A2E;box-shadow:0 4px 0 #E0BF85}
 .shBtn:active{transform:translateY(3px);box-shadow:none}
 #shareCanvasWrap{margin-top:12px;display:none}
+.captain .shareRow{flex-direction:column}
 #shareCanvasWrap.on{display:block}
 #shareCanvasWrap img{width:100%;border-radius:18px;box-shadow:0 6px 18px rgba(0,0,0,.18)}
 #shareCanvasWrap p{font-size:11.5px;color:#8B7A69;margin-top:7px;font-weight:700}
@@ -206,8 +219,20 @@ font-family:var(--cjk);font-size:14.5px;font-weight:800;cursor:pointer;line-heig
 .g0{background:#EDF1F4;color:#5E6E7A}.g0 .gbar i{background:#8A99A5}
 .g1{background:#FAEEF2;color:#9A6A78}.g1 .gbar i{background:#C79CA9}
 .g2{background:#FFEFF4;color:#C9426B}.g2 .gbar i{background:#F79FB5}
-.tally{margin-top:14px;font-size:13px;line-height:2;background:#FFF1DE;border-radius:18px;padding:12px 16px;text-align:left}
-.tally i{font-style:normal;float:right;font-weight:800}
+.chips3{margin-top:12px;display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.chips3 div{background:#FFF1DE;border-radius:14px;padding:10px 6px;text-align:center}
+.chips3 span{display:block;font-size:10.5px;font-weight:800;color:#9C8873;letter-spacing:.04em}
+.chips3 b{display:block;font-size:16px;font-weight:900;color:#4A382B;margin-top:3px;line-height:1.25}
+.acc{margin-top:14px;background:#fff;border-radius:20px;overflow:hidden;box-shadow:0 2px 0 #EFE2CE}
+.acc summary{list-style:none;cursor:pointer;padding:15px 16px;font-size:15px;font-weight:900;color:#4A382B;
+  display:flex;align-items:center;justify-content:space-between;background:#FFF6E8}
+.acc summary::-webkit-details-marker{display:none}
+.acc summary i{font-style:normal;font-size:11.5px;font-weight:800;color:#B08A5E}
+.acc summary::after{content:"⌄";margin-left:8px;font-size:16px;color:#B08A5E;transition:transform .2s}
+.acc[open] summary::after{transform:rotate(180deg)}
+.accIn{padding:4px 12px 14px}
+.accIn .kb:first-child{margin-top:8px}
+#mainAct{margin-top:14px}
 
 .kb{margin-top:12px;text-align:left;border-radius:24px;padding:16px 17px}
 .kb .h{font-weight:900;font-size:16.5px;margin-bottom:10px;display:flex;align-items:center;gap:7px;line-height:1.35}
@@ -260,13 +285,20 @@ font-family:var(--cjk);font-size:14.5px;font-weight:800;cursor:pointer;line-heig
   <button id="btnSfx" class="sndBtn on" aria-label="音效開關">🔊</button>
   <button id="btnBgm" class="sndBtn on" aria-label="音樂開關">🎵</button>
 </div>
-<audio id="bgm" loop preload="auto"></audio>
+<audio id="bgm" loop preload="auto" src="happy_adventure.mp3"></audio>
 <div id="count"><b>3</b></div>
-<div id="cause"><div class="cb">
-  <div class="ct" id="cTitle"></div>
-  <div class="cs" id="cSub"></div>
-  <div class="ch">點一下看白海豚的故事 ›</div>
-</div></div>
+<div id="cause">
+  <i class="cbb" style="left:12%;animation-delay:0s"></i>
+  <i class="cbb" style="left:34%;animation-delay:1.6s;width:9px;height:9px"></i>
+  <i class="cbb" style="left:62%;animation-delay:2.7s;width:14px;height:14px"></i>
+  <i class="cbb" style="left:84%;animation-delay:.9s"></i>
+  <div class="cb">
+    <canvas id="causeCv"></canvas>
+    <div class="ct" id="cTitle"></div>
+    <div class="cs" id="cSub"></div>
+    <button class="cbtn" id="cGo">看白海豚的故事</button>
+  </div>
+</div>
 
 <div class="screen cover" id="intro">
   <div class="sun"></div>
@@ -295,69 +327,67 @@ font-family:var(--cjk);font-size:14.5px;font-weight:800;cursor:pointer;line-heig
   <div class="card">
     <h1 id="ovT"></h1><div class="sub" id="ovS"></div>
     <div class="grew" id="ovGrew"></div>
-    <div class="tally" id="ovL"></div>
+    <div class="chips3" id="ovL"></div>
 
-    <div class="scrollHint">往下滑，分享你的成績 ⌄</div>
+    <a class="lnk lnk1" href="https://forms.gle/EP53e3d9rTYg2j1U7" target="_blank" rel="noopener">
+      <span class="tx">立即連署　搶救極危白海豚<small>只要一分鐘，替牠們留下這片海</small></span>
+      <span class="go">›</span>
+    </a>
 
-    <div class="kb kb1">
-      <div class="h"><span class="ico">🍼</span>辛苦長大的白海豚寶寶</div>
-      <ul>
-        <li>白海豚媽媽要 <b>10〜13 歲</b>才能生寶寶，懷孕要等長長的一年，<b>一次只生一隻</b>。</li>
-        <li>寶寶要黏著媽媽<b>至少 2 年</b>，一邊喝奶，一邊學找魚吃、認路和躲危險，才有辦法自己長大。</li>
-      </ul>
-    </div>
+    <details class="acc" open>
+      <summary>認識台灣白海豚<i>4 則</i></summary>
+      <div class="accIn">
+        <div class="kb kb1">
+          <div class="h"><span class="ico">🍼</span>辛苦長大的白海豚寶寶</div>
+          <ul>
+            <li>媽媽要 <b>10〜13 歲</b>才能生寶寶，懷孕要等長長的一年，<b>一次只生一隻</b>。</li>
+            <li>寶寶要黏著媽媽<b>至少 2 年</b>，一邊喝奶，一邊學找魚吃、認路和躲危險。</li>
+          </ul>
+        </div>
+        <div class="kb kb2">
+          <div class="h"><span class="ico">😢</span>全球不到 50 隻的危機</div>
+          <ul>
+            <li>台灣白海豚非常稀有，全世界只剩下<b>不到 50 隻</b>。</li>
+            <li>現在死掉的海豚比新生的寶寶還要多，牠們<b>正快要永遠消失</b>。</li>
+          </ul>
+        </div>
+        <div class="kb kb3">
+          <div class="h"><span class="ico">🌊</span>和台灣共用一片海</div>
+          <ul>
+            <li>離岸 <b>3〜5 公里</b>、水深 <b>15〜30 公尺</b>的西岸淺海和河口，就是牠們<b>唯一的家</b>。</li>
+            <li>牠們<b>游不遠也游不深</b>，沒有別的地方可以去。</li>
+            <li>我們和白海豚吃一樣的魚、呼吸一樣的空氣、用一樣的水。<b>大海健康，我們才會健康！</b></li>
+          </ul>
+        </div>
+        <div class="kb kb4">
+          <div class="h"><span class="ico">🚧</span>台中港填海造陸的傷害</div>
+          <ul>
+            <li>填海工程把牠們<b>找食物、養寶寶</b>的海直接變成陸地。</li>
+            <li><b>有毒的廢土</b>跑進海洋，害小魚變少，毒素最後也會影響人類。</li>
+            <li>沒做好環境評估的開發，會造成<b>無法復原的傷害！</b></li>
+          </ul>
+        </div>
+      </div>
+    </details>
 
-    <div class="kb kb2">
-      <div class="h"><span class="ico">😢</span>全球不到 50 隻的危機</div>
-      <ul>
-        <li>台灣白海豚非常稀有，全世界只剩下<b>不到 50 隻</b>。</li>
-        <li>現在死掉的海豚比新生的寶寶還要多，牠們<b>正快要永遠消失</b>。</li>
-      </ul>
-    </div>
-
-    <div class="kb kb3">
-      <div class="h"><span class="ico">🌊</span>和台灣共用一片海</div>
-      <ul>
-        <li>離岸 <b>3〜5 公里</b>、水深 <b>15〜30 公尺</b>的西岸淺海和河口，就是牠們<b>唯一的家</b>。</li>
-        <li>牠們只住在離海岸很近的淺海和河口，<b>游不遠也游不深</b>。</li>
-        <li>我們和白海豚吃一樣的魚、呼吸一樣的空氣、用一樣的水。<b>大海健康，我們才會健康！</b></li>
-      </ul>
-    </div>
-
-    <div class="kb kb4">
-      <div class="h"><span class="ico">🚧</span>台中港填海造陸的傷害</div>
-      <ul>
-        <li>填海工程把牠們<b>找食物、養寶寶</b>的海直接變成陸地，家一塊一塊消失了。</li>
-        <li><b>有毒的廢土</b>跑進海洋，不只害小魚變少，毒素最後也會透過海洋影響人類。</li>
-        <li>沒有做好環境評估的開發，會給大海與白海豚帶來<b>無法復原的傷害！</b></li>
-      </ul>
-    </div>
-
-    <div class="actHd">你可以幫牠做一件事</div>
-    <div class="acts">
-      <a class="lnk lnk1" href="https://forms.gle/EP53e3d9rTYg2j1U7" target="_blank" rel="noopener">
-        <span class="tx">加入連署 · 搶救極危白海豚<small>只要一分鐘，替牠們留下這片海</small></span>
-        <span class="go">›</span>
-      </a>
-      <a class="lnk lnk2" href="https://www.facebook.com/wildatheart.org?locale=zh_TW" target="_blank" rel="noopener">
-        <span class="tx">台灣蠻野心足生態協會<small>長期為白海豚棲地打環境訴訟</small></span>
-        <span class="go">›</span>
-      </a>
-      <a class="lnk lnk2" href="https://www.facebook.com/matzufish?locale=zh_TW" target="_blank" rel="noopener">
-        <span class="tx">台灣白海豚媽祖宮 · 粘錫麟紀念館<small>在地守護「媽祖魚」的行動基地</small></span>
-        <span class="go">›</span>
-      </a>
-    </div>
-
-    <div class="divider"></div>
+    <details class="acc">
+      <summary>更多守護行動<i>2 個團體</i></summary>
+      <div class="accIn acts">
+        <a class="lnk lnk2" href="https://www.facebook.com/wildatheart.org?locale=zh_TW" target="_blank" rel="noopener">
+          <span class="tx">台灣蠻野心足生態協會<small>長期為白海豚棲地打環境訴訟</small></span><span class="go">›</span>
+        </a>
+        <a class="lnk lnk2" href="https://www.facebook.com/matzufish?locale=zh_TW" target="_blank" rel="noopener">
+          <span class="tx">台灣白海豚媽祖宮 · 粘錫麟紀念館<small>在地守護「媽祖魚」的行動基地</small></span><span class="go">›</span>
+        </a>
+      </div>
+    </details>
 
     <div class="captain">
       <div class="ct">🏅 成為「白海豚守護隊長」</div>
-      <p>只有你一個人的力量還不夠，<br>白海豚需要更多好朋友的幫忙！</p>
-      <p>快把這款遊戲分享給同學和家人，看看誰能陪白海豚游得又安全又遠，一起加入守護台灣白海豚的行列吧！</p>
+      <p>一個人的力量還不夠，<br>快找同學和家人一起來守護牠們！</p>
       <div class="shareRow">
         <button class="shBtn sh1" id="shareImg">分享我的成績</button>
-        <button class="shBtn sh2" id="shareLink">找朋友來挑戰</button>
+        <button class="shBtn sh2" id="shareLink">邀請朋友守護白海豚</button>
       </div>
       <div id="shareCanvasWrap"><img id="shareImgEl" alt="成績圖"><p>長按圖片即可儲存或分享</p></div>
     </div>
@@ -465,7 +495,7 @@ function reset(){Object.assign(S,{
   run:false,dist:0,spd:92,y:.45,life:MAXHP,inv:0,air:1,
   fish:0,gold:0,stage:0,deepTime:0,landT:0,fillPass:0,fillHit:0,noiseSec:0,plasticHit:0,netHit:0,propHit:0,
   land:.14,landTgt:.14,deep:.88,murk:0,murkTgt:0,
-  nAlert:0,airWarnCd:0,cheer:{},obs:[],hazT:2,fishT:1.2,fillT:8,pileT:11,goldT:14,pops:[],bub:[],spray:[],sonar:[],sonarT:0,
+  nAlert:0,airWarnCd:0,cheer:{},beep:99,obs:[],hazT:2,fishT:1.2,fillT:8,pileT:11,goldT:14,pops:[],bub:[],spray:[],sonar:[],sonarT:0,
   zone:-1,phase:'tut',tut:0,tutT:0,moved:false,shake:0,
   surf:null,noise:0,tutTotal:0,jitter:0,breathed:false
 });for(let i=0;i<22;i++)S.bub.push({x:Math.random()*W,y:Math.random()*H,r:1+Math.random()*3,s:7+Math.random()*12});}
@@ -585,7 +615,7 @@ function update(dt){
     if(S.tut===0){warn('手指<span class="em">上下滑動</span>看看',9,true);
       if(S.moved&&S.tutT>1.1){S.tut=1;S.tutT=0;hideWarn();S.air=Math.min(S.air,.42);}}
     else if(S.tut===1){hintEl.classList.add('on');
-      warn('牠快沒空氣了！<br>點<span class="em">左下角的圓鈕</span>浮上去換氣',9,true);}
+      warn('快沒空氣了！<br>點<span class="em">左下角圓鈕</span>換氣',9,true);}
     else if(S.tut===2){hintEl.classList.remove('on');
       warn('空氣快沒了就要換氣',2.6,true);
       S.fishT-=dt;if(S.fishT<=0){S.fishT=2;spawnSchool(6,'river');}
@@ -638,10 +668,14 @@ function update(dt){
       if(S.landT===1)tip('太靠岸了',2);}
     if(depth()>=DEEP_TRIG){
       S.y=depthToY(DEEP_TRIG);const before=S.deepTime;S.deepTime+=dt;
-      if(before<=0)warn('水太深了！白海豚<span class="em">感覺不舒服</span>',2.6);
-      if(S.deepTime>1.2)showAlert('⚠️ 快回淺水！'+Math.max(0,Math.ceil(DEEP_LIMIT-S.deepTime))+' 秒');
+      if(before<=0){warn('水太深了！白海豚<span class="em">受不了</span>',2.4);S.beep=99;}
+      const left=Math.max(0,Math.ceil(DEEP_LIMIT-S.deepTime));
+      alertEl.classList.add('cd');
+      showAlert('快回淺水！　'+left);
+      if(left!==S.beep){S.beep=left;SFX.count();}
       if(S.deepTime>=DEEP_LIMIT)return end('deep');
-    } else if(depth()<DEEP_TRIG-3){S.deepTime=Math.max(0,S.deepTime-dt*2);
+    } else if(depth()<DEEP_TRIG-3){S.deepTime=Math.max(0,S.deepTime-dt*2);S.beep=99;
+      if(S.deepTime<=0)alertEl.classList.remove('cd');
       if(S.deepTime<=0&&S.noise<=0)hideAlert();
 }
   }
@@ -676,7 +710,7 @@ function update(dt){
       hit=px+pr>o.x&&px-pr<o.x+o.w&&py-pr<oh;
       if(!o.said&&o.x<W*.75){o.said=true;S.fillPass++;
         if(S.fillPass===1)tip('牠會轉彎啦，自己會<span class="em">繞過去</span>。',3,true);
-        else if(S.fillPass===5)tip('整條海岸都在填 ——<br><span class="em">牠還能繞去哪？</span>',3.2);}
+        else if(S.fillPass===5)tip('整條海岸都在填，<span class="em">牠能繞去哪？</span>',3);}
     } else if(o.t==='pile'){oy=0;oh=(S.land+PILE_EXT)*H;
       hit=px+pr>o.x&&px-pr<o.x+o.w&&py-pr<oh;}
     else{oy=o.y*H;oh=o.h*H;hit=px+pr>o.x&&px-pr<o.x+o.w&&py+pr>oy&&py-pr<oy+oh;}
@@ -778,6 +812,13 @@ function draw(){
     ctx.beginPath();ctx.arc(s.x,s.y,2.4,0,7);ctx.fill();});
   drawSonar(PX(),S.y*H);
   dolphin(PX(),S.y*H);
+  if(S.deepTime>0){
+    const k=Math.min(S.deepTime/DEEP_LIMIT,1);
+    const vg=ctx.createRadialGradient(W/2,H/2,H*.22,W/2,H/2,H*.72);
+    vg.addColorStop(0,'rgba(232,69,47,0)');
+    vg.addColorStop(1,'rgba(232,69,47,'+(.18+k*.42).toFixed(3)+')');
+    ctx.fillStyle=vg;ctx.fillRect(0,0,W,H);
+  }
   if(S.noise>0){
     ctx.fillStyle='rgba(255,255,255,'+(S.noise*.3).toFixed(3)+')';ctx.fillRect(0,0,W,H);
     ctx.strokeStyle='rgba(255,255,255,'+(S.noise*.55).toFixed(2)+')';ctx.lineWidth=1;
@@ -1150,7 +1191,35 @@ function showResult(){
   document.getElementById('over').scrollTop=0;
   pendingResult=null;
 }
+document.getElementById('cGo').addEventListener('click',function(e){e.stopPropagation();SFX.tap();showResult();});
 causeEl.addEventListener('click',showResult);
+
+(function(){
+  const cc=document.getElementById('causeCv'),g=cc.getContext('2d');
+  function frame(t){
+    if(causeEl.classList.contains('on')){
+      const dpr=Math.min(devicePixelRatio||1,2),w=cc.clientWidth,h=cc.clientHeight;
+      if(cc.width!==w*dpr||cc.height!==h*dpr){cc.width=w*dpr;cc.height=h*dpr;}
+      g.setTransform(dpr,0,0,dpr,0,0);g.clearRect(0,0,w,h);
+      const win=causeEl.classList.contains('win');
+      const bob=win?-Math.abs(Math.sin(t/420))*14:Math.sin(t/900)*5;
+      const tilt=win?-.22+Math.sin(t/420)*.12:.16;
+      g.save();g.translate(w*.5,h*.56+bob);g.rotate(tilt);g.scale(1.12,1.12);
+      dolphinShape(g,{body:'#F9AEC1',dark:'#E0708D',belly:'#FEDCE4',line:'#C2647D',
+                      fluke:'#E0708D',flukeFar:'#C9647E',fl:Math.sin(t/300)*(win?.3:.12)});
+      speckles(g,.4);
+      g.strokeStyle='#3F3128';g.lineWidth=1.3;g.lineCap='round';g.beginPath();
+      if(win){g.moveTo(32,6);g.quadraticCurveTo(35,8.4,38,5.6);}
+      else{g.moveTo(32,6.4);g.quadraticCurveTo(35,4.4,38,6);}
+      g.stroke();g.restore();
+      if(win){g.fillStyle='rgba(255,255,255,.7)';
+        for(let i=0;i<5;i++){const pr=((t/700)+i/5)%1;
+          g.beginPath();g.arc(w*.5+18-i*9,h*.56+bob-16-pr*40,2+pr*3,0,7);g.fill();}}
+    }
+    requestAnimationFrame(frame);
+  }
+  requestAnimationFrame(frame);
+})();
 
 function end(k){
   S.run=false;
@@ -1170,20 +1239,26 @@ function end(k){
     '<div class="gbar"><i style="width:'+
       (S.stage>=2?100:Math.round((S.fish-lo)/(hi-lo)*100))+'%"></i></div>'+
     '<div class="gnum">吃到 '+S.fish+' 隻小魚'+(S.stage>=2?'（已長大成人）':'　還差 '+(hi-S.fish)+' 隻就能再長大')+'</div>';
+  
+  const CH=[['死亡地點',ZONES[Math.max(S.zone,0)].n],
+            ['吃到小魚',S.fish+' 隻'],
+            ['黃錫鯛',S.gold+' 隻'],
+            ['被漁網纏住',S.netHit+' 次'],
+            ['誤食塑膠',S.plasticHit+' 次'],
+            ['撞到填海地',S.fillHit+' 次'],
+            ['被水下噪音',S.noiseSec.toFixed(0)+' 秒'],
+            ['總共游了',Math.round((Date.now()-T0)/1000)+' 秒']];
   document.getElementById('ovL').innerHTML=
-    '死亡地點 <i>'+ZONES[Math.max(S.zone,0)].n+'</i><br>吃到的小魚 <i>'+S.fish+' / 350 隻</i><br>'+
-    '吃到黃錫鯛 <i>'+S.gold+' 隻</i><br>成長階段 <i>'+STAGES[S.stage]+'</i><br>'+
-    '撞到填海造陸 <i>'+S.fillHit+' 次</i><br>被水下噪音嚇到 <i>'+S.noiseSec.toFixed(0)+' 秒</i><br>'+
-    '被漁網纏住 <i>'+S.netHit+' 次</i><br>誤食塑膠 <i>'+S.plasticHit+' 次</i>';
+    CH.map(function(c){return '<div><span>'+c[0]+'</span><b>'+c[1]+'</b></div>';}).join('');
   document.getElementById('cTitle').textContent=c.t;
   document.getElementById('cSub').innerHTML=c.s;
   track('end',{kind:k,fish:S.fish,gold:S.gold,stage:S.stage,
     zone:ZONES[Math.max(S.zone,0)].n,zoneIdx:Math.max(S.zone,0),
     netHit:S.netHit,plasticHit:S.plasticHit,fillHit:S.fillHit,
     noiseSec:Math.round(S.noiseSec),durSec:Math.round((Date.now()-T0)/1000)});
+  causeEl.classList.toggle('win',k==='home');
   causeEl.classList.add('on');
   pendingResult=k;
-  setTimeout(showResult,3600);
 }
 
 function stripHTML(h){
@@ -1203,61 +1278,52 @@ function wrapText(g,txt,cx,y,maxW,lh){
   return yy;
 }
 function makeShareImage(){
-  const w=1000,h=1820,c=document.createElement('canvas');c.width=w;c.height=h;
+  const w=1000,h=1250,c=document.createElement('canvas');c.width=w;c.height=h;
   const g=c.getContext('2d');
   const F=(sz,wt)=>(wt||800)+' '+sz+'px "PingFang TC","Noto Sans TC",sans-serif';
   const RR=(x,y,ww,hh,r)=>{g.beginPath();g.roundRect?g.roundRect(x,y,ww,hh,r):g.rect(x,y,ww,hh);};
+
   const bg=g.createLinearGradient(0,0,0,h);
-  bg.addColorStop(0,'#BFE7F2');bg.addColorStop(.45,'#6BC6DE');bg.addColorStop(1,'#2C82AC');
+  bg.addColorStop(0,'#BFE7F2');bg.addColorStop(.5,'#6BC6DE');bg.addColorStop(1,'#2C82AC');
   g.fillStyle=bg;g.fillRect(0,0,w,h);
-  g.fillStyle='rgba(255,255,255,.2)';
-  for(let i=0;i<44;i++){g.beginPath();g.arc(Math.random()*w,Math.random()*h,3+Math.random()*9,0,7);g.fill();}
+  g.fillStyle='rgba(255,255,255,.18)';
+  for(let i=0;i<36;i++){g.beginPath();g.arc(Math.random()*w,Math.random()*h,3+Math.random()*9,0,7);g.fill();}
 
-  g.fillStyle='#F7DFAF';g.fillRect(0,0,w,268);
-  g.fillStyle='#E7CD9A';g.fillRect(0,256,w,14);
+  g.fillStyle='#F7DFAF';g.fillRect(0,0,w,196);
+  g.fillStyle='#E7CD9A';g.fillRect(0,184,w,13);
   g.textAlign='center';
-  g.fillStyle='#5B4636';g.font=F(54,900);g.fillText('台灣白海豚大冒險',w/2,104);
-  g.fillStyle='#B0743A';g.font=F(30,900);
-  g.fillText('從苗栗龍鳳漁港到雲林台西',w/2,164);
-  g.fillStyle='#8B7A69';g.font=F(25,700);
-  wrapText(g,'這是一段陪台灣白海豚游過西海岸的小遊戲。\n穿越重重危險，一起守護牠們最重要的家！',w/2,206,860,36);
+  g.fillStyle='#5B4636';g.font=F(56,900);g.fillText('台灣白海豚大冒險',w/2,96);
+  g.fillStyle='#A9793C';g.font=F(27,800);g.fillText('從苗栗龍鳳漁港到雲林台西',w/2,146);
 
-  g.save();g.translate(w/2,420);g.scale(5.2,5.2);
+  g.save();g.translate(w/2,330);g.scale(5,5);
   dolphinShape(g,{body:'#F9AEC1',dark:'#E0708D',belly:'#FEDCE4',line:'#C2647D',
                   fluke:'#E0708D',flukeFar:'#C9647E',fl:0});
   speckles(g,.42);
   g.restore();
 
   const e2=E[S.lastKind]||E.hurt;
-  g.textAlign='center';
-  g.fillStyle='#FFF';g.font=F(52,900);g.fillText(e2.t,w/2,644);
-  g.fillStyle='rgba(255,255,255,.94)';g.font=F(26,700);
-  const reasonEnd=wrapText(g,stripHTML(e2.s),w/2,696,820,40);
+  g.fillStyle='#FFF';g.font=F(48,900);g.fillText(e2.t,w/2,500);
 
-  const bx=90,by=reasonEnd+34,bw=w-180,bh=436;
-  g.fillStyle='rgba(255,249,240,.95)';RR(bx,by,bw,bh,40);g.fill();
-  const rows=[['死亡地點',ZONES[Math.max(S.zone,0)].n],
-              ['吃到的小魚',S.fish+' / 350 隻'],
-              ['成長階段',STAGES[S.stage]],
-              ['吃到黃錫鯛',S.gold+' 隻'],
-              ['撞到填海造陸',S.fillHit+' 次'],
-              ['被水下噪音嚇到',S.noiseSec.toFixed(0)+' 秒'],
-              ['誤食塑膠',S.plasticHit+' 次']];
-  rows.forEach((r,i)=>{
-    const y=by+68+i*66;
-    g.textAlign='left';g.fillStyle='#8B7A69';g.font=F(30,700);g.fillText(r[0],bx+44,y);
-    g.textAlign='right';g.fillStyle='#5B4636';g.font=F(34,900);g.fillText(r[1],bx+bw-44,y);
+  const cards=[['成長階段',STAGES[S.stage]],
+               ['吃到小魚',S.fish+' 隻'],
+               ['游到',ZONES[Math.max(S.zone,0)].n.split(' · ')[0]]];
+  const cw=280,gap=25,x0=(w-(cw*3+gap*2))/2;
+  cards.forEach(function(cd,i){
+    const x=x0+i*(cw+gap);
+    g.fillStyle='rgba(255,249,240,.95)';RR(x,556,cw,168,32);g.fill();
+    g.fillStyle='#9C8873';g.font=F(24,800);g.fillText(cd[0],x+cw/2,616);
+    g.fillStyle='#4A382B';g.font=F(cd[1].length>6?30:38,900);g.fillText(cd[1],x+cw/2,672);
   });
 
-  g.textAlign='center';
-  g.fillStyle='#FFF';g.font=F(42,900);
-  g.fillText('台灣白海豚，全球剩下不到 50 隻！',w/2,by+bh+76);
+  g.fillStyle='#FFF';g.font=F(44,900);
+  g.fillText('台灣白海豚，全球剩下不到 50 隻！',w/2,830);
   g.fillStyle='rgba(255,255,255,.92)';g.font=F(27,700);
-  g.fillText('牠們游不遠也游不深，只有西海岸這片淺海可以去',w/2,by+bh+126);
-  g.fillText('我們與白海豚享用同一片海、空氣、水和漁獲',w/2,by+bh+168);
-  g.fillStyle='#FF8A6B';RR(w/2-300,by+bh+214,600,78,39);g.fill();
-  g.fillStyle='#fff';g.font=F(34,900);
-  g.fillText('立即連署　搶救極危白海豚',w/2,by+bh+264);
+  wrapText(g,'牠們游不遠也游不深，只有西海岸這片淺海可以去。\n我們與白海豚享用同一片海、空氣、水和漁獲。',w/2,890,860,42);
+
+  g.fillStyle='#FF8A6B';RR(w/2-300,1010,600,84,42);g.fill();
+  g.fillStyle='#fff';g.font=F(36,900);g.fillText('立即連署　搶救極危白海豚',w/2,1063);
+  g.fillStyle='rgba(255,255,255,.9)';g.font=F(24,700);
+  g.fillText('一起守護牠們最重要的家',w/2,1146);
   return c;
 }
 document.getElementById('shareImg').onclick=function(){
@@ -1281,7 +1347,7 @@ document.getElementById('shareLink').onclick=function(){
   const url='https://lihi3.me/Bsby0/twbaihaitun';
   if(navigator.share){navigator.share({title:'台灣白海豚大冒險',text:txt,url:url}).catch(()=>{});}
   else if(navigator.clipboard){navigator.clipboard.writeText(txt+' '+url).then(()=>{
-    this.textContent='✅ 已複製，貼給朋友吧！';setTimeout(()=>{this.textContent='🎯 找朋友來挑戰';},2200);});}
+    this.textContent='✅ 已複製，貼給朋友吧！';setTimeout(()=>{this.textContent='邀請朋友守護白海豚';},2200);});}
 };
 
 function start(){
@@ -1348,6 +1414,11 @@ const SFX={
   win  (){[0,.1,.2,.3,.45].forEach((d,i)=>tone([523,659,784,1046,1319][i],.3,'triangle',.22,null,d));}
 };
 const bgmEl=document.getElementById('bgm');
+bgmEl.volume=.32;
+
+bgmEl.addEventListener('timeupdate',function(){
+  if(bgmEl.duration&&bgmEl.currentTime>bgmEl.duration-.18)bgmEl.currentTime=.05;
+});
 function bgmPlay(){ if(AUDIO.bgm&&bgmEl.getAttribute('src'))bgmEl.play().catch(()=>{}); }
 function bgmStop(){ bgmEl.pause(); }
 document.getElementById('btnSfx').onclick=function(){
