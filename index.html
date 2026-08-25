@@ -87,6 +87,35 @@ box-shadow:0 4px 14px rgba(0,0,0,.1);opacity:0;transition:opacity .18s,transform
 background:rgba(31,110,147,.35);backdrop-filter:blur(2px);font-size:96px;font-weight:900;color:#fff;
 text-shadow:0 6px 24px rgba(0,0,0,.35);pointer-events:none}
 #count.on{display:flex}
+#evBar{position:absolute;left:50%;top:calc(env(safe-area-inset-top) + 150px);transform:translateX(-50%) scale(.9);
+  background:rgba(20,80,110,.72);backdrop-filter:blur(3px);color:#fff;border-radius:20px;padding:11px 20px;
+  text-align:center;opacity:0;transition:opacity .3s,transform .3s;pointer-events:none;z-index:22;max-width:86%}
+#evBar.show{opacity:1;transform:translateX(-50%) scale(1)}
+#evBar b{display:block;font-size:15px;font-weight:900}
+
+#dex{position:absolute;inset:0;display:none;z-index:40;background:rgba(10,44,67,.88);
+  backdrop-filter:blur(4px);padding:calc(env(safe-area-inset-top) + 16px) 14px 16px}
+#dex.on{display:block}
+.dxIn{background:#F4FBFD;border-radius:24px;height:100%;display:flex;flex-direction:column;overflow:hidden}
+.dxHd{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:15px 16px;
+  background:linear-gradient(180deg,#9FE0EE,#6BC6DE)}
+.dxHd b{display:block;font-size:17px;font-weight:900;color:#0E3A57}
+.dxHd small{display:block;font-size:12px;font-weight:800;color:#155C7C;margin-top:2px}
+.dxHd button{border:0;border-radius:16px;padding:9px 15px;font-family:var(--cjk);font-size:13px;
+  font-weight:900;background:#fff;color:#155C7C;cursor:pointer}
+.dxGrid{flex:1;overflow-y:auto;display:grid;grid-template-columns:repeat(auto-fill,minmax(88px,1fr));
+  gap:8px;padding:14px}
+.dxCell{border-radius:14px;padding:9px 4px;text-align:center;background:#E5EDF1;color:#9DAFB9}
+.dxCell b{display:block;font-size:11px;font-weight:900;letter-spacing:.02em}
+.dxCell span{display:block;font-size:13px;font-weight:900;margin-top:2px}
+.dxCell.got{background:#FFE7EE;color:#C9426B}
+.dxCell.mine{background:linear-gradient(160deg,#FFD86B,#FFB43F);color:#6B3E06;box-shadow:0 3px 0 #D98F1E}
+.dxNote{font-size:11px;line-height:1.7;color:#7C8FA0;padding:0 16px 14px}
+#dexBtn{position:absolute;left:12px;top:calc(env(safe-area-inset-top) + 10px);z-index:30;
+  border:0;border-radius:20px;padding:9px 14px;font-family:var(--cjk);font-size:13px;font-weight:900;
+  background:rgba(255,255,255,.62);backdrop-filter:blur(3px);color:#155C7C;cursor:pointer;
+  box-shadow:0 3px 8px rgba(0,0,0,.14)}
+#evBar small{display:block;font-size:11.5px;font-weight:700;opacity:.85;margin-top:3px}
 #count b{animation:pop .9s ease-out}
 @keyframes pop{0%{transform:scale(2.2);opacity:0}30%{transform:scale(1);opacity:1}100%{transform:scale(.85);opacity:.5}}
 
@@ -215,6 +244,13 @@ font-family:var(--cjk);font-size:14.5px;font-weight:800;cursor:pointer;line-heig
 .screen.ocean .card::before{content:"";position:absolute;left:0;right:0;top:0;height:16px;
   border-radius:28px 28px 0 0;
   background:repeating-linear-gradient(90deg,#6BC6DE 0 18px,#9FE0EE 18px 36px);opacity:.55}
+.rescue{margin-top:14px;background:linear-gradient(160deg,#FFF3D6,#FFE3AE);border-radius:22px;padding:16px;text-align:center}
+.rescue .rsT{font-size:15.5px;font-weight:900;color:#9A6B12}
+.rescue .rsL{display:flex;flex-wrap:wrap;gap:6px;justify-content:center;margin-top:10px}
+.rescue .rsL i{font-style:normal;background:#fff;border-radius:12px;padding:5px 10px;
+  font-size:12.5px;font-weight:900;color:#8A5E0E}
+.rescue .rsB{margin-top:12px;border:0;border-radius:18px;padding:11px 20px;cursor:pointer;
+  font-family:var(--cjk);font-size:13.5px;font-weight:900;background:#fff;color:#9A6B12;box-shadow:0 3px 0 #E0BF85}
 .sect{display:flex;align-items:center;gap:10px;margin:22px 0 4px;color:#1F6E93}
 .sect::before,.sect::after{content:"";flex:1;height:2px;border-radius:2px;
   background:linear-gradient(90deg,rgba(31,110,147,0),rgba(31,110,147,.35),rgba(31,110,147,0))}
@@ -299,12 +335,27 @@ font-family:var(--cjk);font-size:14.5px;font-weight:800;cursor:pointer;line-heig
   </div>
 </div>
 <div id="msg"></div>
+<button id="dexBtn">圖鑑</button>
 <div id="sndBar">
   <button id="btnSfx" class="sndBtn on" aria-label="音效開關">🔊</button>
   <button id="btnBgm" class="sndBtn on" aria-label="音樂開關">🎵</button>
 </div>
 <audio id="bgm" loop preload="auto" src="happy_adventure.mp3"></audio>
 <div id="count"><b>3</b></div>
+<div id="evBar"></div>
+<div id="dex">
+  <div class="dxIn">
+    <div class="dxHd">
+      <div>
+        <b>白海豚救援圖鑑</b>
+        <small id="dxSum">載入中…</small>
+      </div>
+      <button id="dxClose">關閉</button>
+    </div>
+    <div class="dxGrid" id="dxGrid"></div>
+    <p class="dxNote">全台玩家一起收集。編號沿用研究者以背鰭辨識個體的方式，名字為遊戲暱稱。</p>
+  </div>
+</div>
 <div id="cause">
   <i class="cbb" style="left:12%;animation-delay:0s"></i>
   <i class="cbb" style="left:34%;animation-delay:1.6s;width:9px;height:9px"></i>
@@ -353,6 +404,7 @@ font-family:var(--cjk);font-size:14.5px;font-weight:800;cursor:pointer;line-heig
     <div class="sub" id="ovS"></div>
     <div class="scrollHint">往下滑，查看你的成績 ⌄</div>
 
+    <div class="rescue" id="ovRescue" style="display:none"></div>
     <div class="sect"><span>這一趟的旅程</span></div>
     <div class="chips3" id="ovL"></div>
 
@@ -426,6 +478,36 @@ font-family:var(--cjk);font-size:14.5px;font-weight:800;cursor:pointer;line-heig
 
 const ANALYTICS_URL='';
 
+const ROSTER=(function(){
+  const names=['小粉','阿蚵','波波','浪花','風車','濁水','芳苑','媽祖','小鰭','圓圓',
+   '台西','麥寮','大甲','後龍','龍鳳','高美','伸港','線西','鹿港','王功',
+   '海口','三條崙','蚵寮','竹南','通霄','白沙','西濱','潮間','沙洲','河口',
+   '小灣','阿浪','珍珠','泡泡','銀鱗','月光','汐汐','晨曦','暮色','星砂',
+   '潮生','岸邊','淺灘','洄游','逐浪','領航','守望','相伴','同行','歸來'];
+  return names.map(function(n,i){
+    return {id:'TW-'+String(i+1).padStart(2,'0'),name:n};
+  });
+})();
+const DEX={counts:{},mine:{}};
+
+const PILE_SITES=[
+ {zone:0,name:'苗栗竹南 · 海洋風電 Formosa 1',note:'龍鳳漁港外海 2～6 公里'},
+ {zone:1,name:'苗栗外海 · 海能風場 Formosa 2',note:'竹南、後龍外海'},
+ {zone:3,name:'台中港 · 擴建工程',note:'港區填海與基樁施工'},
+ {zone:4,name:'彰化伸港外海 · 海鼎風場海纜',note:'海纜穿越白海豚重要棲息環境'},
+ {zone:5,name:'彰化芳苑外海 · 台電一期風場',note:'蚵農反映打樁影響收成'},
+ {zone:6,name:'彰化外海 · 彰芳／西島風場',note:'航道以東、緊鄰白海豚棲地'},
+ {zone:7,name:'雲林外海 · 允能風場',note:'漁民反映傳統漁場受擾'}
+];
+const EVENTS=[
+ {k:'pile', t:'今天有風場在打樁',      d:'低頻噪音可傳超過 20 公里'},
+ {k:'flood',t:'大雨過後，溪水暴漲',    d:'河口的小魚特別多'},
+ {k:'rest', t:'休漁期，漁船少了',      d:'刺網比平常少一半'},
+ {k:'trash',t:'颱風過後，垃圾被沖進海裡',d:'塑膠垃圾變多了'},
+ {k:'calm', t:'風平浪靜的好日子',      d:'海況穩定，體力多一格'},
+ {k:'pod',  t:'遇上一群同伴',          d:'比較容易遇到需要幫忙的夥伴'}
+];
+
 const SID=(function(){
   return Date.now().toString(36)+Math.random().toString(36).slice(2,9);
 })();
@@ -445,7 +527,7 @@ const BASE=(function(){
   const city=tz.includes('/')?tz.split('/').pop().replace(/_/g,' '):'';
   return {dev:isTablet?'tablet':isMobile?'mobile':'desktop',os:os,browser:br,
           tz:tz,city:city,tzOffset:-new Date().getTimezoneOffset(),
-          lang:navigator.language||'',sw:screen.width+'x'+screen.height,
+          lang:navigator.language||'',
           ref:document.referrer||'',path:location.pathname};
 })();
 
@@ -517,7 +599,7 @@ function reset(){Object.assign(S,{
   run:false,dist:0,spd:92,y:.45,life:MAXHP,inv:0,air:1,
   fish:0,gold:0,stage:0,deepTime:0,landT:0,fillPass:0,fillHit:0,noiseSec:0,plasticHit:0,netHit:0,propHit:0,
   land:.14,landTgt:.14,deep:.88,murk:0,murkTgt:0,
-  nAlert:0,airWarnCd:0,cheer:{},beep:99,obs:[],hazT:2,fishT:1.2,fillT:8,pileT:11,goldT:14,pops:[],bub:[],spray:[],sonar:[],sonarT:0,
+  nAlert:0,airWarnCd:0,cheer:{},beep:99,rescued:[],friendT:24,ev:null,obs:[],hazT:2,fishT:1.2,fillT:8,pileT:11,goldT:14,pops:[],bub:[],spray:[],sonar:[],sonarT:0,
   zone:-1,phase:'tut',tut:0,tutT:0,moved:false,shake:0,
   surf:null,noise:0,tutTotal:0,jitter:0,breathed:false
 });for(let i=0;i<22;i++)S.bub.push({x:Math.random()*W,y:Math.random()*H,r:1+Math.random()*3,s:7+Math.random()*12});}
@@ -580,6 +662,17 @@ function spawnHaz(){
   const p=(z==='ind')?(r<.55?'net':'plastic'):(r<.48?'net':'plastic');
   if(p==='net')S.obs.push({t:'net',x:W+50,y:clamp(laneY(),S.land+.06,S.deep-.26),w:22,h:.17,warn:1,ph:Math.random()*6});
   else S.obs.push({t:'plastic',x:W+40,y:laneY(),w:34,h:.062,vx:-6,warn:1,ph:Math.random()*6,kind:Math.floor(Math.random()*3)});
+}
+
+function pickFriend(){
+  const left=ROSTER.filter(function(r){return !DEX.counts[r.id];});
+  const pool=left.length?left:ROSTER;
+  return pool[Math.floor(Math.random()*pool.length)];
+}
+function spawnFriend(){
+  const who=pickFriend();
+  S.obs.push({t:'friend',x:W+60,y:clamp(laneY(),S.land+.10,S.deep-.14),
+    w:46,h:.10,vx:-4,warn:1,ph:Math.random()*6,who:who});
 }
 function spawnPile(){S.obs.push({t:'pile',x:W+120,w:104,rings:[],rt:0});warn('前方在打樁，先換好氣！',2.4);}
 function spawnFill(big){
@@ -647,18 +740,25 @@ function update(dt){
     if(S.tutTotal>60){S.phase='play';S.hazT=1.6;S.fillT=8;S.pileT=9;}
   } else {
     const Z=ZONES[S.zone],z=Z.k;
+    const EV=S.ev||{};
     S.fishT-=dt;
-    if(S.fishT<=0){S.fishT=(z==='river'?2:z==='ind'?4:3)+Math.random();
+    if(S.fishT<=0){S.fishT=((z==='river'?2:z==='ind'?4:3)+Math.random())*(EV.k==='flood'&&z==='river'?.5:1);
       spawnSchool(z==='river'?9+Math.floor(Math.random()*5):5+Math.floor(Math.random()*4),z);}
     S.hazT-=dt;
-    if(S.hazT<=0){S.hazT=(z==='ind'?1.2:1.7)+Math.random()*.9;
+    if(S.hazT<=0){S.hazT=((z==='ind'?1.2:1.7)+Math.random()*.9)*(EV.k==='rest'?1.8:EV.k==='trash'?.75:1);
       spawnHaz();if(z==='ind'&&Math.random()<.4)spawnHaz();}
     S.fillT-=dt;
     if(S.fillT<=0){S.fillT=Z.big?4.5+Math.random()*2:(z==='ind'?7:11)+Math.random()*4;spawnFill(Z.big);}
     S.pileT-=dt;
-    if(S.pileT<=0&&!S.obs.some(o=>o.t==='pile')){S.pileT=(Z.big?9:z==='ind'?11:24)+Math.random()*5;spawnPile();}
+    const atSite=EV.k==='pile'&&EV.site&&EV.site.zone===S.zone;
+    if(S.pileT<=0&&!S.obs.some(o=>o.t==='pile')){
+      S.pileT=(atSite?6:Z.big?9:z==='ind'?11:24)+Math.random()*5;spawnPile();}
     S.goldT-=dt;
     if(S.goldT<=0){S.goldT=(S.life<MAXHP?12:22)+Math.random()*8;spawnGold();}
+    
+    S.friendT-=dt;
+    if(S.friendT<=0&&!S.obs.some(o=>o.t==='friend')){
+      S.friendT=(EV.k==='pod'?18:32)+Math.random()*14;spawnFriend();}
   }
   if(!S.breathed&&S.air<.6&&!S.surf)hintEl.classList.add('on');
 
@@ -740,7 +840,14 @@ function update(dt){
     else{oy=o.y*H;oh=o.h*H;hit=px+pr>o.x&&px-pr<o.x+o.w&&py+pr>oy&&py-pr<oy+oh;}
 
     if(hit){
-      if(o.t==='fish'||o.t==='gold'){
+      if(o.t==='friend'){
+        S.obs.splice(i,1);SFX.rescue();
+        S.rescued.push(o.who.id);
+        DEX.counts[o.who.id]=(DEX.counts[o.who.id]||0)+1;DEX.mine[o.who.id]=1;
+        for(let k=0;k<3;k++)S.pops.push({x:o.x+o.w/2,y:oy+oh/2,r:6+k*10,a:1});
+        msg('救到了！<span class="em">'+o.who.id+' '+o.who.name+'</span>',2.6,3);
+        track('rescue',{what:o.who.id});
+      } else if(o.t==='fish'||o.t==='gold'){
         if(S.noise>0){tip('聲波被蓋住了，吃不到魚',3.5);}
         else if(o.t==='gold'){
           SFX.gold();S.obs.splice(i,1);S.gold++;S.pops.push({x:o.x,y:oy,r:5,a:1,g:1});
@@ -944,6 +1051,27 @@ function drawObs(o){
       ctx.fillStyle='rgba(255,255,255,.55)';ctx.beginPath();ctx.arc(bx+11,S.land*H-bh-26,6,0,7);ctx.fill();}
     ctx.fillStyle='rgba(255,138,107,.95)';ctx.font='800 11px '+FF();ctx.textAlign='center';
     ctx.fillText(o.big?'台中港 · 填海造陸':'填海造陸',o.x+o.w/2,bot+16);ctx.textAlign='left';return;
+  }
+  if(o.t==='friend'){
+    const y=o.y*H,h=o.h*H,cy=y+h/2,sway=Math.sin(T*1.6+o.ph)*3;
+    
+    const pr2=(T*.9+o.ph)%1;
+    ctx.strokeStyle='rgba(255,255,255,'+((1-pr2)*.55).toFixed(2)+')';ctx.lineWidth=2.5;
+    ctx.beginPath();ctx.arc(o.x+o.w/2,cy,18+pr2*26,0,7);ctx.stroke();
+    
+    ctx.save();ctx.translate(o.x+o.w/2,cy+sway);ctx.rotate(.22);ctx.scale(.5,.5);
+    dolphinShape(ctx,{body:'#DDBCC6',dark:'#C79CA9',belly:'#F2DEE4',line:'#A67C8A',
+                      fluke:'#C79CA9',flukeFar:'#B28894',fl:Math.sin(T*4)*.3});
+    ctx.restore();
+    
+    ctx.strokeStyle='rgba(255,255,255,.8)';ctx.lineWidth=1.2;
+    for(let k=-2;k<=2;k++){
+      ctx.beginPath();ctx.moveTo(o.x+4,cy-14+k*7+sway);ctx.lineTo(o.x+o.w-4,cy-10+k*7+sway);ctx.stroke();
+      ctx.beginPath();ctx.moveTo(o.x+4+k*9,cy-16+sway);ctx.lineTo(o.x+14+k*9,cy+16+sway);ctx.stroke();
+    }
+    ctx.fillStyle='#FFF';ctx.font='800 11px '+FF();ctx.textAlign='center';
+    ctx.fillText('救我！',o.x+o.w/2,cy-26+sway);ctx.textAlign='left';
+    return;
   }
   if(o.t==='pile'){
     const cx=o.x+o.w/2,bot=(S.land+PILE_EXT)*H,deck=S.land*H;
@@ -1268,6 +1396,16 @@ function end(k){
     zone:ZONES[Math.max(S.zone,0)].n,zoneIdx:Math.max(S.zone,0),
     netHit:S.netHit,plasticHit:S.plasticHit,fillHit:S.fillHit,
     noiseSec:Math.round(S.noiseSec),durSec:Math.round((Date.now()-T0)/1000)});
+  loadDex();
+  const rs=document.getElementById('ovRescue');
+  if(S.rescued.length){
+    rs.style.display='';
+    rs.innerHTML='<div class="rsT">這一趟你救了 '+S.rescued.length+' 隻同伴</div>'+
+      '<div class="rsL">'+S.rescued.map(function(id){
+        const r=ROSTER.find(function(x){return x.id===id;});
+        return '<i>'+id+' '+(r?r.name:'')+'</i>';
+      }).join('')+'</div><button class="rsB" onclick="document.getElementById(\'dex\').classList.add(\'on\')">打開救援圖鑑</button>';
+  } else rs.style.display='none';
   causeEl.classList.toggle('win',k==='home');
   causeEl.classList.add('on');
   pendingResult=k;
@@ -1355,11 +1493,31 @@ document.getElementById('shareImg').onclick=function(){
 };
 document.getElementById('shareLink').onclick=function(){
   SFX.tap();track('share',{what:'link'});
-  const txt='我在《台灣白海豚大冒險》吃到 '+S.fish+' 隻小魚，游到「'+ZONES[Math.max(S.zone,0)].n+'」。台灣白海豚只剩不到 50 隻，你能游多遠？';
+  const self=this;
   const url='https://lihi3.me/Bsby0/twbaihaitun';
-  if(navigator.share){navigator.share({title:'台灣白海豚大冒險',text:txt,url:url}).catch(()=>{});}
-  else if(navigator.clipboard){navigator.clipboard.writeText(txt+' '+url).then(()=>{
-    this.textContent='✅ 已複製，貼給朋友吧！';setTimeout(()=>{this.textContent='邀請朋友守護白海豚';},2200);});}
+  const txt='我在《台灣白海豚大冒險》'+
+    (S.rescued.length?('救了 '+S.rescued.length+' 隻同伴，'):'')+
+    '吃到 '+S.fish+' 隻小魚，游到「'+ZONES[Math.max(S.zone,0)].n+'」。'+
+    '台灣白海豚全球剩不到 50 隻，你能游多遠？';
+  const full=txt+' '+url;
+  function done(msg){
+    const old=self.textContent;self.textContent=msg;
+    setTimeout(function(){self.textContent=old;},2400);
+  }
+  
+  const canShare=navigator.share&&/Mobi|Android|iPhone|iPad/i.test(navigator.userAgent);
+  if(canShare){navigator.share({title:'台灣白海豚大冒險',text:txt,url:url}).catch(function(){});return;}
+  if(navigator.clipboard&&navigator.clipboard.writeText){
+    navigator.clipboard.writeText(full).then(function(){done('已複製，貼給朋友吧！');},fallback);
+  } else fallback();
+  function fallback(){
+    const ta=document.createElement('textarea');
+    ta.value=full;ta.style.position='fixed';ta.style.opacity='0';
+    document.body.appendChild(ta);ta.select();
+    try{document.execCommand('copy');done('已複製，貼給朋友吧！');}
+    catch(e){done('請手動複製連結');}
+    ta.remove();
+  }
 };
 
 function start(){
@@ -1370,7 +1528,13 @@ function start(){
   document.getElementById('intro').classList.add('hidden');
   document.getElementById('over').classList.add('hidden');
   document.getElementById('shareCanvasWrap').classList.remove('on');
-  track('start');
+  S.ev=pickEvent();
+  if(S.ev.k==='calm')S.life=Math.min(MAXHP+1,6);
+  const eb=document.getElementById('evBar');
+  eb.innerHTML='<b>今日海況 · '+S.ev.t+'</b><small>'+
+    (S.ev.k==='pile'?S.ev.site.name+'（'+S.ev.site.note+'）':S.ev.d)+'</small>';
+  eb.classList.add('show');setTimeout(function(){eb.classList.remove('show');},5200);
+  track('start',{what:S.ev.k});
   countdown(()=>{S.run=true;});
 }
 
@@ -1408,6 +1572,8 @@ const SFX={
   
   eat  (){tone(1046,.09,'triangle',.16);tone(1568,.14,'sine',.10,null,.05);
           noiseBurst(.05,.05,3200,4,.02);},
+  rescue(){[0,.09,.18,.30].forEach((d,i)=>tone([523,784,1046,1568][i],.26,'sine',.22,null,d));
+           noiseBurst(.12,.07,2400,3,.3);},
   gold (){[0,.07,.14].forEach((d,i)=>tone([740,930,1240][i],.14,'triangle',.22,null,d));},
   
   breath(){tone(120,.12,'sine',.24,190);
@@ -1492,6 +1658,38 @@ document.querySelectorAll('.acts .lnk').forEach(function(a,i){
     track('outbound',{what:['petition','wildatheart','matzufish'][i]||'other',href:a.href});
   });
 });
+
+function renderDex(){
+  const got=ROSTER.filter(function(r){return DEX.counts[r.id];}).length;
+  document.getElementById('dxSum').textContent='全台玩家已救到 '+got+' / '+ROSTER.length+' 隻'+
+    (S.rescued&&S.rescued.length?'　（你這局救了 '+S.rescued.length+' 隻）':'');
+  document.getElementById('dxGrid').innerHTML=ROSTER.map(function(r){
+    const got=!!DEX.counts[r.id],mine=!!DEX.mine[r.id];
+    return '<div class="dxCell'+(got?' got':'')+(mine?' mine':'')+'">'+
+      '<b>'+r.id+'</b><span>'+(got?r.name:'？')+'</span></div>';
+  }).join('');
+}
+
+function loadDex(){
+  renderDex();
+  if(!ANALYTICS_URL)return;
+  const cb='__dex'+Math.random().toString(36).slice(2,8);
+  const sc=document.createElement('script');
+  window[cb]=function(d){
+    if(d&&d.counts){DEX.counts=d.counts;renderDex();}
+    delete window[cb];sc.remove();
+  };
+  sc.src=ANALYTICS_URL+'?action=dex&callback='+cb;
+  sc.onerror=function(){delete window[cb];sc.remove();};
+  document.head.appendChild(sc);
+}
+document.getElementById('dexBtn').onclick=function(){
+  SFX.tap();renderDex();document.getElementById('dex').classList.add('on');track('dex');
+};
+document.getElementById('dxClose').onclick=function(){
+  SFX.tap();document.getElementById('dex').classList.remove('on');
+};
+loadDex();
 
 watchScroll();watchCards();
 updHUD();
