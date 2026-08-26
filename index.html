@@ -142,7 +142,15 @@ text-shadow:0 6px 24px rgba(0,0,0,.35);pointer-events:none}
 .bfIn{width:100%;max-width:396px;border-radius:28px;overflow:hidden;
   background:#F7FCFD;box-shadow:0 12px 38px rgba(0,0,0,.4);
   animation:cin .45s cubic-bezier(.2,1.3,.4,1)}
-.bfTop{background:linear-gradient(135deg,#9FE0EE,#6BC6DE);padding:18px 18px 16px;text-align:center}
+.bfTop{position:relative;background:linear-gradient(135deg,#9FE0EE,#6BC6DE);padding:18px 18px 16px;text-align:center}
+.bfSkip{position:absolute;right:12px;top:12px;border:0;cursor:pointer;border-radius:14px;
+  padding:7px 13px;font-family:var(--cjk);font-size:12px;font-weight:900;
+  background:rgba(255,255,255,.8);color:#14688C}
+.bfStep{margin-top:7px;font-size:11.5px;font-weight:900;color:#0E3A57;opacity:.65;letter-spacing:.1em}
+
+.bfR{transition:opacity .3s,transform .3s,filter .3s}
+.bfR.dim{opacity:.28;filter:saturate(.35);transform:scale(.985)}
+.bfR.cur{transform:scale(1.015)}
 .bfTag{display:inline-block;background:rgba(255,255,255,.85);color:#14688C;border-radius:14px;
   padding:4px 13px;font-size:11.5px;font-weight:900;letter-spacing:.18em}
 .bfT{font-size:20px;font-weight:900;color:#0E3A57;margin-top:8px;letter-spacing:.02em}
@@ -535,6 +543,21 @@ font-family:var(--cjk);font-size:14.5px;font-weight:800;cursor:pointer;line-heig
 .orgs a:active{transform:translateY(2px);background:#E1F0F7}
 .orgsNote{font-size:11.5px;font-weight:700;color:#7E9AA8;margin-top:9px;line-height:1.7}
 
+.kb.flip{cursor:pointer;transition:transform .17s ease-in}
+.kb.flip.turning{transform:scaleX(.02)}
+.kb.flip .fBack{display:none}
+.kb.flip.open .fFront{display:none}
+.kb.flip.open .fBack{display:block}
+.fFront{display:flex;flex-direction:column;align-items:center;text-align:center;gap:12px;padding:14px 4px 8px}
+.fFront b{font-size:17px;font-weight:900;line-height:1.6}
+.fFront i{font-style:normal;font-size:11.5px;font-weight:800;opacity:.6;
+  border:1.5px dashed currentColor;border-radius:14px;padding:5px 13px;margin-top:2px}
+
+.moreBtn{margin-top:12px;width:100%;border:2px dashed #E8B5A8;background:#FFF7F5;cursor:pointer;
+  border-radius:20px;padding:16px 14px;font-family:var(--cjk);font-size:14.5px;
+  font-weight:900;color:#A8402C;line-height:1.6}
+.moreBtn small{display:block;font-size:12px;font-weight:700;color:#B58A80;margin-top:5px}
+.moreBtn:active{transform:translateY(2px)}
 .real{margin-top:12px;background:#FFF7F5;border-radius:24px;padding:18px 16px;border:2px solid #F3DAD3}
 .rhT{font-size:17px;font-weight:900;color:#A8402C;letter-spacing:.02em}
 .rhS{font-size:13px;font-weight:700;color:#8A6A62;line-height:1.75;margin-top:7px}
@@ -599,6 +622,8 @@ font-family:var(--cjk);font-size:14.5px;font-weight:800;cursor:pointer;line-heig
     <div class="bfTop">
       <span class="bfTag">出發前</span>
       <div class="bfT">帶白海豚回家的五件事</div>
+      <button class="bfSkip" id="briefSkip">略過</button>
+      <div class="bfStep" id="bfStep"></div>
     </div>
     <div class="bfList">
       <div class="bfR bad">
@@ -627,7 +652,7 @@ font-family:var(--cjk);font-size:14.5px;font-weight:800;cursor:pointer;line-heig
         <small>路上看到被漁網纏住的同伴，趕快游過去救牠，解鎖「救援圖鑑」！</small></div>
       </div>
     </div>
-    <button class="bfB" id="briefGo">開始教學</button>
+    <button class="bfB" id="briefGo">下一個</button>
   </div>
 </div>
 
@@ -770,42 +795,57 @@ font-family:var(--cjk);font-size:14.5px;font-weight:800;cursor:pointer;line-heig
 
     <div class="sect"><span>認識台灣白海豚</span></div>
 
-    <div class="kb kb1">
+    <div class="kb kb1 flip" data-q="kb1">
+      <div class="fFront"><b>白海豚媽媽，<br>生小孩有多慢？</b><i>點一下看答案</i></div>
+      <div class="fBack">
       <div class="h"><span class="ico">🍼</span>辛苦長大的白海豚寶寶</div>
       <ul>
         <li>媽媽要 <b>10〜13 歲</b>才能生寶寶，懷孕要等長長的一年，<b>一次只生一隻</b>。</li>
         <li>寶寶要黏著媽媽<b>至少 2 年</b>，一邊喝奶，一邊學找魚吃、認路和躲危險。</li>
       </ul>
+      </div>
     </div>
 
-    <div class="kb kb2">
+    <div class="kb kb2 flip" data-q="kb2">
+      <div class="fFront"><b>全台灣白海豚，<br>比你的 LINE 好友還少？</b><i>點一下看答案</i></div>
+      <div class="fBack">
       <div class="h"><span class="ico">😢</span>全球不到 50 隻的危機</div>
       <ul>
         <li>台灣白海豚非常稀有，<b>全球只剩不到 50 隻</b>。</li>
         <li>現在死掉的海豚比新生的寶寶還要多，牠們<b>正快要永遠消失</b>。</li>
       </ul>
+      </div>
     </div>
 
-    <div class="kb kb3">
+    <div class="kb kb3 flip" data-q="kb3">
+      <div class="fFront"><b>牠們為什麼<br>不搬去台東住？</b><i>點一下看答案</i></div>
+      <div class="fBack">
       <div class="h"><span class="ico">🌊</span>和台灣共用一片海</div>
       <ul>
         <li>離岸 <b>5 公里（3 海哩）</b>內、水深 <b>30 米以內</b>的西岸淺海和河口，就是牠們<b>唯一的家</b>，沒有別的地方可以去。</li>
         <li>我們和白海豚吃一樣的魚、呼吸一樣的空氣、用一樣的水。<b>大海健康，我們才會健康！</b></li>
       </ul>
+      </div>
     </div>
 
-    <div class="kb kb4">
+    <div class="kb kb4 flip" data-q="kb4">
+      <div class="fFront"><b>工程廢土倒進大海<br>有關係嗎？</b><i>點一下看答案</i></div>
+      <div class="fBack">
       <div class="h"><span class="ico">🚧</span>台中港填海造陸的傷害</div>
       <ul>
         <li>填海工程把牠們<b>找食物、養寶寶</b>的海直接變成陸地。</li>
         <li><b>有毒的廢土</b>跑進海洋，害小魚變少，毒素最後也會影響人類。</li>
         <li><b>沒有環境評估</b>的工程，會造成<b>無法復原的傷害！</b></li>
       </ul>
+      </div>
     </div>
 
     <div class="sect"><span>現實正在發生的搶救</span></div>
 
-    <div class="real">
+    <button class="moreBtn" id="realMore">了解更多　台中港正在用廢土填海造陸 ›
+      <small>2022 年到現在的完整事件時間軸</small></button>
+
+    <div class="real" id="realBox" style="display:none">
       <div class="rhT">台中港，正在用廢土填海造陸</div>
       <div class="rhS">你剛才通過的每一個難關，都是台灣白海豚每天面對的生存考驗。</div>
       <ul class="tl">
@@ -2040,6 +2080,7 @@ function start(){
   if(PLAYED){                      
     beginJourney();
   } else {                         
+    bfStep=0;bfRender();
     document.getElementById('brief').classList.add('on');
   }
 }
@@ -2073,7 +2114,29 @@ function beginJourney(){
     track('start',{what:S.ev.k});
   });
 }
-document.getElementById('briefGo').onclick=function(){SFX.tap();startTutorial();};
+
+let bfStep=0;
+function bfRender(){
+  const rows=document.querySelectorAll('#brief .bfR');
+  rows.forEach(function(r,i){
+    r.classList.toggle('dim',i!==bfStep);
+    r.classList.toggle('cur',i===bfStep);
+  });
+  document.getElementById('bfStep').textContent=(bfStep+1)+' / '+rows.length;
+  document.getElementById('briefGo').textContent=
+    (bfStep>=rows.length-1)?'知道了，開始教學':'下一個';
+}
+function bfNext(){
+  const rows=document.querySelectorAll('#brief .bfR');
+  if(bfStep>=rows.length-1){startTutorial();return;}
+  bfStep++;SFX.tap();bfRender();
+  rows[bfStep].scrollIntoView({behavior:'smooth',block:'nearest'});
+}
+document.getElementById('briefGo').onclick=function(e){e.stopPropagation();bfNext();};
+document.getElementById('briefSkip').onclick=function(e){
+  e.stopPropagation();SFX.tap();track('brief',{what:'skip',depth:bfStep+1});startTutorial();
+};
+document.getElementById('brief').addEventListener('click',bfNext);
 
 const AUDIO={sfx:true,bgm:true,ctx:null,master:null};
 function audioInit(){
@@ -2998,6 +3061,26 @@ document.getElementById('dxClose').onclick=function(){
 })();
 
 loadDex();
+
+document.querySelectorAll('.kb.flip').forEach(function(c){
+  c.addEventListener('click',function(){
+    if(c.classList.contains('open'))return;
+    SFX.tap();
+    c.classList.add('turning');
+    setTimeout(function(){
+      c.classList.add('open');
+      c.classList.remove('turning');
+      track('flip',{what:c.dataset.q});
+    },170);
+  });
+});
+
+document.getElementById('realMore').onclick=function(){
+  SFX.tap();
+  this.style.display='none';
+  document.getElementById('realBox').style.display='';
+  track('read',{what:'real'});
+};
 
 watchScroll();watchCards();
 updHUD();
