@@ -375,7 +375,7 @@ font-family:var(--cjk);font-size:14.5px;font-weight:800;cursor:pointer;line-heig
   <div class="bfIn">
     <div class="bfT">出發前，還有幾件事</div>
     <div class="bfR bad"><span>⚠️</span><div><b>刺網、塑膠垃圾、填海陸地</b><small>碰到會扣一格體力，體力用完就結束了</small></div></div>
-    <div class="bfR good"><span>🟡</span><div><b>金色的黃錫鯛</b><small>比小魚大一圈，吃到可以補回一格體力</small></div></div>
+    <div class="bfR good"><span>🟡</span><div><b>金色的黃花魚</b><small>比小魚大一圈，吃到可以補回一格體力</small></div></div>
     <div class="bfR warn"><span>🔊</span><div><b>打樁噪音</b><small>聲波被蓋住：吃不到魚、聽不見同伴求救、空氣消耗變快，也不敢浮上去換氣</small></div></div>
     <div class="bfR task"><span>🐬</span><div><b>救援任務</b><small>碰到被漁網纏住的同伴就能救牠，收進大家一起收集的救援圖鑑</small></div></div>
     <button class="bfB" id="briefGo">知道了，出發！</button>
@@ -390,7 +390,7 @@ font-family:var(--cjk);font-size:14.5px;font-weight:800;cursor:pointer;line-heig
       </div>
       <button id="dxClose">關閉</button>
     </div>
-    <div class="dxDone" id="dxDone">🎉 50 隻同伴全部被救回來了！<small>謝謝每一位守護隊長</small></div>
+    <div class="dxDone" id="dxDone">🎉 50 隻同伴全部被救回來了！<small>這是遊戲，可以重來；真實的白海豚只剩不到 50 隻，牠們沒有第二次機會。<br>下一個目標：讓每一隻都被救到 10 次。</small></div>
     <div class="dxGrid" id="dxGrid"></div>
     <p class="dxNote">遊戲中的白海豚編號與名字為虛擬設定，但牠們面臨的危險都是真實發生的喔！</p>
   </div>
@@ -429,7 +429,7 @@ font-family:var(--cjk);font-size:14.5px;font-weight:800;cursor:pointer;line-heig
 
     <button class="goBtn big" id="startBtn">出發囉</button>
     <div class="coverDex" id="dexBtn2">
-      <div class="cdTop"><span>救援圖鑑</span><b id="dexCount">0 / 50</b></div>
+      <div class="cdTop"><span id="dexLabel">救援圖鑑</span><b id="dexCount">0 / 50</b></div>
       <div class="cdBar"><i id="dexBar"></i></div>
     </div>
   </div>
@@ -795,7 +795,7 @@ function update(dt){
       document.getElementById('swipeHint').classList.remove('on');
       S.phase='brief';showBrief();return;}
   } else {
-    const Z=ZONES[S.zone],z=Z.k;
+    const Z=ZONES[Math.max(S.zone,0)],z=Z.k;
     const EV=S.ev||{};
     S.fishT-=dt;
     if(S.fishT<=0){S.fishT=((z==='river'?2:z==='ind'?4:3)+Math.random())*(EV.k==='flood'&&z==='river'?.5:1);
@@ -911,8 +911,8 @@ function update(dt){
         if(S.noise>0){tip('聲波被蓋住了，吃不到魚',3.5);}
         else if(o.t==='gold'){
           SFX.gold();S.obs.splice(i,1);S.gold++;S.pops.push({x:o.x,y:oy,r:5,a:1,g:1});
-          if(S.life<MAXHP){S.life++;tip('黃錫鯛！<span class="em">體力回復</span>',2.4);}
-          else tip('黃錫鯛！好好吃',2);
+          if(S.life<MAXHP){S.life++;tip('黃花魚！<span class="em">體力回復</span>',2.4);}
+          else tip('黃花魚！好好吃',2);
           updHUD();
         } else {
           SFX.eat();S.obs.splice(i,1);S.fish++;S.pops.push({x:o.x,y:oy,r:4,a:1});
@@ -1170,7 +1170,7 @@ function drawObs(o){
     ctx.fillStyle='#5B4636';ctx.beginPath();ctx.arc(5*s,-1.3*s,1.4*s,0,7);ctx.fill();
     ctx.restore();
     if(G){ctx.fillStyle='rgba(255,255,255,.9)';ctx.font='800 10px '+FF();ctx.textAlign='center';
-      ctx.fillText('黃錫鯛',o.x+14,y-8);ctx.textAlign='left';}
+      ctx.fillText('黃花魚',o.x+14,y-8);ctx.textAlign='left';}
     return;
   }
   if(o.t==='net'){
@@ -1627,6 +1627,114 @@ function beginJourney(){
 }
 document.getElementById('briefGo').onclick=function(){SFX.tap();beginJourney();};
 
+const AUDIO={sfx:true,bgm:true,ctx:null,master:null};
+function audioInit(){
+  if(AUDIO.ctx)return;
+  const AC=window.AudioContext||window.webkitAudioContext;if(!AC)return;
+  AUDIO.ctx=new AC();
+  AUDIO.master=AUDIO.ctx.createGain();
+  AUDIO.master.gain.value=.5;AUDIO.master.connect(AUDIO.ctx.destination);
+}
+function tone(freq,dur,type,vol,slideTo,delay){
+  if(!AUDIO.sfx||!AUDIO.ctx)return;
+  const c=AUDIO.ctx,t0=c.currentTime+(delay||0);
+  const o=c.createOscillator(),g=c.createGain();
+  o.type=type||'sine';o.frequency.setValueAtTime(freq,t0);
+  if(slideTo)o.frequency.exponentialRampToValueAtTime(slideTo,t0+dur);
+  g.gain.setValueAtTime(0,t0);
+  g.gain.linearRampToValueAtTime(vol||.25,t0+.012);
+  g.gain.exponentialRampToValueAtTime(.0008,t0+dur);
+  o.connect(g);g.connect(AUDIO.master);o.start(t0);o.stop(t0+dur+.03);
+}
+function noiseBurst(dur,vol,freq,q,delay){
+  if(!AUDIO.sfx||!AUDIO.ctx)return;
+  const c=AUDIO.ctx,t0=c.currentTime+(delay||0),len=Math.max(1,Math.floor(c.sampleRate*dur));
+  const buf=c.createBuffer(1,len,c.sampleRate),d=buf.getChannelData(0);
+  for(let i=0;i<len;i++)d[i]=(Math.random()*2-1)*(1-i/len);
+  const src=c.createBufferSource();src.buffer=buf;
+  const bp=c.createBiquadFilter();bp.type='bandpass';bp.frequency.value=freq||900;bp.Q.value=q||1;
+  const g=c.createGain();g.gain.value=vol||.2;
+  src.connect(bp);bp.connect(g);g.connect(AUDIO.master);src.start(t0);
+}
+const SFX={
+  tap  (){tone(520,.07,'triangle',.2,720);},
+  
+  eat  (){tone(1046,.09,'triangle',.16);tone(1568,.14,'sine',.10,null,.05);
+          noiseBurst(.05,.05,3200,4,.02);},
+  rescue(){[0,.09,.18,.30].forEach((d,i)=>tone([523,784,1046,1568][i],.26,'sine',.22,null,d));
+           noiseBurst(.12,.07,2400,3,.3);},
+  gold (){[0,.07,.14].forEach((d,i)=>tone([740,930,1240][i],.14,'triangle',.22,null,d));},
+  
+  breath(){tone(120,.12,'sine',.24,190);
+           noiseBurst(.22,.14,700,.6,.05);
+           noiseBurst(.10,.10,2600,3,.20);
+           tone(660,.10,'sine',.09,1180,.22);},
+  bubble(){tone(900,.06,'sine',.08,1300);},
+  
+  hit  (){tone(98,.34,'sawtooth',.20,52);tone(104,.30,'sawtooth',.14,55,.01);
+          noiseBurst(.16,.14,240,.9);},
+  grow (){[0,.1,.2,.3].forEach((d,i)=>tone([523,659,784,1046][i],.2,'triangle',.2,null,d));},
+  pile (){tone(70,.32,'square',.3,40);noiseBurst(.26,.26,260,.7);},
+  count(){tone(760,.12,'square',.18);},
+  go   (){[0,.09].forEach((d,i)=>tone([880,1320][i],.18,'square',.2,null,d));},
+  lose (){[0,.14,.28].forEach((d,i)=>tone([440,350,260][i],.3,'triangle',.22,null,d));},
+  win  (){[0,.1,.2,.3,.45].forEach((d,i)=>tone([523,659,784,1046,1319][i],.3,'triangle',.22,null,d));}
+};
+const bgmEl=document.getElementById('bgm');
+bgmEl.volume=.32;
+
+bgmEl.addEventListener('timeupdate',function(){
+  if(bgmEl.duration&&bgmEl.currentTime>bgmEl.duration-.18)bgmEl.currentTime=.05;
+});
+function bgmPlay(){ if(AUDIO.bgm&&bgmEl.getAttribute('src'))bgmEl.play().catch(()=>{}); }
+function bgmStop(){ bgmEl.pause(); }
+document.getElementById('btnSfx').onclick=function(){
+  audioInit();AUDIO.sfx=!AUDIO.sfx;this.classList.toggle('on',AUDIO.sfx);this.classList.toggle('off',!AUDIO.sfx);
+  if(AUDIO.sfx)SFX.tap();track('toggle',{what:'sfx',on:AUDIO.sfx?1:0});
+};
+document.getElementById('btnBgm').onclick=function(){
+  audioInit();AUDIO.bgm=!AUDIO.bgm;this.classList.toggle('on',AUDIO.bgm);this.classList.toggle('off',!AUDIO.bgm);
+  AUDIO.bgm?bgmPlay():bgmStop();track('toggle',{what:'bgm',on:AUDIO.bgm?1:0});
+};
+
+(function(){
+  const cc=document.getElementById('coverCv');if(!cc)return;
+  const g=cc.getContext('2d');
+  const fishes=[];for(let i=0;i<7;i++)fishes.push({x:Math.random(),y:.2+Math.random()*.6,sp:.05+Math.random()*.07,ph:Math.random()*6});
+  function frame(t){
+    if(document.getElementById('intro').classList.contains('hidden')){requestAnimationFrame(frame);return;}
+    const dpr=Math.min(devicePixelRatio||1,2),w=cc.clientWidth,h=cc.clientHeight;
+    if(cc.width!==w*dpr||cc.height!==h*dpr){cc.width=w*dpr;cc.height=h*dpr;}
+    g.setTransform(dpr,0,0,dpr,0,0);g.clearRect(0,0,w,h);
+    fishes.forEach(f=>{
+      f.x-=f.sp/60;if(f.x<-.12)f.x=1.12;
+      const fx=f.x*w,fy=f.y*h+Math.sin(t/600+f.ph)*5;
+      g.save();g.translate(fx,fy);
+      g.fillStyle='rgba(255,255,255,.75)';g.strokeStyle='rgba(31,110,147,.35)';g.lineWidth=1.2;
+      g.beginPath();g.moveTo(8,0);g.quadraticCurveTo(1,-5,-5,-2.5);
+      g.quadraticCurveTo(-8,0,-5,2.5);g.quadraticCurveTo(1,5,8,0);g.fill();g.stroke();
+      g.fillStyle='#FF7F5C';g.beginPath();g.moveTo(-5,0);g.lineTo(-11,-4);g.lineTo(-11,4);g.closePath();g.fill();
+      g.restore();
+    });
+    const bob=Math.sin(t/700)*7, tilt=Math.sin(t/900)*.06;
+    g.save();g.translate(w*.5,h*.52+bob);g.rotate(tilt);
+    g.scale(Math.min(w/230,1.28),Math.min(w/230,1.28));
+    dolphinShape(g,{body:'#F9AEC1',dark:'#E0708D',belly:'#FEDCE4',line:'#C2647D',
+                    fluke:'#E0708D',flukeFar:'#C9647E',fl:Math.sin(t/320)*.14});
+    speckles(g,.4);
+    g.strokeStyle='#3F3128';g.lineWidth=1.3;g.lineCap='round';
+    g.beginPath();g.moveTo(32,6);g.quadraticCurveTo(35,7.8,38,5.8);g.stroke();
+    g.restore();
+    g.fillStyle='rgba(255,255,255,.6)';
+    for(let i=0;i<3;i++){
+      const pt=((t/900)+i/3)%1;
+      g.beginPath();g.arc(w*.5+10,h*.52+bob-14-pt*46,2.5+pt*2,0,7);g.fill();
+    }
+    requestAnimationFrame(frame);
+  }
+  requestAnimationFrame(frame);
+})();
+
 document.getElementById('startBtn').onclick=start;
 document.getElementById('againBtn').onclick=start;
 
@@ -1717,10 +1825,15 @@ function drawDexDolphin(cv,r,found){
 
 function renderDex(){
   const got=ROSTER.filter(function(r){return DEX.counts[r.id];}).length;
+  
+  const deep=ROSTER.filter(function(r){return (DEX.counts[r.id]||0)>=10;}).length;
+  const stage2=got>=ROSTER.length;
   const dc=document.getElementById('dexCount');
-  if(dc)dc.textContent=got+' / '+ROSTER.length;
+  const dl=document.getElementById('dexLabel');
+  if(dc)dc.textContent=(stage2?deep:got)+' / '+ROSTER.length;
+  if(dl)dl.textContent=stage2?'第二階段 · 每隻救 10 次':'救援圖鑑';
   const cd=document.getElementById('dexBtn2');
-  if(cd)cd.classList.toggle('full',got>=ROSTER.length);
+  if(cd)cd.classList.toggle('full',stage2&&deep>=ROSTER.length);
   document.getElementById('dxSum').textContent='全部玩家已救到 '+got+' / '+ROSTER.length+' 隻'+
     (S.rescued&&S.rescued.length?'　（你這局救了 '+S.rescued.length+' 隻）':'');
   const grid=document.getElementById('dxGrid');
@@ -1738,7 +1851,7 @@ function renderDex(){
     drawDexDolphin(cv,r,!!DEX.counts[r.id]);
   });
   const bar=document.getElementById('dexBar');
-  if(bar)bar.style.width=(got/ROSTER.length*100)+'%';
+  if(bar)bar.style.width=((stage2?deep:got)/ROSTER.length*100)+'%';
 }
 
 function loadDex(){
