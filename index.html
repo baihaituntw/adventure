@@ -176,6 +176,11 @@ text-shadow:0 6px 24px rgba(0,0,0,.35);pointer-events:none}
 .dxHd button{border:0;border-radius:16px;padding:9px 13px;font-family:var(--cjk);font-size:12.5px;
   font-weight:900;background:#fff;color:#155C7C;cursor:pointer;white-space:nowrap}
 #dxReload{background:#155C7C;color:#fff}
+.dxHint{margin:12px 14px 0;border-radius:14px;padding:11px 14px;text-align:center;
+  background:linear-gradient(135deg,#FFE9A8,#FFC97A);color:#7A4E12;
+  font-size:13.5px;font-weight:900;letter-spacing:.06em;
+  box-shadow:0 3px 0 #D99B4B;animation:bob 1.8s ease-in-out infinite}
+.noflash .dxHint{animation:none}
 .dxGrid{flex:1;overflow-y:auto;display:grid;grid-template-columns:repeat(auto-fill,minmax(96px,1fr));
   gap:8px;padding:14px}
 .dxCell{border-radius:14px;padding:9px 4px;text-align:center;background:#E5EDF1;color:#9DAFB9}
@@ -472,21 +477,21 @@ font-family:var(--cjk);font-size:14.5px;font-weight:800;cursor:pointer;line-heig
   color:#1F8FB8;font-style:normal;font-size:12px;font-weight:900;
   display:flex;align-items:center;justify-content:center}
 .iabCover b{font-weight:900;color:#14688C}
-.coverDex{margin:18px auto 0;max-width:300px;cursor:pointer;background:rgba(255,255,255,.92);
-  border-radius:22px;padding:13px 16px 15px;box-shadow:0 4px 0 rgba(30,110,147,.22)}
+.coverDex{margin:15px auto 0;max-width:232px;cursor:pointer;background:rgba(255,255,255,.9);
+  border-radius:16px;padding:9px 13px 10px;box-shadow:0 3px 0 rgba(30,110,147,.2)}
 .coverDex .cdTop{display:flex;align-items:baseline;justify-content:space-between}
-.coverDex .cdTop span{font-size:14px;font-weight:900;color:#1B4D66;letter-spacing:.06em}
-.coverDex .cdTop b{font-size:17px;font-weight:900;color:#C9426B}
-.coverDex .cdBar{position:relative;margin-top:11px;height:16px;border-radius:16px;background:#DCEAF1;
-  box-shadow:inset 0 2px 4px rgba(0,0,0,.08)}
-.coverDex .cdBar i{position:absolute;left:0;top:0;bottom:0;width:0;border-radius:16px;
+.coverDex .cdTop span{font-size:12px;font-weight:900;color:#1B4D66;letter-spacing:.04em}
+.coverDex .cdTop b{font-size:14px;font-weight:900;color:#C9426B}
+.coverDex .cdBar{position:relative;margin-top:7px;height:10px;border-radius:10px;background:#DCEAF1;
+  box-shadow:inset 0 1px 3px rgba(0,0,0,.08)}
+.coverDex .cdBar i{position:absolute;left:0;top:0;bottom:0;width:0;border-radius:10px;
   background:linear-gradient(90deg,#FFD1DE,#F79FB5,#E0708D);background-size:200% 100%;
   animation:flow 2.6s linear infinite;transition:width 1.1s cubic-bezier(.25,1,.4,1)}
 @keyframes flow{0%{background-position:0 0}100%{background-position:200% 0}}
 .coverDex .cdBar i.loading{animation:flow 1s linear infinite,slide 1.4s ease-in-out infinite}
 @keyframes slide{0%,100%{transform:translateX(-6%)}50%{transform:translateX(212%)}}
 .coverDex .cdBar em{position:absolute;top:50%;left:0;transform:translate(-50%,-50%);
-  font-size:17px;font-style:normal;transition:left 1.1s cubic-bezier(.25,1,.4,1);
+  font-size:13px;font-style:normal;transition:left 1.1s cubic-bezier(.25,1,.4,1);
   filter:drop-shadow(0 2px 3px rgba(0,0,0,.25))}
 .coverDex.full{background:linear-gradient(135deg,#FFE9A8,#FFC97A);box-shadow:0 4px 0 #D99B4B}
 .coverDex.full .cdTop span,.coverDex.full .cdTop b{color:#7A4E12}
@@ -692,10 +697,11 @@ font-family:var(--cjk);font-size:14.5px;font-weight:800;cursor:pointer;line-heig
       <button id="dxReload">重新讀取</button>
       <button id="dxClose">關閉</button>
     </div>
+    <div class="dxHint">👆　點任何一格，看牠的故事</div>
     <div class="dxDone" id="dxDone">🎉 50 隻同伴全部被救回來了！<small>這是遊戲，可以重來；真實的白海豚只剩不到 50 隻，牠們沒有第二次機會。<br>下一個目標：讓每一隻都被救到 10 次。</small></div>
     <div class="dxGrid" id="dxGrid"></div>
     <div class="dxLink" id="dxLink"></div>
-    <p class="dxNote">點任何一格可以看牠的介紹。<br>遊戲中的編號與名字為虛擬設定，但牠們面臨的危險都是真實發生的喔！</p>
+    <p class="dxNote">遊戲中的編號與名字為虛擬設定，但牠們面臨的危險都是真實發生的喔！</p>
   </div>
 </div>
 
@@ -2189,7 +2195,7 @@ function wakeAudio(){
     });
     const bob=Math.sin(t/700)*7, tilt=Math.sin(t/900)*.06;
     
-    const cs=Math.min(w/430,.70);
+    const cs=Math.min(w/230,1.35);
     drawDexAt(g,FIN_ID,w*.5,h*.52+bob,cs,tilt,Math.sin(t/320)*.16,'adult');
     g.restore();
     g.fillStyle='rgba(255,255,255,.6)';
