@@ -106,7 +106,7 @@ text-shadow:0 6px 24px rgba(0,0,0,.35);pointer-events:none}
 .dxGrid{flex:1;overflow-y:auto;display:grid;grid-template-columns:repeat(auto-fill,minmax(96px,1fr));
   gap:8px;padding:14px}
 .dxCell{border-radius:14px;padding:9px 4px;text-align:center;background:#E5EDF1;color:#9DAFB9}
-.dxPic{display:block;width:100%;height:46px;margin-bottom:2px}
+.dxPic{display:block;width:100%;height:52px;margin-bottom:2px}
 .dxCell b{display:block;font-size:11px;font-weight:900;letter-spacing:.02em}
 .dxCell span{display:block;font-size:13px;font-weight:900;margin-top:2px}
 .dxCell.got{background:#FFE7EE;color:#C9426B}
@@ -390,21 +390,8 @@ font-family:var(--cjk);font-size:14.5px;font-weight:800;cursor:pointer;line-heig
     <p class="lead">陪一隻剛出生的<b>台灣白海豚</b><br>沿著西海岸的淺灘往南游</p>
     <p class="ask">是否能夠順利長大呢？</p>
 
-    <div class="missions">
-      <div class="ms">
-        <span class="mi">🐟</span>
-        <div class="mt"><b>吃小魚，慢慢長大</b><small>金色的黃錫鯛可以補回體力</small></div>
-      </div>
-      <div class="ms tap" id="dexBtn2">
-        <span class="mi">🐬</span>
-        <div class="mt"><b>救出被漁網纏住的同伴</b><small>大家一起收集 50 隻救援圖鑑</small>
-          <div class="mbar"><i id="dexBar"></i></div>
-        </div>
-        <span class="mn" id="dexCount">0/50</span>
-      </div>
-    </div>
-
     <button class="goBtn big" id="startBtn">出發囉</button>
+    <button class="coverDex" id="dexBtn2">救援圖鑑　<b id="dexCount">0/50</b><i id="dexBar"></i></button>
   </div>
 </div>
 
@@ -437,7 +424,7 @@ font-family:var(--cjk);font-size:14.5px;font-weight:800;cursor:pointer;line-heig
     <div class="kb kb2">
       <div class="h"><span class="ico">😢</span>全球不到 50 隻的危機</div>
       <ul>
-        <li>台灣白海豚非常稀有，全世界只剩下<b>不到 50 隻</b>。</li>
+        <li>台灣白海豚非常稀有，<b>全球只剩不到 50 隻</b>。</li>
         <li>現在死掉的海豚比新生的寶寶還要多，牠們<b>正快要永遠消失</b>。</li>
       </ul>
     </div>
@@ -456,7 +443,7 @@ font-family:var(--cjk);font-size:14.5px;font-weight:800;cursor:pointer;line-heig
       <ul>
         <li>填海工程把牠們<b>找食物、養寶寶</b>的海直接變成陸地。</li>
         <li><b>有毒的廢土</b>跑進海洋，害小魚變少，毒素最後也會影響人類。</li>
-        <li>沒做好環境評估的開發，會造成<b>無法復原的傷害！</b></li>
+        <li><b>沒有環境評估</b>的工程，會造成<b>無法復原的傷害！</b></li>
       </ul>
     </div>
 
@@ -495,11 +482,11 @@ font-family:var(--cjk);font-size:14.5px;font-weight:800;cursor:pointer;line-heig
 const ANALYTICS_URL='https://script.google.com/macros/s/AKfycbz4qS1R_Py4-3pz_cGYxhiPILtvn_s0KsRGqAtc3zBb78Uzka409C025a3Gc1mI20M4lw/exec';
 
 const ROSTER=(function(){
-  const names=['小粉','阿蚵','波波','浪花','風車','濁水','芳苑','媽祖','小鰭','圓圓',
-   '台西','麥寮','大甲','後龍','龍鳳','高美','伸港','線西','鹿港','王功',
-   '海口','三條崙','蚵寮','竹南','通霄','白沙','西濱','潮間','沙洲','河口',
-   '小灣','阿浪','珍珠','泡泡','銀鱗','月光','汐汐','晨曦','暮色','星砂',
-   '潮生','岸邊','淺灘','洄游','逐浪','領航','守望','相伴','同行','歸來'];
+  const names=['小粉','波波','浪花','圓圓','小鰭','泡泡','珍珠','銀鱗','月光','星砂',
+   '汐汐','晨曦','暮色','逐浪','領航','阿浪','小灣','雲朵','彩虹','雪花',
+   '糖糖','果凍','布丁','棉花','蜜桃','荔枝','芝麻','湯圓','麻糬','奶昔',
+   '小勇','小飛','咕嚕','嘟嘟','噗噗','啾啾','咻咻','滾滾','跳跳','轉轉',
+   '微光','曙光','春風','夏浪','秋汐','冬雪','小豆','小米','小葉','小星'];
   return names.map(function(n,i){
     return {id:'TW-'+String(i+1).padStart(2,'0'),name:n};
   });
@@ -660,7 +647,7 @@ function breathe(){
   if(S.noise>0){warn('太吵了，不敢浮上去',2);return;}
   if(blockedAbove()){warn('上面被擋住了',2);return;}
   SFX.breath();S.surf={ph:0,t:0,from:S.y};S.breathed=true;hintEl.classList.remove('on');
-  if(S.phase==='tut'&&S.tut===1){S.tut=2;S.tutT=0;spawnSchool(6,'river');}
+  if(S.phase==='tut'&&S.tut===1){S.tut=2;S.tutT=0;}
 }
 
 function corridorY(m){return clamp(depthToY(m),S.land+.07,S.deep-.07);}
@@ -759,9 +746,8 @@ function update(dt){
     else if(S.tut===1){hintEl.classList.add('on');
       warn('<u>教學 2／2</u><br>快沒空氣了！點<span class="em">左下角圓鈕</span>浮上去換氣',12,true);}
     else if(S.tut===2){hintEl.classList.remove('on');
-      warn('學會了！空氣快沒了就要換氣',2.6,true);
-      S.fishT-=dt;if(S.fishT<=0){S.fishT=2;spawnSchool(6,'river');}
-      if(S.fish>=3){S.tut=3;S.tutT=0;}}
+      warn('學會了！<br>空氣快沒了就要浮上來換氣',2.4,true);
+      if(S.tutT>2.2){S.tut=3;S.tutT=0;}}
     else{hideTip();hideWarn();hintEl.classList.remove('on');warn('前面開始有危險，小心！',2.4);
       document.getElementById('swipeHint').classList.remove('on');
       S.dist=0;S.zone=-1;S.obs=[];   
@@ -869,7 +855,9 @@ function update(dt){
     else{oy=o.y*H;oh=o.h*H;hit=px+pr>o.x&&px-pr<o.x+o.w&&py+pr>oy&&py-pr<oy+oh;}
 
     if(hit){
-      if(o.t==='friend'){
+      if(o.t==='friend'&&S.noise>0){
+        tip('太吵了，聽不見同伴的求救',2.6);
+      } else if(o.t==='friend'){
         S.obs.splice(i,1);SFX.rescue();
         S.rescued.push(o.who.id);
         DEX.counts[o.who.id]=(DEX.counts[o.who.id]||0)+1;DEX.mine[o.who.id]=1;
@@ -1417,7 +1405,6 @@ function end(k){
   if(S.plasticHit>0)CH.push(['誤食塑膠',S.plasticHit+' 次']);
   if(S.fillHit>0)   CH.push(['撞到填海地',S.fillHit+' 次']);
   if(S.noiseSec>=1) CH.push(['被水下噪音',S.noiseSec.toFixed(0)+' 秒']);
-  CH.push(['總共游了',Math.round((Date.now()-T0)/1000)+' 秒']);
   document.getElementById('ovL').innerHTML=
     CH.map(function(c){return '<div><span>'+c[0]+'</span><b>'+c[1]+'</b></div>';}).join('');
   document.getElementById('cTitle').textContent=c.t;
@@ -1458,7 +1445,7 @@ function wrapText(g,txt,cx,y,maxW,lh){
   return yy;
 }
 function makeShareImage(){
-  const w=1000,h=1270,c=document.createElement('canvas');c.width=w;c.height=h;
+  const w=1000,h=1300,c=document.createElement('canvas');c.width=w;c.height=h;
   const g=c.getContext('2d');
   const F=(sz,wt)=>(wt||800)+' '+sz+'px "PingFang TC","Noto Sans TC",sans-serif';
   const RR=(x,y,ww,hh,r)=>{g.beginPath();g.roundRect?g.roundRect(x,y,ww,hh,r):g.rect(x,y,ww,hh);};
@@ -1495,17 +1482,22 @@ function makeShareImage(){
     g.fillStyle='#4A382B';g.font=F(cd[1].length>6?30:38,900);g.fillText(cd[1],x+cw/2,726);
   });
 
-  g.fillStyle='#FFF';g.font=F(44,900);
-  g.fillText('台灣白海豚，全球剩下不到 50 隻！',w/2,884);
-  g.fillStyle='rgba(255,255,255,.92)';g.font=F(27,700);
   const dexGot=ROSTER.filter(function(r){return DEX.counts[r.id];}).length;
-  wrapText(g,'牠們游不遠也游不深，只有西海岸這片淺海可以去。\n'+
-             '大家已經一起救到 '+dexGot+' / 50 隻，一起把救援圖鑑補完吧！',w/2,944,860,42);
+  g.fillStyle='rgba(255,255,255,.95)';g.font=F(28,900);
+  g.fillText('救援圖鑑進度　'+dexGot+' / 50',w/2,806);
+  g.fillStyle='rgba(255,255,255,.35)';RR(w/2-300,826,600,26,13);g.fill();
+  g.fillStyle='#F79FB5';RR(w/2-300,826,Math.max(26,600*dexGot/50),26,13);g.fill();
 
-  g.fillStyle='#FF8A6B';RR(w/2-300,1030,600,84,42);g.fill();
-  g.fillStyle='#fff';g.font=F(36,900);g.fillText('邀請您連署！搶救極危白海豚',w/2,1083);
+  g.fillStyle='#FFF';g.font=F(44,900);
+  g.fillText('台灣白海豚，全球剩下不到 50 隻！',w/2,924);
+  g.fillStyle='rgba(255,255,255,.92)';g.font=F(27,700);
+  wrapText(g,'牠們游不遠也游不深，只有西海岸這片淺海可以去。\n'+
+             '一起把 50 隻同伴全部救回來！',w/2,976,860,42);
+
+  g.fillStyle='#FF8A6B';RR(w/2-300,1066,600,84,42);g.fill();
+  g.fillStyle='#fff';g.font=F(36,900);g.fillText('邀請您連署！搶救極危白海豚',w/2,1119);
   g.fillStyle='rgba(255,255,255,.9)';g.font=F(24,700);
-  g.fillText('一起守護牠們最重要的家',w/2,1164);
+  g.fillText('一起守護牠們最重要的家',w/2,1198);
   return c;
 }
 document.getElementById('shareImg').onclick=function(){
@@ -1528,10 +1520,9 @@ document.getElementById('shareLink').onclick=function(){
   const self=this;
   const url='https://lihi3.me/Bsby0/twbaihaitun';
   const dexGot=ROSTER.filter(function(r){return DEX.counts[r.id];}).length;
-  const txt='我在《台灣白海豚大冒險》'+
-    (S.rescued.length?('救了 '+S.rescued.length+' 隻被漁網纏住的同伴，'):'')+
+  const txt='我在《台灣白海豚大冒險》救了 '+S.rescued.length+' 隻被漁網纏住的同伴，'+
     '吃到 '+S.fish+' 隻小魚，游到「'+ZONES[Math.max(S.zone,0)].n+'」。'+
-    '台灣白海豚全球剩不到 50 隻，救援圖鑑目前 '+dexGot+'/50，'+
+    '台灣白海豚全球剩不到 50 隻，目前救援進度 '+dexGot+'/50，'+
     '一起來把牠們全部救回來！';
   const full=txt+' '+url;
   function done(msg){
@@ -1703,44 +1694,71 @@ function rngOf(seed){let x=seed||1;return function(){x^=x<<13;x^=x>>>17;x^=x<<5;
 
 function drawDexDolphin(cv,r,found){
   const g=cv.getContext('2d'),dpr=Math.min(devicePixelRatio||1,2);
-  const w=cv.clientWidth||78,h=cv.clientHeight||46;
+  const w=cv.clientWidth||96,h=cv.clientHeight||52;
   cv.width=w*dpr;cv.height=h*dpr;g.setTransform(dpr,0,0,dpr,0,0);g.clearRect(0,0,w,h);
+
   const rnd=rngOf(seedOf(r.id));
-  const hue=rnd(), pale=rnd();
-  const body  = found?'hsl('+(338+hue*14).toFixed(0)+','+(58+pale*22).toFixed(0)+'%,'+(78+pale*8).toFixed(0)+'%)':'#D3DDE3';
-  const dark  = found?'hsl('+(338+hue*14).toFixed(0)+',52%,'+(62+pale*6).toFixed(0)+'%)':'#B8C6CE';
-  const belly = found?'#FEE6EC':'#E4EBEF';
-  const line  = found?'#C2647D':'#AAB9C1';
+  const isCalf = rnd()<.28;                    
+  const hue    = rnd();                        
+  const light  = rnd();                        
+  const pose   = rnd();                        
+  const flip   = rnd()<.22;                    
 
-  g.save();g.translate(w*.5,h*.55);g.scale(.66,.66);
-  dolphinShape(g,{body:body,dark:dark,belly:belly,line:line,fluke:dark,flukeFar:dark,fl:0});
+  let body,dark,belly,line;
+  if(!found){ body='#D3DDE3';dark='#B8C6CE';belly='#E4EBEF';line='#AAB9C1'; }
+  else if(isCalf){
+    const L=(58+light*12).toFixed(0);
+    body='hsl('+(205+hue*18).toFixed(0)+',14%,'+(64+light*10).toFixed(0)+'%)';
+    dark='hsl('+(205+hue*18).toFixed(0)+',16%,'+L+'%)';
+    belly='hsl('+(205+hue*18).toFixed(0)+',18%,'+(80+light*6).toFixed(0)+'%)';
+    line='hsl('+(205+hue*18).toFixed(0)+',18%,48%)';
+  } else {
+    body='hsl('+(336+hue*16).toFixed(0)+','+(52+light*28).toFixed(0)+'%,'+(72+light*12).toFixed(0)+'%)';
+    dark='hsl('+(336+hue*16).toFixed(0)+','+(46+light*22).toFixed(0)+'%,'+(56+light*10).toFixed(0)+'%)';
+    belly='hsl('+(340+hue*10).toFixed(0)+',70%,'+(90+light*4).toFixed(0)+'%)';
+    line='hsl('+(336+hue*16).toFixed(0)+',38%,48%)';
+  }
 
-  if(found){
-    
-    g.fillStyle='rgba(96,118,146,.45)';
-    const n=8+Math.floor(rnd()*10);
+  const tilt = pose<.34 ? -.42+rnd()*.12 : pose<.7 ? -.08+rnd()*.16 : .30+rnd()*.14;
+  const fl   = -.28+rnd()*.56;
+  const sc   = .60+rnd()*.10;
+
+  g.save();
+  g.translate(w*.5,h*.56);
+  if(flip)g.scale(-1,1);
+  g.rotate(tilt);g.scale(sc,sc);
+  dolphinShape(g,{body:body,dark:dark,belly:belly,line:line,fluke:dark,flukeFar:dark,fl:fl});
+
+  if(found&&!isCalf){
+    g.fillStyle='rgba(96,118,146,'+(.28+light*.24).toFixed(2)+')';
+    const n=8+Math.floor(rnd()*11);
     for(let i=0;i<n;i++){
-      const x=-24+rnd()*44, y=-11+rnd()*11;
-      g.beginPath();g.arc(x,y,.9,0,7);g.fill();
+      g.beginPath();g.arc(-24+rnd()*44,-11+rnd()*11,.9,0,7);g.fill();
     }
-    
-    if(rnd()>.45){
-      g.strokeStyle='rgba(150,90,100,.5)';g.lineWidth=1;
-      const sx=-16+rnd()*28,sy=-6+rnd()*8;
-      g.beginPath();g.moveTo(sx,sy);g.lineTo(sx+4+rnd()*5,sy+3);g.stroke();
-    }
+  }
+  if(found&&rnd()>.5){
+    g.strokeStyle='rgba(150,90,100,.5)';g.lineWidth=1;
+    const sx=-16+rnd()*28,sy=-6+rnd()*8;
+    g.beginPath();g.moveTo(sx,sy);g.lineTo(sx+4+rnd()*5,sy+3);g.stroke();
   }
   g.restore();
 
-  g.save();g.translate(w*.5,h*.55);g.scale(.66,.66);
+  g.save();
+  g.translate(w*.5,h*.56);
+  if(flip)g.scale(-1,1);
+  g.rotate(tilt);g.scale(sc,sc);
   g.globalCompositeOperation='destination-out';
   const nick=1+Math.floor(rnd()*3);
   for(let i=0;i<nick;i++){
-    const t=.25+rnd()*.6;
-    const x=-.5+(-9)*t, y=-12.4+(-8.6)*t;
-    g.beginPath();g.arc(x-1.2,y,1+rnd()*1.1,0,7);g.fill();
+    const t=.22+rnd()*.62;
+    g.beginPath();g.arc(-1.7+(-9)*t,-12.4+(-8.6)*t,1+rnd()*1.2,0,7);g.fill();
   }
   g.restore();
+
+  if(found&&isCalf){
+    g.fillStyle='rgba(31,110,147,.62)';g.font='800 9px '+FF();g.textAlign='right';
+    g.fillText('幼豚',w-4,h-3);g.textAlign='left';
+  }
 }
 
 function renderDex(){
@@ -1770,7 +1788,14 @@ function loadDex(){
   const cb='__dex'+Math.random().toString(36).slice(2,8);
   const sc=document.createElement('script');
   window[cb]=function(d){
-    if(d&&d.counts){DEX.counts=d.counts;renderDex();}
+    if(d&&d.counts){
+      
+      DEX.counts=d.counts;
+      Object.keys(DEX.mine).forEach(function(id){
+        if(!DEX.counts[id])DEX.counts[id]=1;
+      });
+      renderDex();
+    }
     delete window[cb];sc.remove();
   };
   sc.src=ANALYTICS_URL+'?action=dex&callback='+cb;
