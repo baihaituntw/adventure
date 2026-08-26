@@ -481,6 +481,15 @@ font-family:var(--cjk);font-size:14.5px;font-weight:800;cursor:pointer;line-heig
 .ctStat span{display:block;font-size:10px;font-weight:800;color:#B49A5E;margin-top:2px}
 .ctFoot{font-size:10.5px;font-weight:800;color:#B49A5E;letter-spacing:.06em;margin-top:14px}
 
+.act31{margin-top:14px;background:#FFF3EE;border:2px solid #F3CEC0;border-left:6px solid #E8452F;
+  border-radius:20px;padding:15px 16px;text-align:left}
+.a3Tag{display:inline-block;background:#E8452F;color:#fff;border-radius:11px;padding:3px 11px;
+  font-size:10.5px;font-weight:900;letter-spacing:.14em}
+.a3T{font-size:16.5px;font-weight:900;color:#A8402C;margin-top:9px;line-height:1.4}
+.act31 p{font-size:13px;font-weight:700;color:#7A5A50;margin-top:7px;line-height:1.8}
+.act31 a{display:inline-block;margin-top:10px;font-size:13.5px;font-weight:900;
+  color:#C1341F;text-decoration:none}
+
 .orgs{margin-top:10px;display:grid;grid-template-columns:1fr 1fr;gap:8px}
 .orgs a{display:flex;align-items:center;justify-content:center;text-align:center;
   min-height:56px;padding:10px 8px;border-radius:16px;text-decoration:none;
@@ -766,6 +775,7 @@ font-family:var(--cjk);font-size:14.5px;font-weight:800;cursor:pointer;line-heig
         <li><b>2026 / 1</b>「營建剩餘土石方全流向」政策上路，台中市 6 月公布廢土送往台中港的作業要點。</li>
         <li><b>2026 / 6</b>交通部以一條長 <em>6.7 公里的虛線</em>把防波堤連起來，宣稱虛線以內都算「堤內」。人民批評這是規避環評。</li>
         <li><b>2026 / 7</b>人民向環境部遞交<em>公民告知書</em>，要求開罰、勒令停工；並赴監察院陳情，指控多個機關失職。</li>
+        <li><b>2026 / 8 / 31</b>人民前往<em>行政院</em>前行動，要求停工、重做環評。</li>
         <li><b>2026 / 9</b>營建廢土開始填入白海豚重要棲息環境。</li>
       </ul>
       <div class="rhN">
@@ -774,6 +784,15 @@ font-family:var(--cjk);font-size:14.5px;font-weight:800;cursor:pointer;line-heig
         <div><b>47</b><span>隻<br>白海豚僅存數量</span></div>
       </div>
       <div class="rhSrc">資料整理自環境資訊中心、公視「我們的島」、上下游新聞、中央社等公開報導（2026 年 3～7 月）。</div>
+    </div>
+
+    <div class="act31">
+      <div class="a3Tag">近期行動</div>
+      <div class="a3T">8/31（一）行政院前行動</div>
+      <p>搶救白海豚的行動正在進行中。台中港的填海造陸還沒停下來，需要更多人一起站出來。</p>
+      <a href="https://www.facebook.com/wildatheart.org?locale=zh_TW" target="_blank" rel="noopener">
+        看台灣蠻野心足生態協會的最新消息 ›
+      </a>
     </div>
 
     <a class="lnk lnk1" href="https://forms.gle/EP53e3d9rTYg2j1U7" target="_blank" rel="noopener">
@@ -1851,7 +1870,7 @@ function wrapText(g,txt,cx,y,maxW,lh){
   return yy;
 }
 function makeShareImage(){
-  const w=1000,h=1300,c=document.createElement('canvas');c.width=w;c.height=h;
+  const w=1000,h=1364,c=document.createElement('canvas');c.width=w;c.height=h;
   const g=c.getContext('2d');
   const F=(sz,wt)=>(wt||800)+' '+sz+'px "PingFang TC","Noto Sans TC",sans-serif';
   const RR=(x,y,ww,hh,r)=>{g.beginPath();g.roundRect?g.roundRect(x,y,ww,hh,r):g.rect(x,y,ww,hh);};
@@ -1890,19 +1909,19 @@ function makeShareImage(){
 
   const dexGot=ROSTER.filter(function(r){return DEX.counts[r.id];}).length;
   g.fillStyle='rgba(255,255,255,.95)';g.font=F(28,900);
-  g.fillText('救援圖鑑進度　'+dexGot+' / 50',w/2,806);
-  g.fillStyle='rgba(255,255,255,.35)';RR(w/2-300,826,600,26,13);g.fill();
-  g.fillStyle='#F79FB5';RR(w/2-300,826,Math.max(26,600*dexGot/50),26,13);g.fill();
+  g.fillText('救援圖鑑進度　'+dexGot+' / 50',w/2,858);
+  g.fillStyle='rgba(255,255,255,.35)';RR(w/2-300,882,600,26,13);g.fill();
+  g.fillStyle='#F79FB5';RR(w/2-300,882,Math.max(26,600*dexGot/50),26,13);g.fill();
 
   g.fillStyle='#FFF';g.font=F(44,900);
-  g.fillText('台灣白海豚，全球剩下不到 50 隻！',w/2,924);
+  g.fillText('台灣白海豚，全球剩下不到 50 隻！',w/2,996);
   g.fillStyle='rgba(255,255,255,.92)';g.font=F(27,700);
-  wrapText(g,'一起把 50 隻同伴全部救回來！',w/2,976,860,42);
+  wrapText(g,'一起把 50 隻同伴全部救回來！',w/2,1048,860,42);
 
-  g.fillStyle='#FF8A6B';RR(w/2-300,1066,600,84,42);g.fill();
-  g.fillStyle='#fff';g.font=F(36,900);g.fillText('邀請您連署！搶救極危白海豚',w/2,1119);
+  g.fillStyle='#FF8A6B';RR(w/2-300,1130,600,84,42);g.fill();
+  g.fillStyle='#fff';g.font=F(36,900);g.fillText('邀請您連署！搶救極危白海豚',w/2,1183);
   g.fillStyle='rgba(255,255,255,.9)';g.font=F(24,700);
-  g.fillText('一起守護牠們最重要的家',w/2,1198);
+  g.fillText('一起守護牠們最重要的家',w/2,1262);
   return c;
 }
 
