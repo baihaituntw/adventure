@@ -74,10 +74,10 @@ padding:6px 12px;border-radius:14px;white-space:nowrap;box-shadow:0 3px 10px rgb
 #msg{position:absolute;left:50%;top:29%;transform:translate(-50%,-50%) scale(.88);
 background:rgba(255,249,240,.5);backdrop-filter:blur(2px);border-radius:22px;padding:12px 20px;max-width:84%;
 font-size:15px;font-weight:800;line-height:1.5;text-align:center;color:#4A382B;
-  display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;
 box-shadow:0 4px 14px rgba(0,0,0,.1);opacity:0;transition:opacity .18s,transform .18s cubic-bezier(.3,1.5,.5,1);pointer-events:none}
 #msg.show{opacity:1;transform:translate(-50%,-50%) scale(1)}
 #msg{z-index:26}
+#msg:not(.teach){display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
 #msg .em{color:#C9426B}
 #msg.teach{background:rgba(255,138,107,.68);color:#fff;font-size:16px}
 #msg.teach .em{color:#FFF3C4}
@@ -95,22 +95,28 @@ text-shadow:0 6px 24px rgba(0,0,0,.35);pointer-events:none}
 #evBar b{display:block;font-size:15px;font-weight:900}
 
 #brief{position:absolute;inset:0;display:none;align-items:center;justify-content:center;z-index:28;
-  background:linear-gradient(180deg,rgba(18,73,107,.94),rgba(10,44,67,.96));padding:24px 18px}
+  background:linear-gradient(180deg,#12496B 0%,#0E3A57 60%,#0A2C43 100%);padding:20px 16px;overflow-y:auto}
 #brief.on{display:flex}
-.bfIn{width:100%;max-width:400px;background:#F6FBFD;border-radius:26px;padding:20px 16px 18px;
-  box-shadow:0 10px 34px rgba(0,0,0,.34);animation:cin .45s cubic-bezier(.2,1.3,.4,1)}
-.bfT{font-size:19px;font-weight:900;color:#14688C;text-align:center;margin-bottom:14px}
-.bfR{display:flex;gap:11px;align-items:flex-start;border-radius:18px;padding:12px 13px;margin-bottom:8px}
-.bfR span{font-size:21px;flex:0 0 auto;width:36px;height:36px;border-radius:50%;background:#fff;
-  display:flex;align-items:center;justify-content:center}
-.bfR b{display:block;font-size:14.5px;font-weight:900;line-height:1.35}
-.bfR small{display:block;font-size:12px;font-weight:700;margin-top:3px;line-height:1.55;opacity:.8}
-.bfR.bad{background:#FFEAE4;color:#A8402C}
-.bfR.good{background:#FFF5D9;color:#96690C}
-.bfR.warn{background:#EDE7F6;color:#5B4A8A}
-.bfR.task{background:#E6F4FA;color:#14688C}
-.bfB{margin-top:12px;width:100%;border:0;border-radius:22px;padding:16px;cursor:pointer;
-  font-family:var(--cjk);font-size:17px;font-weight:900;letter-spacing:.12em;
+.bfIn{width:100%;max-width:396px;border-radius:28px;overflow:hidden;
+  background:#F7FCFD;box-shadow:0 12px 38px rgba(0,0,0,.4);
+  animation:cin .45s cubic-bezier(.2,1.3,.4,1)}
+.bfTop{background:linear-gradient(135deg,#9FE0EE,#6BC6DE);padding:18px 18px 16px;text-align:center}
+.bfTag{display:inline-block;background:rgba(255,255,255,.85);color:#14688C;border-radius:14px;
+  padding:4px 13px;font-size:11.5px;font-weight:900;letter-spacing:.18em}
+.bfT{font-size:20px;font-weight:900;color:#0E3A57;margin-top:8px;letter-spacing:.02em}
+.bfList{padding:14px 14px 4px}
+.bfR{display:flex;gap:12px;align-items:flex-start;border-radius:20px;padding:13px 14px;margin-bottom:9px;
+  border-left:5px solid transparent}
+.bfR .bi{font-size:20px;flex:0 0 auto;width:38px;height:38px;border-radius:50%;background:#fff;
+  display:flex;align-items:center;justify-content:center;box-shadow:0 2px 6px rgba(0,0,0,.08)}
+.bfR b{display:block;font-size:15px;font-weight:900;line-height:1.35}
+.bfR small{display:block;font-size:12.5px;font-weight:700;margin-top:4px;line-height:1.7;opacity:.82}
+.bfR.bad{background:#FFEDE7;color:#A8402C;border-left-color:#E8825F}
+.bfR.good{background:#FFF6DC;color:#8E6208;border-left-color:#F0B93C}
+.bfR.warn{background:#EEE8F7;color:#57478A;border-left-color:#9484C4}
+.bfR.task{background:#E7F4FA;color:#14688C;border-left-color:#5FB4D4}
+.bfB{margin:6px 14px 16px;width:calc(100% - 28px);border:0;border-radius:22px;padding:16px;cursor:pointer;
+  font-family:var(--cjk);font-size:17px;font-weight:900;letter-spacing:.14em;
   background:linear-gradient(135deg,#FFD86B,#FFB43F);color:#6B3E06;box-shadow:0 5px 0 #D98F1E}
 .bfB:active{transform:translateY(4px);box-shadow:0 1px 0 #D98F1E}
 
@@ -137,6 +143,9 @@ text-shadow:0 6px 24px rgba(0,0,0,.35);pointer-events:none}
   background:linear-gradient(135deg,#FFE9A8,#FFC97A);color:#7A4E12;font-size:15px;font-weight:900}
 .dxDone.on{display:block}
 .dxDone small{display:block;font-size:11.5px;font-weight:800;opacity:.75;margin-top:3px}
+.dxLink{margin:12px 14px 0;border-radius:16px;padding:13px 14px;background:#FFF1EE;
+  border-left:4px solid #E8452F;font-size:12.5px;font-weight:800;color:#A8402C;line-height:1.7}
+.dxLink a{color:#C1341F;font-weight:900}
 .dxNote{font-size:11px;line-height:1.7;color:#7C8FA0;padding:0 16px 14px}
 #dexBtn{position:absolute;left:12px;top:calc(env(safe-area-inset-top) + 10px);z-index:30;
   border:0;border-radius:20px;padding:9px 14px;font-family:var(--cjk);font-size:13px;font-weight:900;
@@ -362,6 +371,7 @@ font-family:var(--cjk);font-size:14.5px;font-weight:800;cursor:pointer;line-heig
   </div>
 </div>
 <div id="msg"></div>
+<div id="dim"></div>
 <div id="swipeHint"><i>👆</i></div>
 <button id="dexBtn">圖鑑</button>
 <div id="sndBar">
@@ -373,14 +383,49 @@ font-family:var(--cjk);font-size:14.5px;font-weight:800;cursor:pointer;line-heig
 <div id="evBar"></div>
 <div id="brief">
   <div class="bfIn">
-    <div class="bfT">出發前，還有幾件事</div>
-    <div class="bfR bad"><span>⚠️</span><div><b>刺網、塑膠垃圾、填海陸地</b><small>碰到會扣一格體力，體力用完就結束了</small></div></div>
-    <div class="bfR good"><span>🟡</span><div><b>金色的黃花魚</b><small>比小魚大一圈，吃到可以補回一格體力</small></div></div>
-    <div class="bfR warn"><span>🔊</span><div><b>打樁噪音</b><small>聲波被蓋住：吃不到魚、聽不見同伴求救、空氣消耗變快，也不敢浮上去換氣</small></div></div>
-    <div class="bfR task"><span>🐬</span><div><b>救援任務</b><small>碰到被漁網纏住的同伴就能救牠，收進大家一起收集的救援圖鑑</small></div></div>
-    <button class="bfB" id="briefGo">知道了，出發！</button>
+    <div class="bfTop">
+      <span class="bfTag">出發前</span>
+      <div class="bfT">帶白海豚回家的四件事</div>
+    </div>
+    <div class="bfList">
+      <div class="bfR bad">
+        <span class="bi">⚠️</span>
+        <div><b>刺網、塑膠垃圾、填海陸地</b>
+        <small>每碰到一次危險就會失去 1 格體力，體力扣完就沒辦法繼續前進了，加油！</small></div>
+      </div>
+      <div class="bfR good">
+        <span class="bi">🐟</span>
+        <div><b>美味的金色黃花魚</b>
+        <small>發光的金色黃花魚是白海豚的最愛，吃到牠就能補回 1 格體力，繼續向前游！</small></div>
+      </div>
+      <div class="bfR warn">
+        <span class="bi">🔊</span>
+        <div><b>打樁噪音</b>
+        <small>噪音蓋掉了聲波，讓白海豚抓不到魚、聽不見同伴求救。牠因為害怕不敢浮出海面，空氣消耗得更快了！</small></div>
+      </div>
+      <div class="bfR task">
+        <span class="bi">🐬</span>
+        <div><b>救援任務</b>
+        <small>路上看到被漁網纏住的同伴，趕快游過去救牠，解鎖「救援圖鑑」！</small></div>
+      </div>
+    </div>
+    <button class="bfB" id="briefGo">開始教學</button>
   </div>
 </div>
+
+<div id="cause">
+  <i class="cbb" style="left:12%;animation-delay:0s"></i>
+  <i class="cbb" style="left:34%;animation-delay:1.6s;width:9px;height:9px"></i>
+  <i class="cbb" style="left:62%;animation-delay:2.7s;width:14px;height:14px"></i>
+  <i class="cbb" style="left:84%;animation-delay:.9s"></i>
+  <div class="cb">
+    <canvas id="causeCv"></canvas>
+    <div class="ct" id="cTitle"></div>
+    <div class="cs" id="cSub"></div>
+    <button class="cbtn" id="cGo">查看你的成績</button>
+  </div>
+</div>
+
 <div id="dex">
   <div class="dxIn">
     <div class="dxHd">
@@ -392,19 +437,9 @@ font-family:var(--cjk);font-size:14.5px;font-weight:800;cursor:pointer;line-heig
     </div>
     <div class="dxDone" id="dxDone">🎉 50 隻同伴全部被救回來了！<small>這是遊戲，可以重來；真實的白海豚只剩不到 50 隻，牠們沒有第二次機會。<br>下一個目標：讓每一隻都被救到 10 次。</small></div>
     <div class="dxGrid" id="dxGrid"></div>
-    <p class="dxNote">遊戲中的白海豚編號與名字為虛擬設定，但牠們面臨的危險都是真實發生的喔！</p>
-  </div>
-</div>
-<div id="cause">
-  <i class="cbb" style="left:12%;animation-delay:0s"></i>
-  <i class="cbb" style="left:34%;animation-delay:1.6s;width:9px;height:9px"></i>
-  <i class="cbb" style="left:62%;animation-delay:2.7s;width:14px;height:14px"></i>
-  <i class="cbb" style="left:84%;animation-delay:.9s"></i>
-  <div class="cb">
-    <canvas id="causeCv"></canvas>
-    <div class="ct" id="cTitle"></div>
-    <div class="cs" id="cSub"></div>
-    <button class="cbtn" id="cGo">查看你的成績</button>
+    <div class="dxLink" id="dxLink"></div>
+    <p class="dxNote">遊戲中的白海豚編號與名字為虛擬設定，但牠們面臨的危險都是真實發生的喔！<br>
+    遊戲裡的同伴可以一救再救，真實世界的白海豚只剩不到 50 隻，沒有第二次機會。</p>
   </div>
 </div>
 
@@ -426,11 +461,12 @@ font-family:var(--cjk);font-size:14.5px;font-weight:800;cursor:pointer;line-heig
 
     <p class="lead">陪一隻剛出生的<b>台灣白海豚</b><br>沿著西海岸的淺灘往南游</p>
     <p class="ask">是否能夠順利長大呢？</p>
+    <div class="news" id="newsCover" style="display:none"></div>
 
     <button class="goBtn big" id="startBtn">出發囉</button>
     <div class="coverDex" id="dexBtn2">
       <div class="cdTop"><span id="dexLabel">救援圖鑑</span><b id="dexCount">0 / 50</b></div>
-      <div class="cdBar"><i id="dexBar"></i></div>
+      <div class="cdBar"><i id="dexBar"></i><em id="dexMark">🐬</em></div>
     </div>
   </div>
 </div>
@@ -487,6 +523,8 @@ font-family:var(--cjk);font-size:14.5px;font-weight:800;cursor:pointer;line-heig
       </ul>
     </div>
 
+    <div class="news" id="newsOver" style="display:none"></div>
+
     <a class="lnk lnk1" href="https://forms.gle/EP53e3d9rTYg2j1U7" target="_blank" rel="noopener">
       邀請您連署！搶救極危白海豚
     </a>
@@ -532,6 +570,40 @@ const ROSTER=(function(){
   });
 })();
 const DEX={counts:{},mine:{}};
+
+const NEWS={
+  on:true,
+  title:'8/31（一）行政院前行動',
+  text:'搶救白海豚的行動正在進行中。台中港填海造陸的開發案還沒停下來，需要更多人一起站出來。',
+  url:'https://www.facebook.com/wildatheart.org?locale=zh_TW',
+  cta:'看台灣蠻野心足生態協會的最新消息'
+};
+function loadNews(){
+  if(!ANALYTICS_URL)return renderNews();
+  const cb='__news'+Math.random().toString(36).slice(2,8);
+  const sc=document.createElement('script');
+  window[cb]=function(d){
+    if(d&&d.title){NEWS.title=d.title;NEWS.text=d.text||'';NEWS.url=d.url||NEWS.url;
+      NEWS.cta=d.cta||NEWS.cta;NEWS.on=d.on!==false;}
+    renderNews();delete window[cb];sc.remove();
+  };
+  sc.src=ANALYTICS_URL+'?action=news&callback='+cb;
+  sc.onerror=function(){renderNews();delete window[cb];sc.remove();};
+  document.head.appendChild(sc);
+}
+function renderNews(){
+  ['newsCover','newsOver'].forEach(function(id){
+    const el=document.getElementById(id);if(!el)return;
+    if(!NEWS.on||!NEWS.title){el.style.display='none';return;}
+    el.style.display='';
+    el.innerHTML='<span class="nwTag">現正發生</span>'+
+      '<b>'+NEWS.title+'</b>'+
+      (NEWS.text?'<p>'+NEWS.text+'</p>':'')+
+      '<a href="'+NEWS.url+'" target="_blank" rel="noopener">'+NEWS.cta+' ›</a>';
+    const a=el.querySelector('a');
+    if(a)a.addEventListener('click',function(){track('outbound',{what:'news'});});
+  });
+}
 
 const PILE_SITES=[
  {zone:0,name:'苗栗竹南 · 海洋風電 Formosa 1',note:'龍鳳漁港外海 2～6 公里'},
@@ -777,23 +849,27 @@ function update(dt){
 
   if(S.phase==='tut'){
     S.tutT+=dt;S.tutTotal+=dt;
+    
     if(S.tut===0){
+      spotOn(null);
       document.getElementById('swipeHint').classList.add('on');
-      warn('<u>教學 1／2</u><br>手指在畫面上<span class="em">上下滑動</span>，帶牠游上游下',12,true);
-      if(S.moved&&S.tutT>1.1){S.tut=1;S.tutT=0;hideWarn();
+      warn('<u>教學 1／3</u><br>手指在畫面上<span class="em">上下滑動</span><br>帶白海豚游上游下',14,true);
+      if(S.moved&&S.tutT>1.2){S.tut=1;S.tutT=0;hideWarn();
         document.getElementById('swipeHint').classList.remove('on');
         S.air=Math.min(S.air,.42);}}
-    else if(S.tut===1){hintEl.classList.add('on');
-      warn('<u>教學 2／2</u><br>快沒空氣了！點<span class="em">左下角圓鈕</span>浮上去換氣',12,true);}
-    else if(S.tut===2){hintEl.classList.remove('on');
-      warn('學會了！<br>空氣快沒了就要浮上來換氣',2.4,true);
-      if(S.tutT>2.2){S.tut=3;S.tutT=0;}}
-    else{hideTip();hideWarn();hintEl.classList.remove('on');
+    else if(S.tut===1){
+      spotOn('bubbleRing');hintEl.classList.add('on');
+      warn('<u>教學 2／3</u><br>快沒空氣了！<br>點<span class="em">左下角的圓鈕</span>浮上海面換氣',14,true);}
+    else if(S.tut===2){
+      hintEl.classList.remove('on');spotOn('hp');
+      warn('<u>教學 3／3</u><br>左上角是<span class="em">體力</span><br>碰到危險會少一格，用完就結束了',14,true);
+      if(S.tutT>3.6){S.tut=3;S.tutT=0;}}
+    else{hideTip();hideWarn();hintEl.classList.remove('on');spotOff();
       document.getElementById('swipeHint').classList.remove('on');
-      S.phase='brief';showBrief();return;}
-    if(S.tutTotal>60){hideWarn();hintEl.classList.remove('on');
+      S.phase='brief';beginJourney();S.run=false;return;}
+    if(S.tutTotal>70){hideWarn();hintEl.classList.remove('on');spotOff();
       document.getElementById('swipeHint').classList.remove('on');
-      S.phase='brief';showBrief();return;}
+      S.phase='brief';beginJourney();S.run=false;return;}
   } else {
     const Z=ZONES[Math.max(S.zone,0)],z=Z.k;
     const EV=S.ev||{};
@@ -801,10 +877,10 @@ function update(dt){
     if(S.fishT<=0){S.fishT=((z==='river'?2:z==='ind'?4:3)+Math.random())*(EV.k==='flood'&&z==='river'?.5:1);
       spawnSchool(z==='river'?9+Math.floor(Math.random()*5):5+Math.floor(Math.random()*4),z);}
     S.hazT-=dt;
-    if(S.hazT<=0){S.hazT=((z==='ind'?1.2:1.7)+Math.random()*.9)*(EV.k==='rest'?1.8:EV.k==='trash'?.75:1);
-      spawnHaz();if(z==='ind'&&Math.random()<.4)spawnHaz();}
+    if(S.hazT<=0){S.hazT=((z==='ind'?2.1:2.9)+Math.random()*1.2)*(EV.k==='rest'?1.8:EV.k==='trash'?.8:1);
+      spawnHaz();if(z==='ind'&&Math.random()<.22)spawnHaz();}
     S.fillT-=dt;
-    if(S.fillT<=0){S.fillT=Z.big?4.5+Math.random()*2:(z==='ind'?7:11)+Math.random()*4;spawnFill(Z.big);}
+    if(S.fillT<=0){S.fillT=Z.big?6+Math.random()*2.5:(z==='ind'?10:15)+Math.random()*5;spawnFill(Z.big);}
     S.pileT-=dt;
     const atSite=EV.k==='pile'&&EV.site&&EV.site.zone===S.zone;
     if(S.pileT<=0&&!S.obs.some(o=>o.t==='pile')){
@@ -1456,7 +1532,7 @@ function end(k){
     zone:ZONES[Math.max(S.zone,0)].n,zoneIdx:Math.max(S.zone,0),
     netHit:S.netHit,plasticHit:S.plasticHit,fillHit:S.fillHit,
     noiseSec:Math.round(S.noiseSec),durSec:Math.round((Date.now()-T0)/1000)});
-  loadDex();
+  loadDex();renderNews();
   const rs=document.getElementById('ovRescue');
   if(S.rescued.length){
     rs.style.display='';
@@ -1601,17 +1677,26 @@ function start(){
   document.getElementById('intro').classList.add('hidden');
   document.getElementById('over').classList.add('hidden');
   document.getElementById('shareCanvasWrap').classList.remove('on');
-  document.getElementById('brief').classList.remove('on');
-  track('view2');
-  S.run=true;                 
-}
-
-function showBrief(){
+  spotOff();
+  
   S.run=false;
   document.getElementById('brief').classList.add('on');
 }
-function beginJourney(){
+function spotOn(id){
+  document.getElementById('dim').classList.add('on');
+  ['hp','bubbleRing'].forEach(function(x){document.getElementById(x).classList.remove('spot');});
+  if(id)document.getElementById(id).classList.add('spot');
+}
+function spotOff(){
+  document.getElementById('dim').classList.remove('on');
+  ['hp','bubbleRing'].forEach(function(x){document.getElementById(x).classList.remove('spot');});
+}
+function startTutorial(){
   document.getElementById('brief').classList.remove('on');
+  S.run=true;
+}
+function beginJourney(){
+  document.getElementById('brief').classList.remove('on');spotOff();
   S.ev=pickEvent();
   countdown(function(){
     if(S.ev.k==='calm')S.life=Math.min(MAXHP+1,6);
@@ -1625,7 +1710,7 @@ function beginJourney(){
     track('start',{what:S.ev.k});
   });
 }
-document.getElementById('briefGo').onclick=function(){SFX.tap();beginJourney();};
+document.getElementById('briefGo').onclick=function(){SFX.tap();startTutorial();};
 
 const AUDIO={sfx:true,bgm:true,ctx:null,master:null};
 function audioInit(){
@@ -1844,14 +1929,20 @@ function renderDex(){
       '<b>'+r.id+'</b><span>'+(g2?r.name:'？')+'</span>'+
       (g2?'<em>被救過 '+DEX.counts[r.id]+' 次</em>':'')+'</div>';
   }).join('');
+  const dxl=document.getElementById('dxLink');
+  if(dxl)dxl.innerHTML='大家已經一起救回 '+got+' 隻。<br>真實世界的搶救行動也正在進行 —— '+
+    '<a href="'+NEWS.url+'" target="_blank" rel="noopener">一起加入 ›</a>';
   const done=document.getElementById('dxDone');
   if(done)done.classList.toggle('on',got>=ROSTER.length);
   grid.querySelectorAll('.dxPic').forEach(function(cv){
     const r=ROSTER.find(function(x){return x.id===cv.dataset.id;});
     drawDexDolphin(cv,r,!!DEX.counts[r.id]);
   });
+  const pct=(stage2?deep:got)/ROSTER.length*100;
   const bar=document.getElementById('dexBar');
-  if(bar)bar.style.width=((stage2?deep:got)/ROSTER.length*100)+'%';
+  if(bar)bar.style.width=pct+'%';
+  const mk=document.getElementById('dexMark');
+  if(mk)mk.style.left=Math.max(6,Math.min(pct,97))+'%';
 }
 
 function loadDex(){
@@ -1882,7 +1973,7 @@ document.getElementById('dexBtn2').onclick=openDex;
 document.getElementById('dxClose').onclick=function(){
   SFX.tap();document.getElementById('dex').classList.remove('on');
 };
-loadDex();
+loadDex();loadNews();
 
 watchScroll();watchCards();
 updHUD();
