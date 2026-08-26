@@ -1000,8 +1000,11 @@ const ZONES=[
  {n:'彰化 · 濁水溪口',k:'river',land:.29},
  {n:'雲林 · 麥寮六輕',k:'ind',land:.32},
  {n:'雲林 · 台西海岸',k:'wet',land:.28}];
+
 const GOAL=SEG*ZONES.length, MAXD=38, SAFE=30, DEEP_TRIG=34, DEEP_LIMIT=4;
+
 const TH=[0,130,280], STAGES=['幼豚','少年豚','成年豚'], MAXHP=5;
+
 const PILE_R=250, PILE_EXT=.17;
 
 const S={};
@@ -1072,9 +1075,9 @@ function corridorY(m){return clamp(depthToY(m),S.land+.07,S.deep-.07);}
 function fishY(z){return z==='river'?corridorY(8+Math.random()*8):corridorY(6+Math.random()*20);}
 function laneY(){return S.land+.10+Math.random()*(S.deep-S.land-.20);}
 function spawnSchool(n,z){
-  const c=n||(5+Math.floor(Math.random()*5)),b=fishY(z||'wet'),amp=.018+Math.random()*.022,ph=Math.random()*6;
+  const c=n||(3+Math.floor(Math.random()*3)),b=fishY(z||'wet'),amp=.018+Math.random()*.022,ph=Math.random()*6;
   for(let i=0;i<c;i++){const col=Math.floor(i/2),row=i%2;
-    S.obs.push({t:'fish',x:W+30+col*26+row*12,
+    S.obs.push({t:'fish',x:W+30+col*32+row*14,
       y:clamp(b+Math.sin(ph+col*.7)*amp+row*.02,S.land+.07,S.deep-.07),w:20,h:.042,ph:Math.random()*6});}
 }
 function spawnGold(){S.obs.push({t:'gold',x:W+40,y:corridorY(10+Math.random()*10),w:30,h:.058,ph:Math.random()*6});}
@@ -1179,8 +1182,10 @@ function update(dt){
     const Z=ZONES[Math.max(S.zone,0)],z=Z.k;
     const EV=S.ev||{};
     S.fishT-=dt;
-    if(S.fishT<=0){S.fishT=((z==='river'?2:z==='ind'?4:3)+Math.random())*(EV.k==='flood'&&z==='river'?.5:1);
-      spawnSchool(z==='river'?9+Math.floor(Math.random()*5):5+Math.floor(Math.random()*4),z);}
+    
+    if(S.fishT<=0){S.fishT=((z==='river'?1.3:z==='ind'?2.6:2)+Math.random()*.7)
+                          *(EV.k==='flood'&&z==='river'?.55:1);
+      spawnSchool(z==='river'?5+Math.floor(Math.random()*3):3+Math.floor(Math.random()*3),z);}
     S.hazT-=dt;
     if(S.hazT<=0){
       
@@ -1241,7 +1246,7 @@ function update(dt){
     if(dNow>=DEEP_TRIG-.05){
       S.y=depthToY(DEEP_TRIG+.4);
       if(S.phase==='tut'){
-        
+
         S.deepTime=0;S.beep=99;
       } else {
         const before=S.deepTime;S.deepTime+=dt;
@@ -1366,7 +1371,7 @@ function depth(){return (S.y-S.land)/(S.deep-S.land)*MAXD;}
 function depthToY(m){return S.land+m/MAXD*(S.deep-S.land);}
 function updHUD(){
   const hp=document.getElementById('hp');hp.innerHTML='<span class="lb">體力</span>';
-  
+
   const slots=Math.max(MAXHP,S.life);
   for(let i=0;i<slots;i++){const d=document.createElement('span');
     d.className='pip'+(i<S.life?'':' off');hp.appendChild(d);}
@@ -1376,7 +1381,7 @@ function updHUD(){
 }
 
 function draw(){
-  
+
   const sh=(A11Y.flash&&S.shake>0)?(Math.random()-.5)*9*S.shake:0;
   const sv=(A11Y.flash&&S.noise>0)?(Math.random()-.5)*6*S.noise:0;
   ctx.save();ctx.translate(sh,sv);
@@ -1716,7 +1721,7 @@ causeEl.addEventListener('click',showResult);
 })();
 
 function end(k){
-  
+
   if(S.phase==='tut')return;
   S.run=false;
   (k==='home'?SFX.win:SFX.lose)();const e=E[k],c=CAUSE[k];
@@ -1985,7 +1990,7 @@ document.getElementById('shareLink').onclick=function(){
   const self=this;
   const url='https://lihi3.me/Bsby0/twbaihaitun';
   const dexGot=ROSTER.filter(function(r){return DEX.counts[r.id];}).length;
-  
+
   const txt = (S.lastKind==='home')
     ? ('我在《台灣白海豚大冒險》成功護送一隻台灣白海豚，'+
        '從苗栗一路游到雲林，全長 200 公里都平安回家了！'+
@@ -2137,7 +2142,7 @@ document.getElementById('btnSfx').onclick=function(){
 document.getElementById('btnBgm').onclick=function(){
   audioInit();AUDIO.bgm=!AUDIO.bgm;this.classList.toggle('on',AUDIO.bgm);this.classList.toggle('off',!AUDIO.bgm);
   AUDIO.bgm?bgmPlay():bgmStop();
-  
+
   wakeAudio();
   track('toggle',{what:'bgm',on:AUDIO.bgm?1:0});
 };
@@ -2227,7 +2232,7 @@ document.addEventListener('click',function(e){
   if(!a)return;
   let w='other';
   OUT_MAP.forEach(function(m){if(a.href.indexOf(m[0])>=0)w=m[1];});
-  
+
   const where=a.closest('#dex')?'dex':a.closest('#about')?'about':
               a.closest('#over')?'result':'cover';
   track('outbound',{what:w,where:where,href:a.href});
