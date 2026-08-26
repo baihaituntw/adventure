@@ -456,10 +456,11 @@ font-family:var(--cjk);font-size:14.5px;font-weight:800;cursor:pointer;line-heig
 #dim.on{opacity:1}
 
 #hp{position:relative}
-.spot{z-index:25!important;border-radius:22px;
-  box-shadow:0 0 0 4px rgba(255,214,110,.95),0 0 30px 10px rgba(255,214,110,.6)!important;
-  animation:spotP 1.3s ease-in-out infinite}
-@keyframes spotP{50%{box-shadow:0 0 0 8px rgba(255,214,110,.8),0 0 40px 14px rgba(255,214,110,.45)!important}}
+.spot{z-index:25!important;animation:spotP 1.8s ease-in-out infinite}
+@keyframes spotP{
+  0%,100%{filter:drop-shadow(0 0 3px rgba(255,205,90,.55))}
+  50%    {filter:drop-shadow(0 0 16px rgba(255,205,90,.95))}
+}
 
 #swipeHint{position:absolute;left:50%;top:52%;transform:translate(-50%,-50%);z-index:25;
   pointer-events:none;opacity:0;transition:opacity .3s}
@@ -1000,7 +1001,7 @@ const ZONES=[
  {n:'雲林 · 麥寮六輕',k:'ind',land:.32},
  {n:'雲林 · 台西海岸',k:'wet',land:.28}];
 const GOAL=SEG*ZONES.length, MAXD=38, SAFE=30, DEEP_TRIG=34, DEEP_LIMIT=4;
-const TH=[0,180,280], STAGES=['幼豚','少年豚','成年豚'], MAXHP=5;
+const TH=[0,130,280], STAGES=['幼豚','少年豚','成年豚'], MAXHP=5;
 const PILE_R=250, PILE_EXT=.17;
 
 const S={};
@@ -1650,7 +1651,7 @@ function drawGauge(){
   ctx.fillText(Math.max(0,Math.round(depth()))+'m',x,top-8);ctx.textAlign='left';ctx.restore();
 }
 
-const FIN_SCALE = .38;
+const FIN_SCALE = .46;
 function dolphin(x,y){
   const blink = S.inv>0 && Math.floor(S.inv*12)%2===0;
   const up    = !!S.surf;
