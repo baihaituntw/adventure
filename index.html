@@ -896,7 +896,8 @@ function track(type,extra){
 
 track('view');
 
-let depthSent={};
+let depthSent={},cardSeen={};
+function resetReadMetrics(){depthSent={};cardSeen={};}
 function watchScroll(){
   const el=document.getElementById('over');
   el.addEventListener('scroll',function(){
@@ -910,12 +911,11 @@ function watchScroll(){
 
 function watchCards(){
   if(!('IntersectionObserver' in window))return;
-  const seen={};
   const io=new IntersectionObserver(function(es){
     es.forEach(function(en){
       if(en.isIntersecting){
         const n=en.target.dataset.card;
-        if(n&&!seen[n]){seen[n]=1;track('read',{what:n});}
+        if(n&&!cardSeen[n]){cardSeen[n]=1;track('read',{what:n});}
       }
     });
   },{threshold:.5});
@@ -2093,6 +2093,7 @@ function start(){
   document.getElementById('intro').classList.add('hidden');
   document.getElementById('over').classList.add('hidden');
   document.getElementById('shareCanvasWrap').classList.remove('on');
+  resetReadMetrics();
   spotOff();
   S.run=false;
   if(PLAYED){                      
