@@ -10,6 +10,9 @@
 --cjk:"PingFang TC","Noto Sans TC","Microsoft JhengHei","Heiti TC",sans-serif;}
 *{box-sizing:border-box;-webkit-tap-highlight-color:transparent;margin:0;padding:0}
 html,body{height:100%;overflow:hidden;background:#1F6E93;font-family:var(--cjk)}
+
+body{position:fixed;inset:0;overscroll-behavior:none}
+#wrap{height:100dvh}
 body{display:flex;align-items:center;justify-content:center;user-select:none;color:var(--brown)}
 #wrap{position:relative;width:100%;max-width:520px;height:100%;max-height:100dvh;overflow:hidden;background:var(--sea)}
 canvas{display:block;width:100%;height:100%;touch-action:none}
@@ -42,7 +45,7 @@ font-size:15px;font-weight:900;white-space:nowrap;opacity:0;transition:opacity .
 #alert.cd{font-size:21px;padding:13px 30px;letter-spacing:.05em;background:rgba(232,69,47,.9)}
 @keyframes nz{50%{transform:translate(-50%,-50%) scale(1.06)}}
 
-#bubbleRing{position:absolute;left:16px;bottom:calc(env(safe-area-inset-bottom) + 20px);width:98px;height:98px;pointer-events:auto}
+#bubbleRing{position:absolute;left:16px;bottom:calc(env(safe-area-inset-bottom) + 30px);width:98px;height:98px;pointer-events:auto}
 #airArc{position:absolute;inset:0;pointer-events:none}
 #bubbleBtn{width:98px;height:98px;border-radius:50%;border:none;background:var(--cream);
 box-shadow:0 5px 0 var(--sand-dark),0 8px 16px rgba(0,0,0,.18);font-family:var(--cjk);font-size:14px;font-weight:800;color:var(--brown);
@@ -71,7 +74,7 @@ padding:6px 12px;border-radius:14px;white-space:nowrap;box-shadow:0 3px 10px rgb
 .sndBtn.off::after{content:"";position:absolute;left:7px;right:7px;top:50%;height:2.5px;border-radius:2px;
   background:#E8452F;transform:rotate(-38deg)}
 
-#msg{position:absolute;left:50%;top:29%;transform:translate(-50%,-50%) scale(.88);
+#msg{position:absolute;left:50%;top:27%;transform:translate(-50%,-50%) scale(.88);
 background:rgba(255,249,240,.5);backdrop-filter:blur(2px);border-radius:22px;padding:12px 20px;max-width:84%;
 font-size:15px;font-weight:800;line-height:1.5;text-align:center;color:#4A382B;
 box-shadow:0 4px 14px rgba(0,0,0,.1);opacity:0;transition:opacity .18s,transform .18s cubic-bezier(.3,1.5,.5,1);pointer-events:none}
@@ -114,6 +117,7 @@ text-shadow:0 6px 24px rgba(0,0,0,.35);pointer-events:none}
 .bfR.bad{background:#FFEDE7;color:#A8402C;border-left-color:#E8825F}
 .bfR.good{background:#FFF6DC;color:#8E6208;border-left-color:#F0B93C}
 .bfR.warn{background:#EEE8F7;color:#57478A;border-left-color:#9484C4}
+.bfR.deep{background:#E9EEF2;color:#42606F;border-left-color:#7C9AAB}
 .bfR.task{background:#E7F4FA;color:#14688C;border-left-color:#5FB4D4}
 .bfB{margin:6px 14px 16px;width:calc(100% - 28px);border:0;border-radius:22px;padding:16px;cursor:pointer;
   font-family:var(--cjk);font-size:17px;font-weight:900;letter-spacing:.14em;
@@ -458,13 +462,18 @@ font-family:var(--cjk);font-size:14.5px;font-weight:800;cursor:pointer;line-heig
       </div>
       <div class="bfR good">
         <span class="bi">🐟</span>
-        <div><b>美味的金色黃花魚</b>
+        <div><b>美味金色黃花魚</b>
         <small>發光的金色黃花魚是白海豚的最愛，吃到牠就能補回 1 格體力，繼續向前游！</small></div>
       </div>
       <div class="bfR warn">
         <span class="bi">🔊</span>
         <div><b>打樁噪音</b>
         <small>噪音蓋掉了聲波，讓白海豚抓不到魚、聽不見同伴求救。牠因為害怕不敢浮出海面，空氣消耗得更快了！</small></div>
+      </div>
+      <div class="bfR deep">
+        <span class="bi">📏</span>
+        <div><b>不能游太深</b>
+        <small>白海豚只住在水深 15～30 公尺的淺海。游進太深的地方牠會受不了，撐太久就回不來了。</small></div>
       </div>
       <div class="bfR task">
         <span class="bi">🐬</span>
@@ -501,8 +510,7 @@ font-family:var(--cjk);font-size:14.5px;font-weight:800;cursor:pointer;line-heig
     <div class="dxDone" id="dxDone">🎉 50 隻同伴全部被救回來了！<small>這是遊戲，可以重來；真實的白海豚只剩不到 50 隻，牠們沒有第二次機會。<br>下一個目標：讓每一隻都被救到 10 次。</small></div>
     <div class="dxGrid" id="dxGrid"></div>
     <div class="dxLink" id="dxLink"></div>
-    <p class="dxNote">遊戲中的白海豚編號與名字為虛擬設定，但牠們面臨的危險都是真實發生的喔！<br>
-    遊戲裡的同伴可以一救再救，真實世界的白海豚只剩不到 50 隻，沒有第二次機會。</p>
+    <p class="dxNote">遊戲中的白海豚編號與名字為虛擬設定，但牠們面臨的危險都是真實發生的喔！</p>
   </div>
 </div>
 
@@ -624,10 +632,22 @@ font-family:var(--cjk);font-size:14.5px;font-weight:800;cursor:pointer;line-heig
     <div class="sect"><span>更多守護行動</span></div>
     <div class="acts">
       <a class="lnk lnk2" href="https://www.facebook.com/wildatheart.org?locale=zh_TW" target="_blank" rel="noopener">
-        <span class="tx">台灣蠻野心足生態協會<small>長期為白海豚棲地打環境訴訟</small></span><span class="go">›</span>
+        <span class="tx">台灣蠻野心足生態協會<small>長期以「法律」角度為白海豚棲地打環境訴訟</small></span><span class="go">›</span>
       </a>
       <a class="lnk lnk2" href="https://www.facebook.com/matzufish?locale=zh_TW" target="_blank" rel="noopener">
         <span class="tx">台灣白海豚媽祖宮 · 粘錫麟紀念館<small>在地守護「媽祖魚」的行動基地</small></span><span class="go">›</span>
+      </a>
+      <a class="lnk lnk2" href="https://sites.google.com/view/twsousa/" target="_blank" rel="noopener">
+        <span class="tx">台灣媽祖魚保育聯盟<small>長期記錄白海豚族群與棲地變化</small></span><span class="go">›</span>
+      </a>
+      <a class="lnk lnk2" href="https://www.facebook.com/GovWatchA" target="_blank" rel="noopener">
+        <span class="tx">監督施政聯盟<small>緊盯台中港填海造陸的行政程序</small></span><span class="go">›</span>
+      </a>
+      <a class="lnk lnk2" href="https://www.facebook.com/sow.org.tw" target="_blank" rel="noopener">
+        <span class="tx">荒野保護協會<small>推動棲地保育與公民行動</small></span><span class="go">›</span>
+      </a>
+      <a class="lnk lnk2" href="https://cepu49.webnode.tw/" target="_blank" rel="noopener">
+        <span class="tx">彰化縣環境保護聯盟<small>在地守護彰化外海與潮間帶</small></span><span class="go">›</span>
       </a>
     </div>
 
@@ -651,7 +671,7 @@ const ROSTER=(function(){
     return {id:'TW-'+String(i+1).padStart(2,'0'),name:n};
   });
 })();
-const DEX={counts:{},mine:{}};
+const DEX={counts:{},mine:{},err:''};
 
 const NEWS={
   on:true,
@@ -941,7 +961,7 @@ function update(dt){
     else if(S.tut===1){
       spotOn('hp');
       warn('<u>教學 2／3</u><br>左上角亮起來的是<span class="em">體力</span><br>碰到危險會少一格，用完就結束了',14,true);
-      if(S.tutT>4){S.tut=2;S.tutT=0;hideWarn();S.air=Math.min(S.air,.42);}}
+      if(S.tutT>7.5){S.tut=2;S.tutT=0;hideWarn();S.air=Math.min(S.air,.42);}}
     else if(S.tut===2){
       spotOn('bubbleRing');hintEl.classList.add('on');
       warn('<u>教學 3／3</u><br>快沒空氣了！<br>點<span class="em">左下角亮起來的圓鈕</span>浮上海面換氣',14,true);}
@@ -1069,6 +1089,7 @@ function update(dt){
         msg('救到了！<span class="em">'+o.who.id+' '+o.who.name+'</span>'+
             (times>1?'　（第 '+times+' 次被救）':'　★ 圖鑑新增'),2.8,3);
         track('rescue',{what:o.who.id});
+        setTimeout(loadDex,4000);   
       } else if(o.t==='fish'||o.t==='gold'){
         if(S.noise>0){tip('聲波被蓋住了，吃不到魚',3.5);}
         else if(o.t==='gold'){
@@ -1542,7 +1563,7 @@ const E={
  home :{t:'太棒了！順利抵達雲林！',
   s:'你陪牠游過了<span class="em">苗栗、台中、彰化到雲林</span>的最危險海岸。<br><br>這片海長約 200 公里、寬不到 5 公里，是<span class="em">全世界最小的鯨豚家園</span>。白海豚一輩子都只能在這條窄窄的海邊巷子裡生活。<br><br>謝謝你，安全送牠回家！'},
  hurt :{t:'體力用完了，無法再前進了',
-  s:'一路上有太多<span class="em">塑膠垃圾、刺網和填海陸地</span>，根本來不及閃躲。<br><br>你知道嗎？真實的白海豚裡，<span class="em">每三隻就有一隻</span>身上發現被漁網纏繞或被船隻割傷的痕跡，這些傷口永遠不會好。<br><br>不過，科學家也是透過背鰭上這些獨一無二的缺角和傷痕，才能一隻一隻把牠們認出來，記錄牠們辛苦過生活的故事。'},
+  s:'一路上有太多<span class="em">塑膠垃圾、刺網和填海陸地</span>，根本來不及閃躲。<br><br>你知道嗎？真實的白海豚裡，<span class="em">每三隻就有一隻</span>身上發現被漁網纏繞或被船隻割傷的痕跡，這些傷口永遠不會好。'},
  drown:{t:'來不及浮上海面換氣',
   s:'水下的噪音太吵了，讓牠<span class="em">迷失了方向</span>，忘記要浮出水面呼吸。<br><br>白海豚跟我們一樣用<span class="em">肺</span>呼吸，每 <span class="em">1～3 分鐘</span>就要換一次氣。牠們是用聲音「聽」出路線的，但施工打樁和船隻的噪音太吵，蓋掉了聲音，讓牠迷失方向，甚至會<span class="em">聽力受傷、迷路擱淺</span>！'},
  deep :{t:'游進太深的海了……',
@@ -2005,7 +2026,8 @@ function renderDex(){
   if(dl)dl.textContent=stage2?'第二階段 · 每隻救 10 次':'救援圖鑑';
   const cd=document.getElementById('dexBtn2');
   if(cd)cd.classList.toggle('full',stage2&&deep>=ROSTER.length);
-  document.getElementById('dxSum').textContent='全部玩家已救到 '+got+' / '+ROSTER.length+' 隻'+
+  document.getElementById('dxSum').textContent=(DEX.err?'（'+DEX.err+'，以下只顯示你自己救到的）':'')+
+    '全部玩家已救到 '+got+' / '+ROSTER.length+' 隻'+
     (S.rescued&&S.rescued.length?'　（你這局救了 '+S.rescued.length+' 隻）':'');
   const grid=document.getElementById('dxGrid');
   grid.innerHTML=ROSTER.map(function(r){
@@ -2016,8 +2038,8 @@ function renderDex(){
       (g2?'<em>被救過 '+DEX.counts[r.id]+' 次</em>':'')+'</div>';
   }).join('');
   const dxl=document.getElementById('dxLink');
-  if(dxl)dxl.innerHTML='大家已經一起救回 '+got+' 隻。<br>真實世界的搶救行動也正在進行 —— '+
-    '<a href="'+NEWS.url+'" target="_blank" rel="noopener">一起加入 ›</a>';
+  if(dxl)dxl.innerHTML='大家已經一起救回 '+got+' 隻。<br>真實世界的白海豚需要你的一票 —— '+
+    '<a href="https://forms.gle/EP53e3d9rTYg2j1U7" target="_blank" rel="noopener">立即連署 ›</a>';
   const done=document.getElementById('dxDone');
   if(done)done.classList.toggle('on',got>=ROSTER.length);
   grid.querySelectorAll('.dxPic').forEach(function(cv){
@@ -2033,10 +2055,14 @@ function renderDex(){
 
 function loadDex(){
   renderDex();
-  if(!ANALYTICS_URL)return;
+  if(!ANALYTICS_URL){DEX.err='未設定後台網址';return;}
   const cb='__dex'+Math.random().toString(36).slice(2,8);
   const sc=document.createElement('script');
+  
+  let done=false;
+  setTimeout(function(){if(!done){DEX.err='連不上後台';renderDex();}},6000);
   window[cb]=function(d){
+    done=true;DEX.err='';
     if(d&&d.counts){
       
       DEX.counts=d.counts;
