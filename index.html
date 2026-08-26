@@ -352,7 +352,8 @@ font-family:var(--cjk);font-size:14.5px;font-weight:800;cursor:pointer;line-heig
 #dim{position:absolute;inset:0;background:rgba(6,32,48,.58);opacity:0;pointer-events:none;
   transition:opacity .35s;z-index:19}
 #dim.on{opacity:1}
-#hp,#bubbleRing{position:relative}
+
+#hp{position:relative}
 .spot{z-index:25!important;border-radius:22px;
   box-shadow:0 0 0 4px rgba(255,214,110,.95),0 0 30px 10px rgba(255,214,110,.6)!important;
   animation:spotP 1.3s ease-in-out infinite}
@@ -816,14 +817,14 @@ function reset(){Object.assign(S,{
   run:false,dist:0,spd:92,y:.45,life:MAXHP,inv:0,air:1,
   fish:0,gold:0,stage:0,deepTime:0,landT:0,fillPass:0,fillHit:0,noiseSec:0,plasticHit:0,netHit:0,propHit:0,
   land:.14,landTgt:.14,deep:.88,murk:0,murkTgt:0,
-  nAlert:0,airWarnCd:0,cheer:{},beep:99,rescued:[],friendT:24,ev:null,obs:[],hazT:2,fishT:1.2,fillT:8,pileT:11,goldT:14,pops:[],bub:[],spray:[],sonar:[],sonarT:0,
+  nAlert:0,airWarnCd:0,cheer:{},beep:99,tapAdv:false,rescued:[],friendT:24,ev:null,obs:[],hazT:2,fishT:1.2,fillT:8,pileT:11,goldT:14,pops:[],bub:[],spray:[],sonar:[],sonarT:0,
   zone:-1,phase:'tut',tut:0,tutT:0,moved:false,shake:0,
   surf:null,noise:0,tutTotal:0,jitter:0,breathed:false
 });for(let i=0;i<22;i++)S.bub.push({x:Math.random()*W,y:Math.random()*H,r:1+Math.random()*3,s:7+Math.random()*12});}
 reset();
 
 let drag=null;
-cv.addEventListener('pointerdown',e=>{drag={y:e.clientY,by:S.y};});
+cv.addEventListener('pointerdown',e=>{drag={y:e.clientY,by:S.y};if(S.phase==='tut'&&S.tut===1)S.tapAdv=true;});
 cv.addEventListener('pointermove',e=>{
   if(!drag||!S.run||S.surf)return;
   const ny=clamp(drag.by+(e.clientY-drag.y)/H,0,1);
@@ -960,8 +961,8 @@ function update(dt){
         document.getElementById('swipeHint').classList.remove('on');}}
     else if(S.tut===1){
       spotOn('hp');
-      warn('<u>教學 2／3</u><br>左上角亮起來的是<span class="em">體力</span><br>碰到危險會少一格，用完就結束了',14,true);
-      if(S.tutT>7.5){S.tut=2;S.tutT=0;hideWarn();S.air=Math.min(S.air,.42);}}
+      warn('<u>教學 2／3</u><br>左上角亮起來的是<span class="em">體力</span><br>碰到危險會少一格，用完就結束了<br><small style="opacity:.85;font-size:12.5px">（點畫面繼續）</small>',14,true);
+      if(S.tutT>5||S.tapAdv){S.tut=2;S.tutT=0;S.tapAdv=false;hideWarn();S.air=Math.min(S.air,.42);}}
     else if(S.tut===2){
       spotOn('bubbleRing');hintEl.classList.add('on');
       warn('<u>教學 3／3</u><br>快沒空氣了！<br>點<span class="em">左下角亮起來的圓鈕</span>浮上海面換氣',14,true);}
