@@ -134,8 +134,10 @@ text-shadow:0 6px 24px rgba(0,0,0,.35);pointer-events:none}
   background:linear-gradient(180deg,#9FE0EE,#6BC6DE)}
 .dxHd b{display:block;font-size:17px;font-weight:900;color:#0E3A57}
 .dxHd small{display:block;font-size:12px;font-weight:800;color:#155C7C;margin-top:2px}
-.dxHd button{border:0;border-radius:16px;padding:9px 15px;font-family:var(--cjk);font-size:13px;
-  font-weight:900;background:#fff;color:#155C7C;cursor:pointer}
+.dxHd{gap:6px}
+.dxHd button{border:0;border-radius:16px;padding:9px 13px;font-family:var(--cjk);font-size:12.5px;
+  font-weight:900;background:#fff;color:#155C7C;cursor:pointer;white-space:nowrap}
+#dxReload{background:#155C7C;color:#fff}
 .dxGrid{flex:1;overflow-y:auto;display:grid;grid-template-columns:repeat(auto-fill,minmax(96px,1fr));
   gap:8px;padding:14px}
 .dxCell{border-radius:14px;padding:9px 4px;text-align:center;background:#E5EDF1;color:#9DAFB9}
@@ -297,7 +299,14 @@ font-family:var(--cjk);font-size:14.5px;font-weight:800;cursor:pointer;line-heig
 .sect::before,.sect::after{content:"";flex:1;height:2px;border-radius:2px;
   background:linear-gradient(90deg,rgba(31,110,147,0),rgba(31,110,147,.35),rgba(31,110,147,0))}
 .sect span{font-size:14px;font-weight:900;letter-spacing:.06em;white-space:nowrap}
-.scrollHint{margin-top:16px;font-size:13.5px;font-weight:900;color:#1F8FB8;animation:bob 1.4s infinite}
+.scrollHint{margin-top:18px;display:flex;flex-direction:column;align-items:center;gap:9px;
+  font-size:13.5px;font-weight:900;color:#1F8FB8}
+.scrollHint .chev{width:30px;height:30px;border-radius:50%;background:#E1F1F8;
+  display:flex;align-items:center;justify-content:center;position:relative;
+  animation:bob 1.5s ease-in-out infinite;box-shadow:0 2px 0 #C3E0EC}
+.scrollHint .chev::before{content:"";width:9px;height:9px;margin-top:-3px;
+  border-right:2.5px solid #1F8FB8;border-bottom:2.5px solid #1F8FB8;
+  transform:rotate(45deg);border-radius:1px}
 .captain .shareRow{display:flex;gap:9px}
 .captain .shBtn{flex:1;font-size:13.5px;padding:15px 6px}
 .lnk1{margin-top:18px;display:block;text-align:center;padding:17px 16px;font-size:16.5px;
@@ -305,6 +314,15 @@ font-family:var(--cjk);font-size:14.5px;font-weight:800;cursor:pointer;line-heig
 #shareCanvasWrap.on{display:block}
 #shareCanvasWrap img{width:100%;border-radius:18px;box-shadow:0 6px 18px rgba(0,0,0,.18)}
 #shareCanvasWrap p{font-size:11.5px;color:#8B7A69;margin-top:7px;font-weight:700}
+.dlBtn{display:block;margin-top:10px;padding:13px;border-radius:18px;text-align:center;
+  text-decoration:none;background:#5BC8E8;color:#fff;font-size:14.5px;font-weight:900;
+  box-shadow:0 4px 0 #3FA3C0}
+.dlBtn:active{transform:translateY(3px);box-shadow:0 1px 0 #3FA3C0}
+.iabTip{margin-bottom:10px;background:#FFF4E2;border-left:5px solid #E8A33C;border-radius:16px;
+  padding:13px 14px;text-align:left;font-size:12.5px;font-weight:700;color:#8A6212;line-height:1.75}
+.iabTip b{display:block;font-size:13.5px;font-weight:900;color:#A5711A;margin-bottom:5px}
+.iabTip button{margin-top:9px;border:0;border-radius:14px;padding:10px 14px;cursor:pointer;
+  font-family:var(--cjk);font-size:12.5px;font-weight:900;background:#E8A33C;color:#fff}
 .grew{margin-top:14px;border-radius:22px;padding:16px 16px 14px;text-align:center}
 .grew .gt{font-size:12px;font-weight:800;letter-spacing:.1em;opacity:.7}
 .grew .gn{font-size:24px;font-weight:900;margin-top:4px}
@@ -368,6 +386,13 @@ font-family:var(--cjk);font-size:14.5px;font-weight:800;cursor:pointer;line-heig
   animation:swipe 1.6s ease-in-out infinite;filter:drop-shadow(0 3px 10px rgba(0,0,0,.4))}
 @keyframes swipe{0%,100%{transform:translateY(-36px)}50%{transform:translateY(36px)}}
 
+.iabCover{margin:16px auto 0;max-width:320px;background:rgba(255,244,226,.96);
+  border-left:5px solid #E8A33C;border-radius:18px;padding:13px 14px;text-align:left;
+  font-size:12.5px;font-weight:700;color:#8A6212;line-height:1.75;
+  box-shadow:0 4px 0 rgba(160,120,30,.2)}
+.iabCover b{display:block;font-size:13.5px;font-weight:900;color:#A5711A;margin-bottom:4px}
+.iabCover button{margin-top:9px;border:0;border-radius:14px;padding:10px 14px;cursor:pointer;
+  font-family:var(--cjk);font-size:12.5px;font-weight:900;background:#E8A33C;color:#fff}
 .coverDex{margin:18px auto 0;max-width:300px;cursor:pointer;background:rgba(255,255,255,.92);
   border-radius:22px;padding:13px 16px 15px;box-shadow:0 4px 0 rgba(30,110,147,.22)}
 .coverDex .cdTop{display:flex;align-items:baseline;justify-content:space-between}
@@ -531,12 +556,13 @@ font-family:var(--cjk);font-size:14.5px;font-weight:800;cursor:pointer;line-heig
         <b>白海豚救援圖鑑</b>
         <small id="dxSum">載入中…</small>
       </div>
+      <button id="dxReload">重新讀取</button>
       <button id="dxClose">關閉</button>
     </div>
     <div class="dxDone" id="dxDone">🎉 50 隻同伴全部被救回來了！<small>這是遊戲，可以重來；真實的白海豚只剩不到 50 隻，牠們沒有第二次機會。<br>下一個目標：讓每一隻都被救到 10 次。</small></div>
     <div class="dxGrid" id="dxGrid"></div>
     <div class="dxLink" id="dxLink"></div>
-    <p class="dxNote">白海豚寶寶全身是灰色的，長大後灰色會慢慢褪去、轉為粉白，<b>沒褪乾淨的地方就留下一顆顆斑點</b>。每隻的斑點與背鰭缺角都不一樣，研究人員就是靠這些認出牠們。<br>遊戲中的編號與名字為虛擬設定，但牠們面臨的危險都是真實發生的喔！</p>
+    <p class="dxNote">遊戲中的編號與名字為虛擬設定，但牠們面臨的危險都是真實發生的喔！</p>
   </div>
 </div>
 
@@ -558,6 +584,7 @@ font-family:var(--cjk);font-size:14.5px;font-weight:800;cursor:pointer;line-heig
 
     <p class="lead">陪一隻剛出生的<b>台灣白海豚</b><br>沿著西海岸的淺灘往南游</p>
     <p class="ask">是否能夠順利長大呢？</p>
+    <div class="iabCover" id="iabCover" style="display:none"></div>
 
     <button class="goBtn big" id="startBtn">出發囉</button>
     <div class="coverDex" id="dexBtn2">
@@ -577,7 +604,7 @@ font-family:var(--cjk);font-size:14.5px;font-weight:800;cursor:pointer;line-heig
   <div class="card">
     <h1 id="ovT"></h1>
     <div class="sub" id="ovS"></div>
-    <div class="scrollHint">往下滑，分享你的成績 ⌄</div>
+    <div class="scrollHint"><span>往下滑，分享你的成績</span><i class="chev"></i></div>
 
     <div class="cert" id="ovCert" style="display:none">
       <div class="ctIn">
@@ -665,7 +692,12 @@ font-family:var(--cjk);font-size:14.5px;font-weight:800;cursor:pointer;line-heig
         <button class="shBtn sh1" id="shareImg">分享我的成績</button>
         <button class="shBtn sh2" id="shareLink">邀請朋友守護白海豚</button>
       </div>
-      <div id="shareCanvasWrap"><img id="shareImgEl" alt="成績圖"><p>長按圖片即可儲存或分享</p></div>
+      <div class="iabTip" id="iabTip" style="display:none"></div>
+      <div id="shareCanvasWrap">
+        <img id="shareImgEl" alt="成績圖">
+        <a id="shareDl" class="dlBtn" download="台灣白海豚大冒險.png">下載成績圖</a>
+        <p id="shareHint">長按圖片即可儲存或分享</p>
+      </div>
     </div>
 
     <div class="sect"><span>更多守護行動</span></div>
@@ -1159,7 +1191,9 @@ function depth(){return (S.y-S.land)/(S.deep-S.land)*MAXD;}
 function depthToY(m){return S.land+m/MAXD*(S.deep-S.land);}
 function updHUD(){
   const hp=document.getElementById('hp');hp.innerHTML='<span class="lb">體力</span>';
-  for(let i=0;i<MAXHP;i++){const d=document.createElement('span');
+  
+  const slots=Math.max(MAXHP,S.life);
+  for(let i=0;i<slots;i++){const d=document.createElement('span');
     d.className='pip'+(i<S.life?'':' off');hp.appendChild(d);}
   const lo=TH[S.stage],hi=S.stage>=2?TH[2]:TH[S.stage+1];
   document.getElementById('growthFill').style.width=clamp(S.stage>=2?100:(S.fish-lo)/(hi-lo)*100,0,100)+'%';
@@ -1572,7 +1606,7 @@ const E={
  home :{t:'太棒了！順利抵達雲林！',
   s:'你陪牠游過了<span class="em">苗栗、台中、彰化到雲林</span>的最危險海岸。<br><br>這片海長約 200 公里、寬不到 5 公里，是<span class="em">全世界最小的鯨豚家園</span>。白海豚一輩子都只能在這條窄窄的海邊巷子裡生活。<br><br>謝謝你，安全送牠回家！'},
  hurt :{t:'體力用完，無法再前進了',
-  s:'一路上有太多<span class="em">塑膠、漁網和填海陸地</span>，根本來不及閃躲。<br><br>你知道嗎？真實的白海豚，<span class="em">每三隻就有一隻</span>身上發現被漁網纏繞或船隻割傷的痕跡，這些傷口永遠不會好。'},
+  s:'一路上有太多<span class="em">塑膠、漁網和填海地</span>，根本來不及閃躲。<br><br>你知道嗎？真實的白海豚，<span class="em">每三隻就有一隻</span>身上發現被漁網纏繞或船隻割傷的痕跡，這些傷口永遠不會好。'},
  drown:{t:'來不及換氣……',
   s:'水下噪音太吵了，讓牠<span class="em">迷失方向</span>，忘記浮出水面呼吸。<br><br>白海豚跟我們一樣用<span class="em">肺</span>呼吸，每 <span class="em">1～3 分鐘</span>要換一次氣。牠們是用聲音「聽」出路線的，但施工打樁和船隻的噪音太吵，蓋掉了聲音，讓牠迷失方向，甚至會<span class="em">聽力受傷、迷路擱淺</span>！'},
  deep :{t:'游進太深的海了……',
@@ -1810,18 +1844,81 @@ function makeCertImage(){
   return c;
 }
 
+function inAppBrowser(){
+  const ua=navigator.userAgent||'';
+  if(/FBAN|FBAV|FB_IAB|FBIOS/i.test(ua))return 'Facebook';
+  if(/Instagram/i.test(ua))return 'Instagram';
+  if(/Threads/i.test(ua))return 'Threads';
+  if(/Line\//i.test(ua))return 'LINE';
+  return '';
+}
+function showIabTip(){
+  const app=inAppBrowser();
+  const el=document.getElementById('iabTip');
+  if(!app){el.style.display='none';return false;}
+  const ios=/iPhone|iPad|iPod/i.test(navigator.userAgent);
+  el.style.display='';
+  el.innerHTML='<b>你正在 '+app+' 的內建瀏覽器裡</b>'+
+    '這裡沒辦法儲存圖片或叫出分享功能。'+
+    (ios?'請點右上角的「⋯」，選<b style="display:inline">在 Safari 中開啟</b>'
+        :'請點右上角的「⋯」，選<b style="display:inline">用瀏覽器開啟</b>')+
+    '，就能順利下載和分享了。'+
+    '<button id="iabCopy">複製遊戲連結</button>';
+  document.getElementById('iabCopy').onclick=function(){
+    const self=this;
+    copyText('https://lihi3.me/Bsby0/twbaihaitun',function(){
+      self.textContent='已複製！貼到瀏覽器打開';
+      setTimeout(function(){self.textContent='複製遊戲連結';},2600);
+    });
+  };
+  return true;
+}
+
+function copyText(t,cb){
+  if(navigator.clipboard&&navigator.clipboard.writeText){
+    navigator.clipboard.writeText(t).then(cb,fb);
+  } else fb();
+  function fb(){
+    const ta=document.createElement('textarea');
+    ta.value=t;ta.style.position='fixed';ta.style.opacity='0';
+    document.body.appendChild(ta);ta.select();
+    try{document.execCommand('copy');cb();}catch(e){cb();}
+    ta.remove();
+  }
+}
+
 document.getElementById('shareImg').onclick=function(){
-  SFX.tap();track('share',{what:S.lastKind==='home'?'cert':'image'});
-  const c=(S.lastKind==='home'?makeCertImage():makeShareImage()),url=c.toDataURL('image/png');
+  SFX.tap();
+  const isCert=(S.lastKind==='home');
+  const iab=inAppBrowser();
+  track('share',{what:(isCert?'cert':'image')+(iab?'_iab':'')});
+
+  const c=(isCert?makeCertImage():makeShareImage()),url=c.toDataURL('image/png');
+  const name=(isCert?'台灣白海豚守護證書':'台灣白海豚大冒險')+'.png';
   document.getElementById('shareImgEl').src=url;
-  document.getElementById('shareCanvasWrap').classList.add('on');
-  document.getElementById('shareCanvasWrap').scrollIntoView({behavior:'smooth',block:'center'});
-  if(navigator.canShare&&c.toBlob){
+
+  const dl=document.getElementById('shareDl');
+  dl.href=url;dl.setAttribute('download',name);
+  dl.textContent=isCert?'下載守護證書':'下載成績圖';
+
+  const wrap=document.getElementById('shareCanvasWrap');
+  wrap.classList.add('on');
+
+  const blocked=showIabTip();
+  document.getElementById('shareHint').textContent=blocked
+    ? '在這裡長按圖片通常存不起來，請依上方說明改用外部瀏覽器'
+    : '長按圖片可儲存，或按上面的下載鈕';
+
+  wrap.scrollIntoView({behavior:'smooth',block:'center'});
+
+  if(!blocked&&navigator.canShare&&c.toBlob){
     c.toBlob(b=>{
       if(!b)return;
-      const f=new File([b],(S.lastKind==='home'?'台灣白海豚守護證書':'台灣白海豚大冒險')+'.png',{type:'image/png'});
+      const f=new File([b],name,{type:'image/png'});
       if(navigator.canShare({files:[f]}))
-        navigator.share({files:[f],title:'台灣白海豚大冒險',text:'台灣白海豚只剩不到 50 隻，你能陪牠游多遠？'}).catch(()=>{});
+        navigator.share({files:[f],
+          title:(isCert?'我把白海豚平安送回家了！':'台灣白海豚大冒險'),
+          text:'台灣白海豚只剩不到 50 隻，你能陪牠游多遠？'}).catch(()=>{});
     },'image/png');
   }
 };
@@ -1846,12 +1943,10 @@ document.getElementById('shareLink').onclick=function(){
     const old=self.textContent;self.textContent=msg;
     setTimeout(function(){self.textContent=old;},2400);
   }
-  
-  const canShare=navigator.share&&/Mobi|Android|iPhone|iPad/i.test(navigator.userAgent);
+
+  const canShare=navigator.share&&!inAppBrowser()&&/Mobi|Android|iPhone|iPad/i.test(navigator.userAgent);
   if(canShare){navigator.share({title:(S.lastKind==='home'?'我把白海豚平安送回家了！':'台灣白海豚大冒險'),text:txt,url:url}).catch(function(){});return;}
-  if(navigator.clipboard&&navigator.clipboard.writeText){
-    navigator.clipboard.writeText(full).then(function(){done('已複製，貼給朋友吧！');},fallback);
-  } else fallback();
+  copyText(full,function(){done('已複製，貼給朋友吧！');});
   function fallback(){
     const ta=document.createElement('textarea');
     ta.value=full;ta.style.position='fixed';ta.style.opacity='0';
@@ -2168,14 +2263,29 @@ function loadDex(){
   if(DEXPRE.data){apply(DEXPRE.data);DEXPRE.data=null;return;}
   DEXPRE.onready=function(d){DEXPRE.onready=null;apply(d);};
 
+  fetchDex(0);
+}
+
+function fetchDex(tryNo){
   const cb='__dex'+Math.random().toString(36).slice(2,8);
   const sc=document.createElement('script');
   let done=false;
-  setTimeout(function(){if(!done&&DEX.loading){DEX.loading=false;DEX.err='讀不到全體進度';renderDex();}},12000);
-  window[cb]=function(d){done=true;apply(d);delete window[cb];sc.remove();};
+  function fail(){
+    if(done)return;done=true;
+    try{delete window[cb];sc.remove();}catch(e){}
+    if(tryNo<2){setTimeout(function(){fetchDex(tryNo+1);},1500);}
+    else if(DEX.loading){DEX.loading=false;DEX.err='讀不到全體進度';renderDex();}
+  }
+  setTimeout(fail,9000);
+  window[cb]=function(d){
+    if(done)return;done=true;
+    DEX.counts=(d&&d.counts)||DEX.counts;
+    Object.keys(DEX.mine).forEach(function(id){if(!DEX.counts[id])DEX.counts[id]=1;});
+    DEX.loading=false;DEX.err='';renderDex();
+    try{delete window[cb];sc.remove();}catch(e){}
+  };
   sc.src=ANALYTICS_URL+'?action=dex&callback='+cb+'&t='+Date.now();
-  sc.onerror=function(){done=true;if(DEX.loading){DEX.loading=false;DEX.err='讀不到全體進度';renderDex();}
-    delete window[cb];sc.remove();};
+  sc.onerror=fail;
   document.head.appendChild(sc);
 }
 function openDex(){
@@ -2183,9 +2293,31 @@ function openDex(){
 }
 document.getElementById('dexBtn').onclick=openDex;
 document.getElementById('dexBtn2').onclick=openDex;
+document.getElementById('dxReload').onclick=function(){SFX.tap();DEXPRE.data=null;loadDex();};
 document.getElementById('dxClose').onclick=function(){
   SFX.tap();document.getElementById('dex').classList.remove('on');
 };
+
+(function(){
+  const app=inAppBrowser();
+  const el=document.getElementById('iabCover');
+  if(!app||!el)return;
+  const ios=/iPhone|iPad|iPod/i.test(navigator.userAgent);
+  el.style.display='';
+  el.innerHTML='<b>建議用外部瀏覽器開啟</b>'+
+    '你正在 '+app+' 的內建瀏覽器裡，這裡沒辦法儲存成績圖，音樂也可能播不出來。<br>'+
+    '請點右上角的「⋯」，選'+(ios?'「在 Safari 中開啟」':'「用瀏覽器開啟」')+'。'+
+    '<button id="iabCoverCopy">複製遊戲連結</button>';
+  document.getElementById('iabCoverCopy').onclick=function(){
+    const self=this;
+    copyText('https://lihi3.me/Bsby0/twbaihaitun',function(){
+      self.textContent='已複製！貼到瀏覽器打開';
+      setTimeout(function(){self.textContent='複製遊戲連結';},2600);
+    });
+  };
+  track('iab',{what:app});
+})();
+
 loadDex();
 
 watchScroll();watchCards();
