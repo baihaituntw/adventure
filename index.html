@@ -1083,13 +1083,19 @@ function update(dt){
     
     const dNow=depth();
     if(dNow>=DEEP_TRIG-.05){
-      S.y=depthToY(DEEP_TRIG+.4);const before=S.deepTime;S.deepTime+=dt;
-      if(before<=0){warn('水太深了！白海豚<span class="em">受不了</span>',2.4);S.beep=99;}
-      const left=Math.max(0,Math.ceil(DEEP_LIMIT-S.deepTime));
-      alertEl.classList.add('cd');
-      showAlert('快回淺水！　'+left);
-      if(left!==S.beep){S.beep=left;SFX.count();}
-      if(S.deepTime>=DEEP_LIMIT)return end('deep');
+      S.y=depthToY(DEEP_TRIG+.4);
+      if(S.phase==='tut'){
+        
+        S.deepTime=0;S.beep=99;
+      } else {
+        const before=S.deepTime;S.deepTime+=dt;
+        if(before<=0){warn('水太深了！白海豚<span class="em">受不了</span>',2.4);S.beep=99;}
+        const left=Math.max(0,Math.ceil(DEEP_LIMIT-S.deepTime));
+        alertEl.classList.add('cd');
+        showAlert('快回淺水！　'+left);
+        if(left!==S.beep){S.beep=left;SFX.count();}
+        if(S.deepTime>=DEEP_LIMIT)return end('deep');
+      }
     } else if(dNow<DEEP_TRIG-3){S.deepTime=Math.max(0,S.deepTime-dt*2);S.beep=99;
       if(S.deepTime<=0)alertEl.classList.remove('cd');
       if(S.deepTime<=0&&S.noise<=0)hideAlert();
@@ -1674,6 +1680,8 @@ causeEl.addEventListener('click',showResult);
 })();
 
 function end(k){
+  
+  if(S.phase==='tut')return;
   S.run=false;
   (k==='home'?SFX.win:SFX.lose)();const e=E[k],c=CAUSE[k];
   hideAlert();hintEl.classList.remove('on');hideTip();hideWarn();placeEl.classList.remove('show');
