@@ -318,11 +318,13 @@ font-family:var(--cjk);font-size:14.5px;font-weight:800;cursor:pointer;line-heig
   text-decoration:none;background:#5BC8E8;color:#fff;font-size:14.5px;font-weight:900;
   box-shadow:0 4px 0 #3FA3C0}
 .dlBtn:active{transform:translateY(3px);box-shadow:0 1px 0 #3FA3C0}
-.iabTip{margin-bottom:10px;background:#FFF4E2;border-left:5px solid #E8A33C;border-radius:16px;
-  padding:13px 14px;text-align:left;font-size:12.5px;font-weight:700;color:#8A6212;line-height:1.75}
-.iabTip b{display:block;font-size:13.5px;font-weight:900;color:#A5711A;margin-bottom:5px}
-.iabTip button{margin-top:9px;border:0;border-radius:14px;padding:10px 14px;cursor:pointer;
-  font-family:var(--cjk);font-size:12.5px;font-weight:900;background:#E8A33C;color:#fff}
+.iabTip{margin-bottom:10px;background:#F2F9FC;border:1.5px solid #D3E7F0;border-radius:16px;
+  padding:13px 14px;text-align:left;font-size:12.5px;font-weight:700;color:#2F6A85;line-height:1.75}
+.iabTip b{font-weight:900;color:#14688C}
+.iabTip button{margin-top:10px;border:0;border-radius:14px;padding:10px 15px;cursor:pointer;
+  font-family:var(--cjk);font-size:12.5px;font-weight:900;background:#5BC8E8;color:#fff;
+  box-shadow:0 3px 0 #3FA3C0}
+.iabTip button:active{transform:translateY(2px);box-shadow:none}
 .grew{margin-top:14px;border-radius:22px;padding:16px 16px 14px;text-align:center}
 .grew .gt{font-size:12px;font-weight:800;letter-spacing:.1em;opacity:.7}
 .grew .gn{font-size:24px;font-weight:900;margin-top:4px}
@@ -386,13 +388,15 @@ font-family:var(--cjk);font-size:14.5px;font-weight:800;cursor:pointer;line-heig
   animation:swipe 1.6s ease-in-out infinite;filter:drop-shadow(0 3px 10px rgba(0,0,0,.4))}
 @keyframes swipe{0%,100%{transform:translateY(-36px)}50%{transform:translateY(36px)}}
 
-.iabCover{margin:16px auto 0;max-width:320px;background:rgba(255,244,226,.96);
-  border-left:5px solid #E8A33C;border-radius:18px;padding:13px 14px;text-align:left;
-  font-size:12.5px;font-weight:700;color:#8A6212;line-height:1.75;
-  box-shadow:0 4px 0 rgba(160,120,30,.2)}
-.iabCover b{display:block;font-size:13.5px;font-weight:900;color:#A5711A;margin-bottom:4px}
-.iabCover button{margin-top:9px;border:0;border-radius:14px;padding:10px 14px;cursor:pointer;
-  font-family:var(--cjk);font-size:12.5px;font-weight:900;background:#E8A33C;color:#fff}
+.iabCover{margin:14px auto 0;max-width:330px;display:flex;align-items:center;gap:9px;
+  background:rgba(255,255,255,.82);backdrop-filter:blur(3px);border-radius:16px;
+  padding:9px 13px 9px 10px;text-align:left;
+  font-size:12px;font-weight:700;color:#2F6A85;line-height:1.6;
+  box-shadow:0 2px 8px rgba(0,0,0,.1)}
+.iabCover i{flex:0 0 auto;width:22px;height:22px;border-radius:50%;background:#E1F1F8;
+  color:#1F8FB8;font-style:normal;font-size:12px;font-weight:900;
+  display:flex;align-items:center;justify-content:center}
+.iabCover b{font-weight:900;color:#14688C}
 .coverDex{margin:18px auto 0;max-width:300px;cursor:pointer;background:rgba(255,255,255,.92);
   border-radius:22px;padding:13px 16px 15px;box-shadow:0 4px 0 rgba(30,110,147,.22)}
 .coverDex .cdTop{display:flex;align-items:baseline;justify-content:space-between}
@@ -1858,11 +1862,9 @@ function showIabTip(){
   if(!app){el.style.display='none';return false;}
   const ios=/iPhone|iPad|iPod/i.test(navigator.userAgent);
   el.style.display='';
-  el.innerHTML='<b>你正在 '+app+' 的內建瀏覽器裡</b>'+
-    '這裡沒辦法儲存圖片或叫出分享功能。'+
-    (ios?'請點右上角的「⋯」，選<b style="display:inline">在 Safari 中開啟</b>'
-        :'請點右上角的「⋯」，選<b style="display:inline">用瀏覽器開啟</b>')+
-    '，就能順利下載和分享了。'+
+  el.innerHTML='在 '+app+' 的內建瀏覽器裡沒辦法儲存圖片。'+
+    '建議點右上角「⋯」選擇<b>'+(ios?'「在 Safari 中開啟」':'「用外部瀏覽器開啟」')+'</b>，'+
+    '再回來分享一次。'+
     '<button id="iabCopy">複製遊戲連結</button>';
   document.getElementById('iabCopy').onclick=function(){
     const self=this;
@@ -2304,17 +2306,8 @@ document.getElementById('dxClose').onclick=function(){
   if(!app||!el)return;
   const ios=/iPhone|iPad|iPod/i.test(navigator.userAgent);
   el.style.display='';
-  el.innerHTML='<b>建議用外部瀏覽器開啟</b>'+
-    '你正在 '+app+' 的內建瀏覽器裡，這裡沒辦法儲存成績圖，音樂也可能播不出來。<br>'+
-    '請點右上角的「⋯」，選'+(ios?'「在 Safari 中開啟」':'「用瀏覽器開啟」')+'。'+
-    '<button id="iabCoverCopy">複製遊戲連結</button>';
-  document.getElementById('iabCoverCopy').onclick=function(){
-    const self=this;
-    copyText('https://lihi3.me/Bsby0/twbaihaitun',function(){
-      self.textContent='已複製！貼到瀏覽器打開';
-      setTimeout(function(){self.textContent='複製遊戲連結';},2600);
-    });
-  };
+  el.innerHTML='<i>↗</i><span>建議點右上角「⋯」選擇<b>'+
+    (ios?'「在 Safari 中開啟」':'「用外部瀏覽器開啟」')+'</b>，遊戲體驗更完整</span>';
   track('iab',{what:app});
 })();
 
