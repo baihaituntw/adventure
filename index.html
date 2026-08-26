@@ -180,7 +180,7 @@ text-shadow:0 6px 24px rgba(0,0,0,.35);pointer-events:none}
   border-left:4px solid #E8452F;font-size:12.5px;font-weight:800;color:#A8402C;line-height:1.7}
 .dxLink a{color:#C1341F;font-weight:900}
 .dxNote{font-size:11px;line-height:1.7;color:#7C8FA0;padding:0 16px 14px}
-.aboutLink{display:block;margin:14px auto 0;border:0;background:none;cursor:pointer;
+.aboutLink{display:block;margin:18px auto 0;padding:6px 10px;border:0;background:none;cursor:pointer;
   font-family:var(--cjk);font-size:11.5px;font-weight:800;color:rgba(255,255,255,.8);
   text-decoration:underline;text-underline-offset:3px;letter-spacing:.04em}
 #about{position:absolute;inset:0;display:none;z-index:45;background:rgba(10,44,67,.9);
@@ -680,12 +680,12 @@ font-family:var(--cjk);font-size:14.5px;font-weight:800;cursor:pointer;line-heig
     <div class="iabCover" id="iabCover" style="display:none"></div>
 
     <button class="goBtn big" id="startBtn">出發囉</button>
-    <button class="aboutLink" id="aboutBtn">關於本遊戲</button>
-
     <div class="coverDex" id="dexBtn2">
       <div class="cdTop"><span id="dexLabel">救援圖鑑</span><b id="dexCount">0 / 50</b></div>
       <div class="cdBar"><i id="dexBar"></i><em id="dexMark">🐬</em></div>
     </div>
+
+    <button class="aboutLink" id="aboutBtn">關於本遊戲</button>
   </div>
 </div>
 
@@ -2269,12 +2269,26 @@ function wakeAudio(){
 document.getElementById('startBtn').onclick=start;
 document.getElementById('againBtn').onclick=start;
 
-[['lnk1','petition'],['lnk2','partner']].forEach(function(){});
-document.querySelectorAll('.acts .lnk').forEach(function(a,i){
-  a.addEventListener('click',function(){
-    track('outbound',{what:['petition','wildatheart','matzufish'][i]||'other',href:a.href});
-  });
-});
+const OUT_MAP=[
+  ['forms.gle',        'petition'],      
+  ['wildatheart',      'wildatheart'],   
+  ['matzufish',        'matzufish'],     
+  ['twsousa',          'twsousa'],       
+  ['GovWatchA',        'govwatch'],      
+  ['sow.org.tw',       'sow'],           
+  ['cepu49',           'cepu'],          
+  ['lihi3.me',         'gamelink']       
+];
+document.addEventListener('click',function(e){
+  const a=e.target&&e.target.closest?e.target.closest('a[href^="http"]'):null;
+  if(!a)return;
+  let w='other';
+  OUT_MAP.forEach(function(m){if(a.href.indexOf(m[0])>=0)w=m[1];});
+  
+  const where=a.closest('#dex')?'dex':a.closest('#about')?'about':
+              a.closest('#over')?'result':'cover';
+  track('outbound',{what:w,where:where,href:a.href});
+},true);
 
 function seedOf(id){let h=0;for(let i=0;i<id.length;i++)h=(h*31+id.charCodeAt(i))>>>0;return h;}
 function rngOf(seed){let x=seed||1;return function(){x^=x<<13;x^=x>>>17;x^=x<<5;x>>>=0;return x/4294967296;};}
