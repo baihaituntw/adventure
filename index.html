@@ -536,7 +536,7 @@ font-family:var(--cjk);font-size:14.5px;font-weight:800;cursor:pointer;line-heig
     <div class="dxDone" id="dxDone">🎉 50 隻同伴全部被救回來了！<small>這是遊戲，可以重來；真實的白海豚只剩不到 50 隻，牠們沒有第二次機會。<br>下一個目標：讓每一隻都被救到 10 次。</small></div>
     <div class="dxGrid" id="dxGrid"></div>
     <div class="dxLink" id="dxLink"></div>
-    <p class="dxNote">遊戲中的白海豚編號與名字為虛擬設定，但牠們面臨的危險都是真實發生的喔！</p>
+    <p class="dxNote">白海豚寶寶全身是灰色的，長大後灰色會慢慢褪去、轉為粉白，<b>沒褪乾淨的地方就留下一顆顆斑點</b>。每隻的斑點與背鰭缺角都不一樣，研究人員就是靠這些認出牠們。<br>遊戲中的編號與名字為虛擬設定，但牠們面臨的危險都是真實發生的喔！</p>
   </div>
 </div>
 
@@ -1110,7 +1110,7 @@ function update(dt){
           SFX.eat();S.obs.splice(i,1);S.fish++;S.pops.push({x:o.x,y:oy,r:4,a:1});
           const st=S.fish>=TH[2]?2:S.fish>=TH[1]?1:0;
           if(st>S.stage){S.stage=st;SFX.grow();
-            tip(st===1?'長大了！身上長出<span class="em">斑點</span>':'長成<span class="em">大人</span>了！',2.8);}
+            tip(st===1?'長大了！灰色慢慢褪掉，<span class="em">留下藍灰色斑點</span>':'長成<span class="em">大人</span>了！體色轉粉白，斑點還留著',3);}
           updHUD();
         }
       } else if(o.t==='plastic'&&S.noise>0){
@@ -1830,10 +1830,17 @@ document.getElementById('shareLink').onclick=function(){
   const self=this;
   const url='https://lihi3.me/Bsby0/twbaihaitun';
   const dexGot=ROSTER.filter(function(r){return DEX.counts[r.id];}).length;
-  const txt='我在《台灣白海豚大冒險》救了 '+S.rescued.length+' 隻被漁網纏住的同伴，'+
-    '吃到 '+S.fish+' 隻小魚，游到「'+ZONES[Math.max(S.zone,0)].n+'」。'+
-    '台灣白海豚全球剩不到 50 隻，目前救援進度 '+dexGot+'/50，'+
-    '一起來把牠們全部救回來！';
+  
+  const txt = (S.lastKind==='home')
+    ? ('我在《台灣白海豚大冒險》成功護送一隻台灣白海豚，'+
+       '從苗栗一路游到雲林，全長 200 公里都平安回家了！'+
+       (S.rescued.length?('路上還救了 '+S.rescued.length+' 隻被漁網纏住的同伴。'):'')+
+       '台灣白海豚全球剩不到 50 隻，目前救援進度 '+dexGot+'/50，'+
+       '換你來試試，看能不能把牠平安送回家！')
+    : ('我在《台灣白海豚大冒險》救了 '+S.rescued.length+' 隻被漁網纏住的同伴，'+
+       '吃到 '+S.fish+' 隻小魚，游到「'+ZONES[Math.max(S.zone,0)].n+'」。'+
+       '台灣白海豚全球剩不到 50 隻，目前救援進度 '+dexGot+'/50，'+
+       '一起來把牠們全部救回來！');
   const full=txt+' '+url;
   function done(msg){
     const old=self.textContent;self.textContent=msg;
@@ -1841,7 +1848,7 @@ document.getElementById('shareLink').onclick=function(){
   }
   
   const canShare=navigator.share&&/Mobi|Android|iPhone|iPad/i.test(navigator.userAgent);
-  if(canShare){navigator.share({title:'台灣白海豚大冒險',text:txt,url:url}).catch(function(){});return;}
+  if(canShare){navigator.share({title:(S.lastKind==='home'?'我把白海豚平安送回家了！':'台灣白海豚大冒險'),text:txt,url:url}).catch(function(){});return;}
   if(navigator.clipboard&&navigator.clipboard.writeText){
     navigator.clipboard.writeText(full).then(function(){done('已複製，貼給朋友吧！');},fallback);
   } else fallback();
@@ -2112,7 +2119,7 @@ function renderDex(){
   const dc=document.getElementById('dexCount');
   const dl=document.getElementById('dexLabel');
   if(dc)dc.textContent=DEX.loading?'讀取中…':((stage2?deep:got)+' / '+ROSTER.length);
-  if(dl)dl.textContent=stage2?'第二階段 · 每隻救 10 次':'救援圖鑑';
+  if(dl)dl.textContent=stage2?'第二階段 · 每隻救 10 次':'救援進度';
   const cd=document.getElementById('dexBtn2');
   if(cd)cd.classList.toggle('full',stage2&&deep>=ROSTER.length);
   document.getElementById('dxSum').textContent=
