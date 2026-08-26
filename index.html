@@ -2,6 +2,8 @@
 <html lang="zh-Hant">
 <head>
 <meta charset="utf-8">
+<link rel="preconnect" href="https://script.google.com" crossorigin>
+<link rel="preconnect" href="https://script.googleusercontent.com" crossorigin>
 <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover">
 <title>台灣白海豚大冒險</title>
 <style>
@@ -481,7 +483,7 @@ font-family:var(--cjk);font-size:14.5px;font-weight:800;cursor:pointer;line-heig
     <div class="bfList">
       <div class="bfR bad">
         <span class="bi">⚠️</span>
-        <div><b>危險：刺網｜塑膠｜填海陸地｜打樁平台</b>
+        <div><b>危險：刺網｜塑膠｜填海陸地｜打樁台</b>
         <small>每碰到一次危險就會失去 1 格體力，體力扣完就沒辦法繼續前進了，加油！</small></div>
       </div>
       <div class="bfR good">
@@ -718,6 +720,20 @@ const EVENTS=[
 ];
 
 let PLAYED=false;   
+
+const DEXPRE={data:null,onready:null};
+(function(){
+  if(!ANALYTICS_URL)return;
+  const cb='__dexpre';
+  window[cb]=function(d){
+    DEXPRE.data=d;
+    if(DEXPRE.onready)DEXPRE.onready(d);
+  };
+  const sc=document.createElement('script');
+  sc.src=ANALYTICS_URL+'?action=dex&callback='+cb+'&t='+Date.now();
+  document.head.appendChild(sc);
+})();
+
 const SID=(function(){
   return Date.now().toString(36)+Math.random().toString(36).slice(2,9);
 })();
@@ -1557,8 +1573,8 @@ const E={
   s:'你陪牠游過了<span class="em">苗栗、台中、彰化到雲林</span>的最危險海岸。<br><br>這片海長約 200 公里、寬不到 5 公里，是<span class="em">全世界最小的鯨豚家園</span>。白海豚一輩子都只能在這條窄窄的海邊巷子裡生活。<br><br>謝謝你，安全送牠回家！'},
  hurt :{t:'體力用完，無法再前進了',
   s:'一路上有太多<span class="em">塑膠、漁網和填海陸地</span>，根本來不及閃躲。<br><br>你知道嗎？真實的白海豚，<span class="em">每三隻就有一隻</span>身上發現被漁網纏繞或船隻割傷的痕跡，這些傷口永遠不會好。'},
- drown:{t:'來不及浮上海面換氣',
-  s:'水下的噪音太吵了，讓牠<span class="em">迷失了方向</span>，忘記要浮出水面呼吸。<br><br>白海豚跟我們一樣用<span class="em">肺</span>呼吸，每 <span class="em">1～3 分鐘</span>就要換一次氣。牠們是用聲音「聽」出路線的，但施工打樁和船隻的噪音太吵，蓋掉了聲音，讓牠迷失方向，甚至會<span class="em">聽力受傷、迷路擱淺</span>！'},
+ drown:{t:'來不及換氣……',
+  s:'水下噪音太吵了，讓牠<span class="em">迷失方向</span>，忘記浮出水面呼吸。<br><br>白海豚跟我們一樣用<span class="em">肺</span>呼吸，每 <span class="em">1～3 分鐘</span>要換一次氣。牠們是用聲音「聽」出路線的，但施工打樁和船隻的噪音太吵，蓋掉了聲音，讓牠迷失方向，甚至會<span class="em">聽力受傷、迷路擱淺</span>！'},
  deep :{t:'游進太深的海了……',
   s:'這裡不是牠熟悉的家。<br><br>白海豚最喜歡住在離岸邊 <span class="em">3～5 公里</span>、水深只有 <span class="em">15～30 公尺</span>的淺海與河口。如果游得太遠、太深，就沒有牠最愛吃的小魚，也找不到其他海豚同伴了。<br><br>牠不是不會潛水，只是深海裡……<span class="em">真的沒有牠的生活</span>。'}
 };
@@ -1566,7 +1582,7 @@ const COMFORT='你已經很努力了！<br>白海豚每天都要面對這些挑�
 const CAUSE={
  home :{t:'順利抵達雲林台西！',s:'你一路安全地陪著牠回到家。<br>謝謝你，守護隊長！'},
  hurt :{t:'體力用完了',s:COMFORT},
- drown:{t:'來不及浮上海面換氣',s:COMFORT},
+ drown:{t:'來不及換氣……',s:COMFORT},
  deep :{t:'游進太深的海了',s:COMFORT}
 };
 const causeEl=document.getElementById('cause');
@@ -2134,25 +2150,25 @@ function renderDex(){
 function loadDex(){
   DEX.loading=true;DEX.err='';renderDex();
   if(!ANALYTICS_URL){DEX.loading=false;DEX.err='未設定後台網址';renderDex();return;}
+
+  function apply(d){
+    if(d&&d.counts){
+      DEX.counts=d.counts;
+      Object.keys(DEX.mine).forEach(function(id){if(!DEX.counts[id])DEX.counts[id]=1;});
+    }
+    DEX.loading=false;DEX.err='';renderDex();
+  }
+  if(DEXPRE.data){apply(DEXPRE.data);DEXPRE.data=null;return;}
+  DEXPRE.onready=function(d){DEXPRE.onready=null;apply(d);};
+
   const cb='__dex'+Math.random().toString(36).slice(2,8);
   const sc=document.createElement('script');
-  
   let done=false;
-  setTimeout(function(){if(!done){DEX.loading=false;DEX.err='讀不到全體進度';renderDex();}},12000);
-  window[cb]=function(d){
-    done=true;DEX.loading=false;DEX.err='';
-    if(d&&d.counts){
-      
-      DEX.counts=d.counts;
-      Object.keys(DEX.mine).forEach(function(id){
-        if(!DEX.counts[id])DEX.counts[id]=1;
-      });
-      renderDex();
-    }
-    delete window[cb];sc.remove();
-  };
-  sc.src=ANALYTICS_URL+'?action=dex&callback='+cb;
-  sc.onerror=function(){delete window[cb];sc.remove();};
+  setTimeout(function(){if(!done&&DEX.loading){DEX.loading=false;DEX.err='讀不到全體進度';renderDex();}},12000);
+  window[cb]=function(d){done=true;apply(d);delete window[cb];sc.remove();};
+  sc.src=ANALYTICS_URL+'?action=dex&callback='+cb+'&t='+Date.now();
+  sc.onerror=function(){done=true;if(DEX.loading){DEX.loading=false;DEX.err='讀不到全體進度';renderDex();}
+    delete window[cb];sc.remove();};
   document.head.appendChild(sc);
 }
 function openDex(){
