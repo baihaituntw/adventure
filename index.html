@@ -377,11 +377,34 @@ font-family:var(--cjk);font-size:14.5px;font-weight:800;cursor:pointer;line-heig
   background:linear-gradient(90deg,#FFD1DE,#F79FB5,#E0708D);background-size:200% 100%;
   animation:flow 2.6s linear infinite;transition:width 1.1s cubic-bezier(.25,1,.4,1)}
 @keyframes flow{0%{background-position:0 0}100%{background-position:200% 0}}
+.coverDex .cdBar i.loading{animation:flow 1s linear infinite,slide 1.4s ease-in-out infinite}
+@keyframes slide{0%,100%{transform:translateX(-6%)}50%{transform:translateX(212%)}}
 .coverDex .cdBar em{position:absolute;top:50%;left:0;transform:translate(-50%,-50%);
   font-size:17px;font-style:normal;transition:left 1.1s cubic-bezier(.25,1,.4,1);
   filter:drop-shadow(0 2px 3px rgba(0,0,0,.25))}
 .coverDex.full{background:linear-gradient(135deg,#FFE9A8,#FFC97A);box-shadow:0 4px 0 #D99B4B}
 .coverDex.full .cdTop span,.coverDex.full .cdTop b{color:#7A4E12}
+
+.cert{margin-top:14px;padding:5px;border-radius:24px;
+  background:linear-gradient(135deg,#E8BE60,#FFF0C4 28%,#D9A63E 52%,#FFF6DE 78%,#E0B24E);
+  box-shadow:0 6px 18px rgba(160,120,30,.25)}
+.ctIn{background:#FFFDF6;border-radius:20px;padding:22px 18px;text-align:center;
+  border:1.5px solid #EAD9A8}
+.ctTop{font-size:19px;font-weight:900;color:#8A6212;letter-spacing:.08em}
+.ctSub{font-size:9.5px;font-weight:800;color:#C0A25C;letter-spacing:.24em;margin-top:4px}
+.ctLine{height:2px;margin:13px auto;width:64px;border-radius:2px;
+  background:linear-gradient(90deg,rgba(216,166,62,0),#D9A63E,rgba(216,166,62,0))}
+.ctBody{font-size:14px;font-weight:700;color:#6B5232;line-height:2.1}
+.ctBody b{color:#8A6212;font-weight:900}
+#certName{display:inline-block;width:80%;max-width:220px;margin:6px 0;padding:8px 10px;
+  border:0;border-bottom:2px dashed #D9A63E;background:transparent;text-align:center;
+  font-family:var(--cjk);font-size:19px;font-weight:900;color:#8A6212;outline:none}
+#certName::placeholder{color:#D3BE86;font-weight:700;font-size:15px}
+.ctStat{display:flex;gap:7px;margin-top:14px}
+.ctStat div{flex:1;background:#FFF6DE;border-radius:14px;padding:9px 4px}
+.ctStat b{display:block;font-size:17px;font-weight:900;color:#8A6212}
+.ctStat span{display:block;font-size:10px;font-weight:800;color:#B49A5E;margin-top:2px}
+.ctFoot{font-size:10.5px;font-weight:800;color:#B49A5E;letter-spacing:.06em;margin-top:14px}
 
 .orgs{margin-top:10px;display:grid;grid-template-columns:1fr 1fr;gap:8px}
 .orgs a{display:flex;align-items:center;justify-content:center;text-align:center;
@@ -466,7 +489,7 @@ font-family:var(--cjk);font-size:14.5px;font-weight:800;cursor:pointer;line-heig
     <div class="bfList">
       <div class="bfR bad">
         <span class="bi">⚠️</span>
-        <div><b>危險障礙：刺網｜塑膠垃圾｜填海陸地｜打樁平台</b>
+        <div><b>危險：刺網｜塑膠｜填海陸地｜打樁平台</b>
         <small>每碰到一次危險就會失去 1 格體力，體力扣完就沒辦法繼續前進了，加油！</small></div>
       </div>
       <div class="bfR good">
@@ -560,8 +583,24 @@ font-family:var(--cjk);font-size:14.5px;font-weight:800;cursor:pointer;line-heig
   <div class="card">
     <h1 id="ovT"></h1>
     <div class="sub" id="ovS"></div>
-    <div class="scrollHint">往下滑，查看你的成績 ⌄</div>
+    <div class="scrollHint">往下滑，分享你的成績 ⌄</div>
 
+    <div class="cert" id="ovCert" style="display:none">
+      <div class="ctIn">
+        <div class="ctTop">台灣白海豚守護證書</div>
+        <div class="ctSub">CERTIFICATE OF GUARDIANSHIP</div>
+        <div class="ctLine"></div>
+        <div class="ctBody">
+          茲證明<br>
+          <input id="certName" maxlength="12" placeholder="寫下你的名字" autocomplete="off">
+          <br>已陪伴一隻台灣白海豚<br>
+          安全游過<b>苗栗至雲林</b>的重要棲息環境<br>
+          全長約 200 公里
+        </div>
+        <div class="ctStat" id="certStat"></div>
+        <div class="ctFoot">台灣白海豚大冒險　·　<span id="certDate"></span></div>
+      </div>
+    </div>
     <div class="rescue" id="ovRescue" style="display:none"></div>
     <div class="sect"><span>這一趟的旅程</span></div>
     <div class="chips3" id="ovL"></div>
@@ -587,8 +626,7 @@ font-family:var(--cjk);font-size:14.5px;font-weight:800;cursor:pointer;line-heig
     <div class="kb kb3">
       <div class="h"><span class="ico">🌊</span>和台灣共用一片海</div>
       <ul>
-        <li>離岸 <b>3〜5 公里</b>、水深 <b>15〜30 公尺</b>的西岸淺海和河口，就是牠們<b>唯一的家</b>。</li>
-        <li>牠們<b>游不遠也游不深</b>，沒有別的地方可以去。</li>
+        <li>離岸 <b>3〜5 公里</b>、水深 <b>15〜30 公尺</b>的西岸淺海和河口，就是牠們<b>唯一的家</b>，沒有別的地方可以去。</li>
         <li>我們和白海豚吃一樣的魚、呼吸一樣的空氣、用一樣的水。<b>大海健康，我們才會健康！</b></li>
       </ul>
     </div>
@@ -606,7 +644,7 @@ font-family:var(--cjk);font-size:14.5px;font-weight:800;cursor:pointer;line-heig
 
     <div class="real">
       <div class="rhT">台中港，正在用廢土填海造陸</div>
-      <div class="rhS">你剛才通過的每一個難關，都是台灣白海豚每天正在面對的生存考驗。</div>
+      <div class="rhS">你剛才通過的每一個難關，都是台灣白海豚每天面對的生存考驗。</div>
       <ul class="tl">
         <li><b>2022</b>交通部與港務公司認定工程「位於既有防波堤內」，因此<em>免環評</em>。</li>
         <li><b>2026 / 1</b>「營建剩餘土石方全流向」政策上路，台中市 6 月公布廢土送往台中港的作業要點。</li>
@@ -669,7 +707,7 @@ const ROSTER=(function(){
     return {id:'TW-'+String(i+1).padStart(2,'0'),name:n};
   });
 })();
-const DEX={counts:{},mine:{},err:''};
+const DEX={counts:{},mine:{},err:'',loading:true};
 
 const NEWS={
   on:true,
@@ -995,7 +1033,7 @@ function update(dt){
     
     S.friendT-=dt;
     if(S.friendT<=0&&!S.obs.some(o=>o.t==='friend')){
-      S.friendT=(EV.k==='pod'?18:32)+Math.random()*14;spawnFriend();}
+      S.friendT=(EV.k==='pod'?38:66)+Math.random()*26;spawnFriend();}
   }
   if(!S.breathed&&S.air<.6&&!S.surf)hintEl.classList.add('on');
 
@@ -1562,7 +1600,7 @@ const E={
  home :{t:'太棒了！順利抵達雲林！',
   s:'你陪牠游過了<span class="em">苗栗、台中、彰化到雲林</span>的最危險海岸。<br><br>這片海長約 200 公里、寬不到 5 公里，是<span class="em">全世界最小的鯨豚家園</span>。白海豚一輩子都只能在這條窄窄的海邊巷子裡生活。<br><br>謝謝你，安全送牠回家！'},
  hurt :{t:'體力用完，無法再前進了',
-  s:'一路上有太多<span class="em">塑膠垃圾、刺網和填海陸地</span>，根本來不及閃躲。<br><br>你知道嗎？真實的白海豚裡，<span class="em">每三隻就有一隻</span>身上發現被漁網纏繞或被船隻割傷的痕跡，這些傷口永遠不會好。'},
+  s:'一路上有太多<span class="em">塑膠、漁網和填海陸地</span>，根本來不及閃躲。<br><br>你知道嗎？真實的白海豚，<span class="em">每三隻就有一隻</span>身上發現被漁網纏繞或船隻割傷的痕跡，這些傷口永遠不會好。'},
  drown:{t:'來不及浮上海面換氣',
   s:'水下的噪音太吵了，讓牠<span class="em">迷失了方向</span>，忘記要浮出水面呼吸。<br><br>白海豚跟我們一樣用<span class="em">肺</span>呼吸，每 <span class="em">1～3 分鐘</span>就要換一次氣。牠們是用聲音「聽」出路線的，但施工打樁和船隻的噪音太吵，蓋掉了聲音，讓牠迷失方向，甚至會<span class="em">聽力受傷、迷路擱淺</span>！'},
  deep :{t:'游進太深的海了……',
@@ -1629,7 +1667,7 @@ function end(k){
   if(S.netHit>0)    CH.push(['被漁網纏住',S.netHit+' 次']);
   if(S.plasticHit>0)CH.push(['誤食塑膠',S.plasticHit+' 次']);
   if(S.fillHit>0)   CH.push(['撞到填海地',S.fillHit+' 次']);
-  if(S.noiseSec>=1) CH.push(['被水下噪音',S.noiseSec.toFixed(0)+' 秒']);
+  if(S.noiseSec>=1) CH.push(['水下噪音干擾',S.noiseSec.toFixed(0)+' 秒']);
   document.getElementById('ovL').innerHTML=
     CH.map(function(c){return '<div><span>'+c[0]+'</span><b>'+c[1]+'</b></div>';}).join('');
   document.getElementById('cTitle').textContent=c.t;
@@ -1639,6 +1677,18 @@ function end(k){
     netHit:S.netHit,plasticHit:S.plasticHit,fillHit:S.fillHit,
     noiseSec:Math.round(S.noiseSec),durSec:Math.round((Date.now()-T0)/1000)});
   loadDex();renderNews();
+  
+  const cert=document.getElementById('ovCert');
+  if(k==='home'){
+    cert.style.display='';
+    document.getElementById('certStat').innerHTML=
+      '<div><b>'+S.rescued.length+'</b><span>救援同伴</span></div>'+
+      '<div><b>'+S.fish+'</b><span>吃到小魚</span></div>'+
+      '<div><b>'+STAGES[S.stage]+'</b><span>成長階段</span></div>';
+    const d=new Date();
+    document.getElementById('certDate').textContent=
+      d.getFullYear()+' 年 '+(d.getMonth()+1)+' 月 '+d.getDate()+' 日';
+  } else cert.style.display='none';
   const rs=document.getElementById('ovRescue');
   if(S.rescued.length){
     rs.style.display='';
@@ -1716,8 +1766,7 @@ function makeShareImage(){
   g.fillStyle='#FFF';g.font=F(44,900);
   g.fillText('台灣白海豚，全球剩下不到 50 隻！',w/2,924);
   g.fillStyle='rgba(255,255,255,.92)';g.font=F(27,700);
-  wrapText(g,'牠們游不遠也游不深，只有西海岸這片淺海可以去。\n'+
-             '一起把 50 隻同伴全部救回來！',w/2,976,860,42);
+  wrapText(g,'一起把 50 隻同伴全部救回來！',w/2,976,860,42);
 
   g.fillStyle='#FF8A6B';RR(w/2-300,1066,600,84,42);g.fill();
   g.fillStyle='#fff';g.font=F(36,900);g.fillText('邀請您連署！搶救極危白海豚',w/2,1119);
@@ -1725,16 +1774,80 @@ function makeShareImage(){
   g.fillText('一起守護牠們最重要的家',w/2,1198);
   return c;
 }
+
+function makeCertImage(){
+  const w=1000,h=1400,c=document.createElement('canvas');c.width=w;c.height=h;
+  const g=c.getContext('2d');
+  const F=(sz,wt)=>(wt||800)+' '+sz+'px "PingFang TC","Noto Sans TC",sans-serif';
+  const RR=(x,y,ww,hh,r)=>{g.beginPath();g.roundRect?g.roundRect(x,y,ww,hh,r):g.rect(x,y,ww,hh);};
+
+  const bg=g.createLinearGradient(0,0,w,h);
+  bg.addColorStop(0,'#E8BE60');bg.addColorStop(.28,'#FFF0C4');
+  bg.addColorStop(.52,'#D9A63E');bg.addColorStop(.78,'#FFF6DE');bg.addColorStop(1,'#E0B24E');
+  g.fillStyle=bg;g.fillRect(0,0,w,h);
+  g.fillStyle='#FFFDF6';RR(28,28,w-56,h-56,28);g.fill();
+  g.strokeStyle='#EAD9A8';g.lineWidth=3;RR(48,48,w-96,h-96,20);g.stroke();
+
+  g.textAlign='center';
+  g.fillStyle='#8A6212';g.font=F(50,900);g.fillText('台灣白海豚守護證書',w/2,150);
+  g.fillStyle='#C0A25C';g.font=F(20,800);g.fillText('C E R T I F I C A T E   O F   G U A R D I A N S H I P',w/2,192);
+  g.fillStyle='#D9A63E';RR(w/2-70,220,140,4,2);g.fill();
+
+  g.save();g.translate(w/2,330);g.scale(4.2,4.2);
+  dolphinShape(g,{body:'#F9AEC1',dark:'#E0708D',belly:'#FEDCE4',line:'#C2647D',
+                  fluke:'#E0708D',flukeFar:'#C9647E',fl:0});
+  speckles(g,.42);
+  g.restore();
+
+  const nm=(document.getElementById('certName').value||'').trim();
+  g.fillStyle='#6B5232';g.font=F(26,700);g.fillText('茲　證　明',w/2,470);
+  g.fillStyle='#8A6212';g.font=F(nm?52:34,900);
+  g.fillText(nm||'（ 寫下你的名字 ）',w/2,536);
+  g.strokeStyle='#E0C888';g.lineWidth=2;g.setLineDash([8,7]);
+  g.beginPath();g.moveTo(w/2-220,556);g.lineTo(w/2+220,556);g.stroke();g.setLineDash([]);
+
+  g.fillStyle='#6B5232';g.font=F(26,700);
+  wrapText(g,'已陪伴一隻台灣白海豚\n安全游過苗栗至雲林的重要棲息環境\n全長約 200 公里',w/2,616,780,46);
+
+  const cards=[['救援同伴',S.rescued.length+' 隻'],
+               ['吃到小魚',S.fish+' 隻'],
+               ['成長階段',STAGES[S.stage]]];
+  const cw=268,gap=22,x0=(w-(cw*3+gap*2))/2;
+  cards.forEach(function(cd,i){
+    const x=x0+i*(cw+gap);
+    g.fillStyle='#FFF6DE';RR(x,790,cw,150,26);g.fill();
+    g.fillStyle='#B49A5E';g.font=F(22,800);g.fillText(cd[0],x+cw/2,842);
+    g.fillStyle='#8A6212';g.font=F(cd[1].length>4?30:38,900);g.fillText(cd[1],x+cw/2,896);
+  });
+
+  const dexGot=ROSTER.filter(function(r){return DEX.counts[r.id];}).length;
+  g.fillStyle='#8A6212';g.font=F(26,900);
+  g.fillText('全部玩家救援圖鑑進度　'+dexGot+' / 50',w/2,1010);
+  g.fillStyle='#EFE0BC';RR(w/2-260,1032,520,20,10);g.fill();
+  g.fillStyle='#D9A63E';RR(w/2-260,1032,Math.max(20,520*dexGot/50),20,10);g.fill();
+
+  g.fillStyle='#A8402C';g.font=F(30,900);
+  g.fillText('台灣白海豚，全球剩下不到 50 隻',w/2,1116);
+  g.fillStyle='#FF8A6B';RR(w/2-290,1150,580,80,40);g.fill();
+  g.fillStyle='#fff';g.font=F(34,900);
+  g.fillText('邀請您連署！搶救極危白海豚',w/2,1201);
+
+  const d=new Date();
+  g.fillStyle='#B49A5E';g.font=F(22,800);
+  g.fillText('台灣白海豚大冒險　·　'+d.getFullYear()+' 年 '+(d.getMonth()+1)+' 月 '+d.getDate()+' 日',w/2,1290);
+  return c;
+}
+
 document.getElementById('shareImg').onclick=function(){
-  SFX.tap();track('share',{what:'image'});
-  const c=makeShareImage(),url=c.toDataURL('image/png');
+  SFX.tap();track('share',{what:S.lastKind==='home'?'cert':'image'});
+  const c=(S.lastKind==='home'?makeCertImage():makeShareImage()),url=c.toDataURL('image/png');
   document.getElementById('shareImgEl').src=url;
   document.getElementById('shareCanvasWrap').classList.add('on');
   document.getElementById('shareCanvasWrap').scrollIntoView({behavior:'smooth',block:'center'});
   if(navigator.canShare&&c.toBlob){
     c.toBlob(b=>{
       if(!b)return;
-      const f=new File([b],'台灣白海豚大冒險.png',{type:'image/png'});
+      const f=new File([b],(S.lastKind==='home'?'台灣白海豚守護證書':'台灣白海豚大冒險')+'.png',{type:'image/png'});
       if(navigator.canShare({files:[f]}))
         navigator.share({files:[f],title:'台灣白海豚大冒險',text:'台灣白海豚只剩不到 50 隻，你能陪牠游多遠？'}).catch(()=>{});
     },'image/png');
@@ -1814,9 +1927,9 @@ function beginJourney(){
       (S.ev.k==='pile'?S.ev.site.name+'（'+S.ev.site.note+'）':S.ev.d)+'</small>';
     eb.classList.add('show');setTimeout(function(){eb.classList.remove('show');},5000);
     
-    S.surf=null;drag=null;S.jitter=0;S.y=depthToY(18);
+    S.surf=null;drag=null;S.jitter=0;S.y=depthToY(18);S.air=1;S.breathed=false;
     S.dist=0;S.zone=-1;S.obs=[];S.phase='play';
-    S.hazT=1.8;S.fishT=1.2;S.fillT=8;S.pileT=9;S.goldT=12;S.friendT=20;
+    S.hazT=1.8;S.fishT=1.2;S.fillT=8;S.pileT=9;S.goldT=12;S.friendT=34;
     updHUD();S.run=true;
     track('start',{what:S.ev.k});
   });
@@ -2026,11 +2139,13 @@ function renderDex(){
   const stage2=got>=ROSTER.length;
   const dc=document.getElementById('dexCount');
   const dl=document.getElementById('dexLabel');
-  if(dc)dc.textContent=(stage2?deep:got)+' / '+ROSTER.length;
+  if(dc)dc.textContent=DEX.loading?'讀取中…':((stage2?deep:got)+' / '+ROSTER.length);
   if(dl)dl.textContent=stage2?'第二階段 · 每隻救 10 次':'救援圖鑑';
   const cd=document.getElementById('dexBtn2');
   if(cd)cd.classList.toggle('full',stage2&&deep>=ROSTER.length);
-  document.getElementById('dxSum').textContent=(DEX.err?'（'+DEX.err+'，以下只顯示你自己救到的）':'')+
+  document.getElementById('dxSum').textContent=
+    (DEX.loading?'讀取全體進度中…　':'')+
+    (DEX.err?'（'+DEX.err+'，先顯示你自己救到的）　':'')+
     '全部玩家已救到 '+got+' / '+ROSTER.length+' 隻'+
     (S.rescued&&S.rescued.length?'　（你這局救了 '+S.rescued.length+' 隻）':'');
   const grid=document.getElementById('dxGrid');
@@ -2052,21 +2167,24 @@ function renderDex(){
   });
   const pct=(stage2?deep:got)/ROSTER.length*100;
   const bar=document.getElementById('dexBar');
-  if(bar)bar.style.width=pct+'%';
+  if(bar){
+    bar.classList.toggle('loading',DEX.loading);
+    bar.style.width=DEX.loading?'32%':(pct+'%');
+  }
   const mk=document.getElementById('dexMark');
   if(mk)mk.style.left=Math.max(6,Math.min(pct,97))+'%';
 }
 
 function loadDex(){
-  renderDex();
-  if(!ANALYTICS_URL){DEX.err='未設定後台網址';return;}
+  DEX.loading=true;DEX.err='';renderDex();
+  if(!ANALYTICS_URL){DEX.loading=false;DEX.err='未設定後台網址';renderDex();return;}
   const cb='__dex'+Math.random().toString(36).slice(2,8);
   const sc=document.createElement('script');
   
   let done=false;
-  setTimeout(function(){if(!done){DEX.err='連不上後台';renderDex();}},6000);
+  setTimeout(function(){if(!done){DEX.loading=false;DEX.err='讀不到全體進度';renderDex();}},12000);
   window[cb]=function(d){
-    done=true;DEX.err='';
+    done=true;DEX.loading=false;DEX.err='';
     if(d&&d.counts){
       
       DEX.counts=d.counts;
