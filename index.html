@@ -77,6 +77,7 @@ font-size:15px;font-weight:800;line-height:1.5;text-align:center;color:#4A382B;
   display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;
 box-shadow:0 4px 14px rgba(0,0,0,.1);opacity:0;transition:opacity .18s,transform .18s cubic-bezier(.3,1.5,.5,1);pointer-events:none}
 #msg.show{opacity:1;transform:translate(-50%,-50%) scale(1)}
+#msg{z-index:26}
 #msg .em{color:#C9426B}
 #msg.teach{background:rgba(255,138,107,.68);color:#fff;font-size:16px}
 #msg.teach .em{color:#FFF3C4}
@@ -92,6 +93,26 @@ text-shadow:0 6px 24px rgba(0,0,0,.35);pointer-events:none}
   text-align:center;opacity:0;transition:opacity .3s,transform .3s;pointer-events:none;z-index:22;max-width:86%}
 #evBar.show{opacity:1;transform:translateX(-50%) scale(1)}
 #evBar b{display:block;font-size:15px;font-weight:900}
+
+#brief{position:absolute;inset:0;display:none;align-items:center;justify-content:center;z-index:28;
+  background:linear-gradient(180deg,rgba(18,73,107,.94),rgba(10,44,67,.96));padding:24px 18px}
+#brief.on{display:flex}
+.bfIn{width:100%;max-width:400px;background:#F6FBFD;border-radius:26px;padding:20px 16px 18px;
+  box-shadow:0 10px 34px rgba(0,0,0,.34);animation:cin .45s cubic-bezier(.2,1.3,.4,1)}
+.bfT{font-size:19px;font-weight:900;color:#14688C;text-align:center;margin-bottom:14px}
+.bfR{display:flex;gap:11px;align-items:flex-start;border-radius:18px;padding:12px 13px;margin-bottom:8px}
+.bfR span{font-size:21px;flex:0 0 auto;width:36px;height:36px;border-radius:50%;background:#fff;
+  display:flex;align-items:center;justify-content:center}
+.bfR b{display:block;font-size:14.5px;font-weight:900;line-height:1.35}
+.bfR small{display:block;font-size:12px;font-weight:700;margin-top:3px;line-height:1.55;opacity:.8}
+.bfR.bad{background:#FFEAE4;color:#A8402C}
+.bfR.good{background:#FFF5D9;color:#96690C}
+.bfR.warn{background:#EDE7F6;color:#5B4A8A}
+.bfR.task{background:#E6F4FA;color:#14688C}
+.bfB{margin-top:12px;width:100%;border:0;border-radius:22px;padding:16px;cursor:pointer;
+  font-family:var(--cjk);font-size:17px;font-weight:900;letter-spacing:.12em;
+  background:linear-gradient(135deg,#FFD86B,#FFB43F);color:#6B3E06;box-shadow:0 5px 0 #D98F1E}
+.bfB:active{transform:translateY(4px);box-shadow:0 1px 0 #D98F1E}
 
 #dex{position:absolute;inset:0;display:none;z-index:40;background:rgba(10,44,67,.88);
   backdrop-filter:blur(4px);padding:calc(env(safe-area-inset-top) + 16px) 14px 16px}
@@ -111,6 +132,11 @@ text-shadow:0 6px 24px rgba(0,0,0,.35);pointer-events:none}
 .dxCell span{display:block;font-size:13px;font-weight:900;margin-top:2px}
 .dxCell.got{background:#FFE7EE;color:#C9426B}
 .dxCell.mine{background:linear-gradient(160deg,#FFD86B,#FFB43F);color:#6B3E06;box-shadow:0 3px 0 #D98F1E}
+.dxCell em{display:block;font-style:normal;font-size:9.5px;font-weight:800;opacity:.65;margin-top:2px}
+.dxDone{display:none;margin:12px 14px 0;border-radius:18px;padding:13px;text-align:center;
+  background:linear-gradient(135deg,#FFE9A8,#FFC97A);color:#7A4E12;font-size:15px;font-weight:900}
+.dxDone.on{display:block}
+.dxDone small{display:block;font-size:11.5px;font-weight:800;opacity:.75;margin-top:3px}
 .dxNote{font-size:11px;line-height:1.7;color:#7C8FA0;padding:0 16px 14px}
 #dexBtn{position:absolute;left:12px;top:calc(env(safe-area-inset-top) + 10px);z-index:30;
   border:0;border-radius:20px;padding:9px 14px;font-family:var(--cjk);font-size:13px;font-weight:900;
@@ -345,6 +371,16 @@ font-family:var(--cjk);font-size:14.5px;font-weight:800;cursor:pointer;line-heig
 <audio id="bgm" loop preload="auto" src="happy_adventure.mp3"></audio>
 <div id="count"><b>3</b></div>
 <div id="evBar"></div>
+<div id="brief">
+  <div class="bfIn">
+    <div class="bfT">出發前，還有幾件事</div>
+    <div class="bfR bad"><span>⚠️</span><div><b>刺網、塑膠垃圾、填海陸地</b><small>碰到會扣一格體力，體力用完就結束了</small></div></div>
+    <div class="bfR good"><span>🟡</span><div><b>金色的黃錫鯛</b><small>比小魚大一圈，吃到可以補回一格體力</small></div></div>
+    <div class="bfR warn"><span>🔊</span><div><b>打樁噪音</b><small>聲波被蓋住：吃不到魚、聽不見同伴求救、空氣消耗變快，也不敢浮上去換氣</small></div></div>
+    <div class="bfR task"><span>🐬</span><div><b>救援任務</b><small>碰到被漁網纏住的同伴就能救牠，收進大家一起收集的救援圖鑑</small></div></div>
+    <button class="bfB" id="briefGo">知道了，出發！</button>
+  </div>
+</div>
 <div id="dex">
   <div class="dxIn">
     <div class="dxHd">
@@ -354,6 +390,7 @@ font-family:var(--cjk);font-size:14.5px;font-weight:800;cursor:pointer;line-heig
       </div>
       <button id="dxClose">關閉</button>
     </div>
+    <div class="dxDone" id="dxDone">🎉 50 隻同伴全部被救回來了！<small>謝謝每一位守護隊長</small></div>
     <div class="dxGrid" id="dxGrid"></div>
     <p class="dxNote">遊戲中的白海豚編號與名字為虛擬設定，但牠們面臨的危險都是真實發生的喔！</p>
   </div>
@@ -391,7 +428,10 @@ font-family:var(--cjk);font-size:14.5px;font-weight:800;cursor:pointer;line-heig
     <p class="ask">是否能夠順利長大呢？</p>
 
     <button class="goBtn big" id="startBtn">出發囉</button>
-    <button class="coverDex" id="dexBtn2">救援圖鑑　<b id="dexCount">0/50</b><i id="dexBar"></i></button>
+    <div class="coverDex" id="dexBtn2">
+      <div class="cdTop"><span>救援圖鑑</span><b id="dexCount">0 / 50</b></div>
+      <div class="cdBar"><i id="dexBar"></i></div>
+    </div>
   </div>
 </div>
 
@@ -669,7 +709,7 @@ function spawnHaz(){
 
 function pickFriend(){
   const left=ROSTER.filter(function(r){return !DEX.counts[r.id];});
-  const pool=left.length?left:ROSTER;
+  const pool=(left.length&&Math.random()<.3)?left:ROSTER;
   return pool[Math.floor(Math.random()*pool.length)];
 }
 function spawnFriend(){
@@ -748,11 +788,12 @@ function update(dt){
     else if(S.tut===2){hintEl.classList.remove('on');
       warn('學會了！<br>空氣快沒了就要浮上來換氣',2.4,true);
       if(S.tutT>2.2){S.tut=3;S.tutT=0;}}
-    else{hideTip();hideWarn();hintEl.classList.remove('on');warn('前面開始有危險，小心！',2.4);
+    else{hideTip();hideWarn();hintEl.classList.remove('on');
       document.getElementById('swipeHint').classList.remove('on');
-      S.dist=0;S.zone=-1;S.obs=[];   
-      S.phase='play';S.hazT=1.6;S.fishT=1.5;S.fillT=8;S.pileT=9;S.goldT=12;}
-    if(S.tutTotal>60){S.dist=0;S.zone=-1;S.obs=[];S.phase='play';S.hazT=1.6;S.fillT=8;S.pileT=9;}
+      S.phase='brief';showBrief();return;}
+    if(S.tutTotal>60){hideWarn();hintEl.classList.remove('on');
+      document.getElementById('swipeHint').classList.remove('on');
+      S.phase='brief';showBrief();return;}
   } else {
     const Z=ZONES[S.zone],z=Z.k;
     const EV=S.ev||{};
@@ -862,7 +903,9 @@ function update(dt){
         S.rescued.push(o.who.id);
         DEX.counts[o.who.id]=(DEX.counts[o.who.id]||0)+1;DEX.mine[o.who.id]=1;
         for(let k=0;k<3;k++)S.pops.push({x:o.x+o.w/2,y:oy+oh/2,r:6+k*10,a:1});
-        msg('救到了！<span class="em">'+o.who.id+' '+o.who.name+'</span>',2.6,3);
+        const times=DEX.counts[o.who.id];
+        msg('救到了！<span class="em">'+o.who.id+' '+o.who.name+'</span>'+
+            (times>1?'　（第 '+times+' 次被救）':'　★ 圖鑑新增'),2.8,3);
         track('rescue',{what:o.who.id});
       } else if(o.t==='fish'||o.t==='gold'){
         if(S.noise>0){tip('聲波被蓋住了，吃不到魚',3.5);}
@@ -1558,126 +1601,31 @@ function start(){
   document.getElementById('intro').classList.add('hidden');
   document.getElementById('over').classList.add('hidden');
   document.getElementById('shareCanvasWrap').classList.remove('on');
+  document.getElementById('brief').classList.remove('on');
+  track('view2');
+  S.run=true;                 
+}
+
+function showBrief(){
+  S.run=false;
+  document.getElementById('brief').classList.add('on');
+}
+function beginJourney(){
+  document.getElementById('brief').classList.remove('on');
   S.ev=pickEvent();
-  if(S.ev.k==='calm')S.life=Math.min(MAXHP+1,6);
-  const eb=document.getElementById('evBar');
-  eb.innerHTML='<b>今日海況 · '+S.ev.t+'</b><small>'+
-    (S.ev.k==='pile'?S.ev.site.name+'（'+S.ev.site.note+'）':S.ev.d)+'</small>';
-  eb.classList.add('show');setTimeout(function(){eb.classList.remove('show');},5200);
-  track('start',{what:S.ev.k});
-  countdown(()=>{S.run=true;});
+  countdown(function(){
+    if(S.ev.k==='calm')S.life=Math.min(MAXHP+1,6);
+    const eb=document.getElementById('evBar');
+    eb.innerHTML='<b>今日海況 · '+S.ev.t+'</b><small>'+
+      (S.ev.k==='pile'?S.ev.site.name+'（'+S.ev.site.note+'）':S.ev.d)+'</small>';
+    eb.classList.add('show');setTimeout(function(){eb.classList.remove('show');},5000);
+    S.dist=0;S.zone=-1;S.obs=[];S.phase='play';
+    S.hazT=1.8;S.fishT=1.2;S.fillT=8;S.pileT=9;S.goldT=12;S.friendT=20;
+    updHUD();S.run=true;
+    track('start',{what:S.ev.k});
+  });
 }
-
-const AUDIO={sfx:true,bgm:true,ctx:null,master:null};
-function audioInit(){
-  if(AUDIO.ctx)return;
-  const AC=window.AudioContext||window.webkitAudioContext;if(!AC)return;
-  AUDIO.ctx=new AC();
-  AUDIO.master=AUDIO.ctx.createGain();
-  AUDIO.master.gain.value=.5;AUDIO.master.connect(AUDIO.ctx.destination);
-}
-function tone(freq,dur,type,vol,slideTo,delay){
-  if(!AUDIO.sfx||!AUDIO.ctx)return;
-  const c=AUDIO.ctx,t0=c.currentTime+(delay||0);
-  const o=c.createOscillator(),g=c.createGain();
-  o.type=type||'sine';o.frequency.setValueAtTime(freq,t0);
-  if(slideTo)o.frequency.exponentialRampToValueAtTime(slideTo,t0+dur);
-  g.gain.setValueAtTime(0,t0);
-  g.gain.linearRampToValueAtTime(vol||.25,t0+.012);
-  g.gain.exponentialRampToValueAtTime(.0008,t0+dur);
-  o.connect(g);g.connect(AUDIO.master);o.start(t0);o.stop(t0+dur+.03);
-}
-function noiseBurst(dur,vol,freq,q,delay){
-  if(!AUDIO.sfx||!AUDIO.ctx)return;
-  const c=AUDIO.ctx,t0=c.currentTime+(delay||0),len=Math.max(1,Math.floor(c.sampleRate*dur));
-  const buf=c.createBuffer(1,len,c.sampleRate),d=buf.getChannelData(0);
-  for(let i=0;i<len;i++)d[i]=(Math.random()*2-1)*(1-i/len);
-  const src=c.createBufferSource();src.buffer=buf;
-  const bp=c.createBiquadFilter();bp.type='bandpass';bp.frequency.value=freq||900;bp.Q.value=q||1;
-  const g=c.createGain();g.gain.value=vol||.2;
-  src.connect(bp);bp.connect(g);g.connect(AUDIO.master);src.start(t0);
-}
-const SFX={
-  tap  (){tone(520,.07,'triangle',.2,720);},
-  
-  eat  (){tone(1046,.09,'triangle',.16);tone(1568,.14,'sine',.10,null,.05);
-          noiseBurst(.05,.05,3200,4,.02);},
-  rescue(){[0,.09,.18,.30].forEach((d,i)=>tone([523,784,1046,1568][i],.26,'sine',.22,null,d));
-           noiseBurst(.12,.07,2400,3,.3);},
-  gold (){[0,.07,.14].forEach((d,i)=>tone([740,930,1240][i],.14,'triangle',.22,null,d));},
-  
-  breath(){tone(120,.12,'sine',.24,190);
-           noiseBurst(.22,.14,700,.6,.05);
-           noiseBurst(.10,.10,2600,3,.20);
-           tone(660,.10,'sine',.09,1180,.22);},
-  bubble(){tone(900,.06,'sine',.08,1300);},
-  
-  hit  (){tone(98,.34,'sawtooth',.20,52);tone(104,.30,'sawtooth',.14,55,.01);
-          noiseBurst(.16,.14,240,.9);},
-  grow (){[0,.1,.2,.3].forEach((d,i)=>tone([523,659,784,1046][i],.2,'triangle',.2,null,d));},
-  pile (){tone(70,.32,'square',.3,40);noiseBurst(.26,.26,260,.7);},
-  count(){tone(760,.12,'square',.18);},
-  go   (){[0,.09].forEach((d,i)=>tone([880,1320][i],.18,'square',.2,null,d));},
-  lose (){[0,.14,.28].forEach((d,i)=>tone([440,350,260][i],.3,'triangle',.22,null,d));},
-  win  (){[0,.1,.2,.3,.45].forEach((d,i)=>tone([523,659,784,1046,1319][i],.3,'triangle',.22,null,d));}
-};
-const bgmEl=document.getElementById('bgm');
-bgmEl.volume=.32;
-
-bgmEl.addEventListener('timeupdate',function(){
-  if(bgmEl.duration&&bgmEl.currentTime>bgmEl.duration-.18)bgmEl.currentTime=.05;
-});
-function bgmPlay(){ if(AUDIO.bgm&&bgmEl.getAttribute('src'))bgmEl.play().catch(()=>{}); }
-function bgmStop(){ bgmEl.pause(); }
-document.getElementById('btnSfx').onclick=function(){
-  audioInit();AUDIO.sfx=!AUDIO.sfx;this.classList.toggle('on',AUDIO.sfx);this.classList.toggle('off',!AUDIO.sfx);
-  if(AUDIO.sfx)SFX.tap();track('toggle',{what:'sfx',on:AUDIO.sfx?1:0});
-};
-document.getElementById('btnBgm').onclick=function(){
-  audioInit();AUDIO.bgm=!AUDIO.bgm;this.classList.toggle('on',AUDIO.bgm);this.classList.toggle('off',!AUDIO.bgm);
-  AUDIO.bgm?bgmPlay():bgmStop();track('toggle',{what:'bgm',on:AUDIO.bgm?1:0});
-};
-
-(function(){
-  const cc=document.getElementById('coverCv');if(!cc)return;
-  const g=cc.getContext('2d');
-  const fishes=[];for(let i=0;i<7;i++)fishes.push({x:Math.random(),y:.2+Math.random()*.6,sp:.05+Math.random()*.07,ph:Math.random()*6});
-  function frame(t){
-    if(document.getElementById('intro').classList.contains('hidden')){requestAnimationFrame(frame);return;}
-    const dpr=Math.min(devicePixelRatio||1,2),w=cc.clientWidth,h=cc.clientHeight;
-    if(cc.width!==w*dpr||cc.height!==h*dpr){cc.width=w*dpr;cc.height=h*dpr;}
-    g.setTransform(dpr,0,0,dpr,0,0);g.clearRect(0,0,w,h);
-    
-    fishes.forEach(f=>{
-      f.x-=f.sp/60;if(f.x<-.12)f.x=1.12;
-      const fx=f.x*w,fy=f.y*h+Math.sin(t/600+f.ph)*5;
-      g.save();g.translate(fx,fy);
-      g.fillStyle='rgba(255,255,255,.75)';g.strokeStyle='rgba(31,110,147,.35)';g.lineWidth=1.2;
-      g.beginPath();g.moveTo(8,0);g.quadraticCurveTo(1,-5,-5,-2.5);
-      g.quadraticCurveTo(-8,0,-5,2.5);g.quadraticCurveTo(1,5,8,0);g.fill();g.stroke();
-      g.fillStyle='#FF7F5C';g.beginPath();g.moveTo(-5,0);g.lineTo(-11,-4);g.lineTo(-11,4);g.closePath();g.fill();
-      g.restore();
-    });
-    
-    const bob=Math.sin(t/700)*7, tilt=Math.sin(t/900)*.06;
-    g.save();g.translate(w*.5,h*.52+bob);g.rotate(tilt);
-    g.scale(Math.min(w/230,1.28),Math.min(w/230,1.28));
-    dolphinShape(g,{body:'#F9AEC1',dark:'#E0708D',belly:'#FEDCE4',line:'#C2647D',
-                    fluke:'#E0708D',flukeFar:'#C9647E',fl:Math.sin(t/320)*.14});
-    speckles(g,.4);
-    g.strokeStyle='#3F3128';g.lineWidth=1.3;g.lineCap='round';
-    g.beginPath();g.moveTo(32,6);g.quadraticCurveTo(35,7.8,38,5.8);g.stroke();
-    g.restore();
-    
-    g.fillStyle='rgba(255,255,255,.6)';
-    for(let i=0;i<3;i++){
-      const pt=((t/900)+i/3)%1;
-      g.beginPath();g.arc(w*.5+10,h*.52+bob-14-pt*46,2.5+pt*2,0,7);g.fill();
-    }
-    requestAnimationFrame(frame);
-  }
-  requestAnimationFrame(frame);
-})();
+document.getElementById('briefGo').onclick=function(){SFX.tap();beginJourney();};
 
 document.getElementById('startBtn').onclick=start;
 document.getElementById('againBtn').onclick=start;
@@ -1759,12 +1707,20 @@ function drawDexDolphin(cv,r,found){
     g.fillStyle='rgba(31,110,147,.62)';g.font='800 9px '+FF();g.textAlign='right';
     g.fillText('幼豚',w-4,h-3);g.textAlign='left';
   }
+  if(!found){
+    
+    g.fillStyle='rgba(244,250,252,.62)';g.fillRect(0,0,w,h);
+    g.fillStyle='#9DB2BE';g.font='900 26px '+FF();g.textAlign='center';
+    g.fillText('？',w/2,h/2+10);g.textAlign='left';
+  }
 }
 
 function renderDex(){
   const got=ROSTER.filter(function(r){return DEX.counts[r.id];}).length;
   const dc=document.getElementById('dexCount');
-  if(dc)dc.textContent=got+'/'+ROSTER.length;
+  if(dc)dc.textContent=got+' / '+ROSTER.length;
+  const cd=document.getElementById('dexBtn2');
+  if(cd)cd.classList.toggle('full',got>=ROSTER.length);
   document.getElementById('dxSum').textContent='全部玩家已救到 '+got+' / '+ROSTER.length+' 隻'+
     (S.rescued&&S.rescued.length?'　（你這局救了 '+S.rescued.length+' 隻）':'');
   const grid=document.getElementById('dxGrid');
@@ -1772,8 +1728,11 @@ function renderDex(){
     const g2=!!DEX.counts[r.id],mine=!!DEX.mine[r.id];
     return '<div class="dxCell'+(g2?' got':'')+(mine?' mine':'')+'">'+
       '<canvas class="dxPic" data-id="'+r.id+'"></canvas>'+
-      '<b>'+r.id+'</b><span>'+(g2?r.name:'？')+'</span></div>';
+      '<b>'+r.id+'</b><span>'+(g2?r.name:'？')+'</span>'+
+      (g2?'<em>被救過 '+DEX.counts[r.id]+' 次</em>':'')+'</div>';
   }).join('');
+  const done=document.getElementById('dxDone');
+  if(done)done.classList.toggle('on',got>=ROSTER.length);
   grid.querySelectorAll('.dxPic').forEach(function(cv){
     const r=ROSTER.find(function(x){return x.id===cv.dataset.id;});
     drawDexDolphin(cv,r,!!DEX.counts[r.id]);
