@@ -434,15 +434,7 @@ font-family:var(--cjk);font-size:14.5px;font-weight:800;cursor:pointer;line-heig
 .rhN span{display:block;font-size:10.5px;font-weight:800;color:#8A6A62;margin-top:5px;line-height:1.5}
 .rhSrc{font-size:10.5px;line-height:1.7;color:#A8908A;margin-top:13px}
 
-.news{margin-top:12px;text-align:left;background:#fff;border-radius:20px;padding:15px 16px;
-  border-left:6px solid #E8452F;box-shadow:0 3px 0 rgba(30,110,147,.12)}
-.news .nwTag{display:inline-block;background:#E8452F;color:#fff;border-radius:10px;
-  padding:3px 11px;font-size:10.5px;font-weight:900;letter-spacing:.14em;
-  animation:blink 1.8s ease-in-out infinite}
 @keyframes blink{50%{opacity:.5}}
-.news b{display:block;font-size:16px;font-weight:900;color:#1B4D66;margin-top:9px;line-height:1.4}
-.news p{font-size:13px;font-weight:700;color:#5C7180;margin-top:7px;line-height:1.75}
-.news a{display:inline-block;margin-top:10px;font-size:13.5px;font-weight:900;color:#C1341F;text-decoration:none}
 </style>
 </head>
 <body>
@@ -660,8 +652,6 @@ font-family:var(--cjk);font-size:14.5px;font-weight:800;cursor:pointer;line-heig
       <div class="rhSrc">資料整理自環境資訊中心、公視「我們的島」、上下游新聞、中央社等公開報導（2026 年 3～7 月）。</div>
     </div>
 
-    <div class="news" id="newsOver" style="display:none"></div>
-
     <a class="lnk lnk1" href="https://forms.gle/EP53e3d9rTYg2j1U7" target="_blank" rel="noopener">
       邀請您連署！搶救極危白海豚
     </a>
@@ -708,40 +698,6 @@ const ROSTER=(function(){
   });
 })();
 const DEX={counts:{},mine:{},err:'',loading:true};
-
-const NEWS={
-  on:true,
-  title:'8/31（一）行政院前行動',
-  text:'搶救白海豚的行動正在進行中。台中港填海造陸的開發案還沒停下來，需要更多人一起站出來。',
-  url:'https://www.facebook.com/wildatheart.org?locale=zh_TW',
-  cta:'看台灣蠻野心足生態協會的最新消息'
-};
-function loadNews(){
-  if(!ANALYTICS_URL)return renderNews();
-  const cb='__news'+Math.random().toString(36).slice(2,8);
-  const sc=document.createElement('script');
-  window[cb]=function(d){
-    if(d&&d.title){NEWS.title=d.title;NEWS.text=d.text||'';NEWS.url=d.url||NEWS.url;
-      NEWS.cta=d.cta||NEWS.cta;NEWS.on=d.on!==false;}
-    renderNews();delete window[cb];sc.remove();
-  };
-  sc.src=ANALYTICS_URL+'?action=news&callback='+cb;
-  sc.onerror=function(){renderNews();delete window[cb];sc.remove();};
-  document.head.appendChild(sc);
-}
-function renderNews(){
-  ['newsOver'].forEach(function(id){
-    const el=document.getElementById(id);if(!el)return;
-    if(!NEWS.on||!NEWS.title){el.style.display='none';return;}
-    el.style.display='';
-    el.innerHTML='<span class="nwTag">現正發生</span>'+
-      '<b>'+NEWS.title+'</b>'+
-      (NEWS.text?'<p>'+NEWS.text+'</p>':'')+
-      '<a href="'+NEWS.url+'" target="_blank" rel="noopener">'+NEWS.cta+' ›</a>';
-    const a=el.querySelector('a');
-    if(a)a.addEventListener('click',function(){track('outbound',{what:'news'});});
-  });
-}
 
 const PILE_SITES=[
  {zone:0,name:'苗栗竹南 · 海洋風電 Formosa 1',note:'龍鳳漁港外海 2～6 公里'},
@@ -1676,7 +1632,7 @@ function end(k){
     zone:ZONES[Math.max(S.zone,0)].n,zoneIdx:Math.max(S.zone,0),
     netHit:S.netHit,plasticHit:S.plasticHit,fillHit:S.fillHit,
     noiseSec:Math.round(S.noiseSec),durSec:Math.round((Date.now()-T0)/1000)});
-  loadDex();renderNews();
+  loadDex();
   
   const cert=document.getElementById('ovCert');
   if(k==='home'){
@@ -2207,7 +2163,7 @@ document.getElementById('dexBtn2').onclick=openDex;
 document.getElementById('dxClose').onclick=function(){
   SFX.tap();document.getElementById('dex').classList.remove('on');
 };
-loadDex();loadNews();
+loadDex();
 
 watchScroll();watchCards();
 updHUD();
