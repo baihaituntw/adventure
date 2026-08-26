@@ -758,7 +758,7 @@ font-family:var(--cjk);font-size:14.5px;font-weight:800;cursor:pointer;line-heig
           <input id="certName" maxlength="12" placeholder="寫下你的名字" autocomplete="off">
           <br>已陪伴一隻台灣白海豚<br>
           安全游過<b>苗栗至雲林</b>的重要棲息環境<br>
-          全長約 200 公里
+          全長約 150 公里
         </div>
         <div class="ctStat" id="certStat"></div>
         <div class="ctFoot">台灣白海豚大冒險　·　<span id="certDate"></span></div>
@@ -1003,7 +1003,7 @@ const ZONES=[
 
 const GOAL=SEG*ZONES.length, MAXD=38, SAFE=30, DEEP_TRIG=34, DEEP_LIMIT=4;
 
-const TH=[0,130,280], STAGES=['幼豚','少年豚','成年豚'], MAXHP=5;
+const TH=[0,130,230], STAGES=['幼豚','少年豚','成年豚'], MAXHP=5;
 
 const PILE_R=250, PILE_EXT=.17;
 
@@ -1075,7 +1075,7 @@ function corridorY(m){return clamp(depthToY(m),S.land+.07,S.deep-.07);}
 function fishY(z){return z==='river'?corridorY(8+Math.random()*8):corridorY(6+Math.random()*20);}
 function laneY(){return S.land+.10+Math.random()*(S.deep-S.land-.20);}
 function spawnSchool(n,z){
-  const c=n||(3+Math.floor(Math.random()*3)),b=fishY(z||'wet'),amp=.018+Math.random()*.022,ph=Math.random()*6;
+  const c=n||(4+Math.floor(Math.random()*2)),b=fishY(z||'wet'),amp=.018+Math.random()*.022,ph=Math.random()*6;
   for(let i=0;i<c;i++){const col=Math.floor(i/2),row=i%2;
     S.obs.push({t:'fish',x:W+30+col*32+row*14,
       y:clamp(b+Math.sin(ph+col*.7)*amp+row*.02,S.land+.07,S.deep-.07),w:20,h:.042,ph:Math.random()*6});}
@@ -1182,10 +1182,11 @@ function update(dt){
     const Z=ZONES[Math.max(S.zone,0)],z=Z.k;
     const EV=S.ev||{};
     S.fishT-=dt;
-    
-    if(S.fishT<=0){S.fishT=((z==='river'?1.3:z==='ind'?2.6:2)+Math.random()*.7)
+
+    if(S.fishT<=0){S.fishT=((z==='river'?1.6:z==='ind'?2.9:2.3)
+                            +Math.random()*(z==='river'?.7:.85))
                           *(EV.k==='flood'&&z==='river'?.55:1);
-      spawnSchool(z==='river'?5+Math.floor(Math.random()*3):3+Math.floor(Math.random()*3),z);}
+      spawnSchool(z==='river'?6+Math.floor(Math.random()*3):4+Math.floor(Math.random()*2),z);}
     S.hazT-=dt;
     if(S.hazT<=0){
       
@@ -1671,7 +1672,7 @@ function dolphin(x,y){
 
 const E={
  home :{t:'太棒了！順利抵達雲林！',
-  s:'你陪牠游過了<span class="em">苗栗、台中、彰化到雲林</span>的最危險海岸。<br><br>這片海長約 200 公里、寬不到 5 公里，是<span class="em">全世界最小的鯨豚家園</span>。白海豚一輩子都只能在這條窄窄的海邊巷子裡生活。<br><br>謝謝你，安全送牠回家！'},
+  s:'你陪牠游過了<span class="em">苗栗、台中、彰化到雲林</span>的最危險海岸。<br><br>這片海長約 150 公里、寬不到 5 公里，是<span class="em">全世界最小的鯨豚家園</span>。白海豚一輩子都只能在這條窄窄的海邊巷子裡生活。<br><br>謝謝你，安全送牠回家！'},
  hurt :{t:'體力用完，無法再前進了',
   s:'一路上有太多<span class="em">塑膠、漁網和填海地</span>，根本來不及閃躲。<br><br>你知道嗎？真實的白海豚，<span class="em">每三隻就有一隻</span>身上發現被漁網纏繞或船隻割傷的痕跡，這些傷口永遠不會好。'},
  drown:{t:'來不及換氣……',
@@ -1730,7 +1731,7 @@ function end(k){
   document.getElementById('ovT').innerHTML=e.t;
   document.getElementById('ovS').innerHTML=e.s;
   
-  const CH=[['死亡地點',ZONES[Math.max(S.zone,0)].n]];
+  const CH=[[k==='home'?'抵達終點':'死亡地點',ZONES[Math.max(S.zone,0)].n]];
   if(S.fish>0)      CH.push(['吃到小魚',S.fish+' 隻']);
   if(S.netHit>0)    CH.push(['被漁網纏住',S.netHit+' 次']);
   if(S.plasticHit>0)CH.push(['誤食塑膠',S.plasticHit+' 次']);
@@ -1878,7 +1879,7 @@ function makeCertImage(){
   g.beginPath();g.moveTo(w/2-220,556);g.lineTo(w/2+220,556);g.stroke();g.setLineDash([]);
 
   g.fillStyle='#6B5232';g.font=F(26,700);
-  wrapText(g,'已陪伴一隻台灣白海豚\n安全游過苗栗至雲林的重要棲息環境\n全長約 200 公里',w/2,616,780,46);
+  wrapText(g,'已陪伴一隻台灣白海豚\n安全游過苗栗至雲林的重要棲息環境\n全長約 150 公里',w/2,616,780,46);
 
   const cards=[['救援同伴',S.rescued.length+' 隻'],
                ['吃到小魚',S.fish+' 隻'],
@@ -1993,7 +1994,7 @@ document.getElementById('shareLink').onclick=function(){
 
   const txt = (S.lastKind==='home')
     ? ('我在《台灣白海豚大冒險》成功護送一隻台灣白海豚，'+
-       '從苗栗一路游到雲林，全長 200 公里都平安回家了！'+
+       '從苗栗一路游到雲林，全長 150 公里都平安回家了！'+
        (S.rescued.length?('路上還救了 '+S.rescued.length+' 隻被漁網纏住的同伴。'):'')+
        '台灣白海豚全球剩不到 50 隻，目前救援進度 '+dexGot+'/50，'+
        '換你來試試，看能不能把牠平安送回家！')
@@ -2202,7 +2203,8 @@ function wakeAudio(){
     const bob=Math.sin(t/700)*7, tilt=Math.sin(t/900)*.06;
     
     const cs=Math.min(w/230,1.35);
-    drawDexAt(g,FIN_ID,w*.5,h*.52+bob,cs,tilt,Math.sin(t/320)*.16,'adult');
+    
+    drawDexAt(g,FIN_ID,w*.5,h*.62+bob,cs,tilt,Math.sin(t/320)*.16,'adult');
     g.restore();
     g.fillStyle='rgba(255,255,255,.6)';
     for(let i=0;i<3;i++){
@@ -2753,7 +2755,10 @@ function openDexDetail(o){
       found = !!o.found,
       cfg   = global.dexConfig(i),
       stage = cfg.stage,
-      no    = 'NO.' + String(i+1);
+      
+      no    = (typeof ROSTER !== 'undefined' && ROSTER[i])
+                ? ROSTER[i].id
+                : 'TW-' + String(i+1).padStart(2,'0');
 
   var html = '<div class="ddxCard" role="dialog" aria-modal="true">' +
     '<button class="ddxX" aria-label="關閉">&times;</button>' +
@@ -2827,6 +2832,8 @@ function finLook(){
     const r = seeded(seed), out = [];
     let n, lo, hi;
     if(kind==='fade'){ n=5; lo=3.4; hi=2.2; }        
+    
+    else if(kind==='molt'){ n=10; lo=2.0; hi=1.5; }
     else             { n=12; lo=1.1; hi=0.9; }       
     for(let k=0;k<n;k++) out.push([ -30+r()*58, -28+r()*24, lo+r()*hi ]);
     return out;
@@ -2843,7 +2850,8 @@ function finLook(){
   }
   FIN_CACHE = [
     make('calf' ,'slate','none',null   ,0    ,1.06),
-    make('teen' ,'grey' ,'fade','fade' ,20250,1.00),
+    
+    make('teen' ,'dove' ,'fade','molt' ,20250,1.00),
     make('adult','pink' ,'dots','dots' ,20260,1.02)
   ];
   return FIN_CACHE;
