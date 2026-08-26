@@ -93,10 +93,23 @@ padding:6px 12px;border-radius:14px;white-space:nowrap;box-shadow:0 3px 10px rgb
   background:rgba(255,255,255,.62);backdrop-filter:blur(3px);box-shadow:0 3px 8px rgba(0,0,0,.14);position:relative}
 .sndBtn:active{transform:translateY(2px)}
 .sndBtn.off{background:rgba(255,255,255,.32);filter:grayscale(1)}
-.noflash #alert.show{animation:none}
-.noflash .nwTag,.noflash .tl li:last-child::before{animation:none}
-.noflash #bubbleBtn.urgent{animation:none}
-.noflash .goBtn.big,.noflash #cause .cbtn{animation:none}
+
+.noflash #alert.show,
+.noflash .nwTag,
+.noflash .tl li:last-child::before,
+.noflash #bubbleBtn.urgent,
+.noflash .goBtn.big,
+.noflash #cause .cbtn,
+.noflash .scrollHint .chev,
+.noflash .cover .bb,
+.noflash #cause .cbb,
+.noflash .screen.ocean .ob,
+.noflash .cover .ask,
+.noflash .coverDex .cdBar i,
+.noflash #count b,
+.noflash #hint .ring{animation:none!important}
+
+.noflash .cover .bb,.noflash #cause .cbb,.noflash .screen.ocean .ob{opacity:0}
 .sndBtn.off::after{content:"";position:absolute;left:7px;right:7px;top:50%;height:2.5px;border-radius:2px;
   background:#E8452F;transform:rotate(-38deg)}
 
@@ -198,6 +211,12 @@ text-shadow:0 6px 24px rgba(0,0,0,.35);pointer-events:none}
 .abBody h4:first-child{margin-top:0}
 .abBody p{font-size:12.5px;font-weight:700;color:#4A6270;line-height:1.85}
 .abBody b{color:#14688C}
+#fToast{position:absolute;left:50%;top:calc(env(safe-area-inset-top) + 58px);
+  transform:translateX(-50%) translateY(-6px);z-index:46;
+  background:rgba(20,80,110,.88);color:#fff;border-radius:16px;padding:10px 18px;
+  font-size:13px;font-weight:800;white-space:nowrap;max-width:90%;
+  opacity:0;transition:opacity .25s,transform .25s;pointer-events:none}
+#fToast.on{opacity:1;transform:translateX(-50%) translateY(0)}
 #dexBtn{position:absolute;left:12px;top:calc(env(safe-area-inset-top) + 10px);z-index:30;
   border:0;border-radius:20px;padding:9px 14px;font-family:var(--cjk);font-size:13px;font-weight:900;
   background:rgba(255,255,255,.62);backdrop-filter:blur(3px);color:#155C7C;cursor:pointer;
@@ -582,7 +601,7 @@ font-family:var(--cjk);font-size:14.5px;font-weight:800;cursor:pointer;line-heig
       <div class="bfR deep">
         <span class="bi">📏</span>
         <div><b>不能游太深</b>
-        <small>白海豚只住在水深 15～30 公尺的淺海。游進太深的地方牠會受不了，撐太久就回不來了。</small></div>
+        <small>白海豚只住在水深 30 米以內的淺海。游進太深的地方牠會受不了，撐太久就回不來了。</small></div>
       </div>
       <div class="bfR task">
         <span class="bi">🐬</span>
@@ -684,7 +703,7 @@ font-family:var(--cjk);font-size:14.5px;font-weight:800;cursor:pointer;line-heig
       <div class="wave"></div>
     </div>
 
-    <p class="lead">陪一隻剛出生的<b>台灣白海豚</b><br>沿著西海岸的淺灘往南游</p>
+    <p class="lead">陪一隻剛出生的<b>台灣白海豚</b><br>沿著西海岸的淺海往南游</p>
     <p class="ask">是否能夠順利長大呢？</p>
     <div class="iabCover" id="iabCover" style="display:none"></div>
 
@@ -751,7 +770,7 @@ font-family:var(--cjk);font-size:14.5px;font-weight:800;cursor:pointer;line-heig
     <div class="kb kb3">
       <div class="h"><span class="ico">🌊</span>和台灣共用一片海</div>
       <ul>
-        <li>離岸 <b>3〜5 公里</b>、水深 <b>15〜30 公尺</b>的西岸淺海和河口，就是牠們<b>唯一的家</b>，沒有別的地方可以去。</li>
+        <li>離岸 <b>5 公里（3 海哩）</b>內、水深 <b>30 米以內</b>的西岸淺海和河口，就是牠們<b>唯一的家</b>，沒有別的地方可以去。</li>
         <li>我們和白海豚吃一樣的魚、呼吸一樣的空氣、用一樣的水。<b>大海健康，我們才會健康！</b></li>
       </ul>
     </div>
@@ -1751,7 +1770,7 @@ const E={
  drown:{t:'來不及換氣……',
   s:'水下噪音太吵了，讓牠<span class="em">迷失方向</span>，忘記浮出水面呼吸。<br><br>白海豚跟我們一樣用<span class="em">肺</span>呼吸，每 <span class="em">1～3 分鐘</span>要換一次氣。牠們是用聲音「聽」出路線的，但施工打樁和船隻的噪音太吵，蓋掉了聲音，讓牠迷失方向，甚至會<span class="em">聽力受傷、迷路擱淺</span>！'},
  deep :{t:'游進太深的海了……',
-  s:'這裡不是牠熟悉的家。<br><br>白海豚最喜歡住在離岸邊 <span class="em">3～5 公里</span>、水深只有 <span class="em">15～30 公尺</span>的淺海與河口。如果游得太遠、太深，就沒有牠最愛吃的小魚，也找不到其他海豚同伴了。<br><br>牠不是不會潛水，只是深海裡……<span class="em">真的沒有牠的生活</span>。'}
+  s:'這裡不是牠熟悉的家。<br><br>白海豚最喜歡住在離岸邊 <span class="em">5 公里（3 海哩）內</span>、水深 <span class="em">30 米以內</span>的淺海與河口。如果游得太遠、太深，就沒有牠最愛吃的小魚，也找不到其他海豚同伴了。'}
 };
 const COMFORT='你已經很努力了！<br>白海豚每天都要面對這些挑戰。';
 const CAUSE={
@@ -2236,8 +2255,19 @@ function applyFlashPref(){
 }
 document.getElementById('btnFlash').onclick=function(){
   A11Y.flash=!A11Y.flash;applyFlashPref();SFX.tap();
+  flashToast(A11Y.flash?'已開啟閃爍效果':'已減少閃爍：畫面不再閃動或震動');
   track('toggle',{what:'flash',on:A11Y.flash?1:0});
 };
+
+function flashToast(txt){
+  let el=document.getElementById('fToast');
+  if(!el){
+    el=document.createElement('div');el.id='fToast';document.getElementById('wrap').appendChild(el);
+  }
+  el.textContent=txt;el.classList.add('on');
+  clearTimeout(flashToast._t);
+  flashToast._t=setTimeout(function(){el.classList.remove('on');},2200);
+}
 applyFlashPref();
 
 function wakeAudio(){
