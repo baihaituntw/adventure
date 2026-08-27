@@ -159,8 +159,8 @@ text-shadow:0 6px 24px rgba(0,0,0,.35);pointer-events:none}
   border-left:5px solid transparent}
 .bfR .bi{font-size:20px;flex:0 0 auto;width:38px;height:38px;border-radius:50%;background:#fff;
   display:flex;align-items:center;justify-content:center;box-shadow:0 2px 6px rgba(0,0,0,.08)}
-.bfR b{display:block;font-size:15px;font-weight:900;line-height:1.35}
-.bfR small{display:block;font-size:12.5px;font-weight:700;margin-top:4px;line-height:1.7;opacity:.82}
+.bfR b{display:block;font-size:16px;font-weight:900;line-height:1.4}
+.bfR small{display:block;font-size:14px;font-weight:800;margin-top:5px;line-height:1.6;opacity:.85}
 .bfR.bad{background:#FFEDE7;color:#A8402C;border-left-color:#E8825F}
 .bfR.good{background:#FFF6DC;color:#8E6208;border-left-color:#F0B93C}
 .bfR.warn{background:#EEE8F7;color:#57478A;border-left-color:#9484C4}
@@ -240,7 +240,9 @@ text-shadow:0 6px 24px rgba(0,0,0,.35);pointer-events:none}
 
 .screen{position:absolute;inset:0;background:linear-gradient(180deg,var(--sky),var(--sea));display:block;
 padding:calc(env(safe-area-inset-top) + 20px) 16px calc(env(safe-area-inset-bottom) + 30px);
-overflow-y:auto;-webkit-overflow-scrolling:touch;text-align:center}
+overflow-y:auto;-webkit-overflow-scrolling:touch;text-align:center;
+
+scrollbar-gutter:stable}
 .screen.hidden{display:none!important}
 .card{background:var(--cream);border-radius:28px;padding:24px 18px;box-shadow:0 6px 0 var(--sand-dark),0 14px 30px rgba(0,0,0,.15);
   max-width:520px;margin-left:auto;margin-right:auto}
@@ -464,12 +466,20 @@ font-family:var(--cjk);font-size:14.5px;font-weight:800;cursor:pointer;line-heig
 #dim.on{opacity:1}
 
 #hp{position:relative}
+
+#hud.spotHost{z-index:25}
 .spot{z-index:25!important;animation:spotP 1.8s ease-in-out infinite}
 @keyframes spotP{
-  0%,100%{filter:drop-shadow(0 0 3px rgba(255,205,90,.55))}
-  50%    {filter:drop-shadow(0 0 16px rgba(255,205,90,.95))}
+  0%,100%{filter:drop-shadow(0 0 4px rgba(255,190,60,.7))}
+  50%    {filter:drop-shadow(0 0 18px rgba(255,190,60,1)) drop-shadow(0 0 30px rgba(255,190,60,.6))}
 }
 
+#hpArrow{position:absolute;left:52px;top:calc(env(safe-area-inset-top) + 92px);z-index:25;
+  pointer-events:none;opacity:0;transition:opacity .3s}
+#hpArrow.on{opacity:1}
+#hpArrow i{display:block;font-size:34px;font-style:normal;
+  animation:pokeUp 1.1s ease-in-out infinite;filter:drop-shadow(0 3px 8px rgba(0,0,0,.45))}
+@keyframes pokeUp{0%,100%{transform:translateY(0)}50%{transform:translateY(-9px)}}
 #swipeHint{position:absolute;left:50%;top:52%;transform:translate(-50%,-50%);z-index:25;
   pointer-events:none;opacity:0;transition:opacity .3s}
 #swipeHint.on{opacity:1}
@@ -608,6 +618,7 @@ font-family:var(--cjk);font-size:14.5px;font-weight:800;cursor:pointer;line-heig
 <div id="msg"></div>
 <div id="dim"></div>
 <div id="swipeHint"><i>👆</i></div>
+<div id="hpArrow"><i>👆</i></div>
 <button id="dexBtn">圖鑑</button>
 <div id="sndBar">
   <button id="btnSfx" class="sndBtn on" aria-label="音效開關">🔊</button>
@@ -621,35 +632,35 @@ font-family:var(--cjk);font-size:14.5px;font-weight:800;cursor:pointer;line-heig
   <div class="bfIn">
     <div class="bfTop">
       <span class="bfTag">出發前</span>
-      <div class="bfT">帶白海豚回家的五件事</div>
+      <div class="bfT">出發囉！先記住這五件事</div>
       <button class="bfSkip" id="briefSkip">略過</button>
       <div class="bfStep" id="bfStep"></div>
     </div>
     <div class="bfList">
       <div class="bfR bad">
         <span class="bi">⚠️</span>
-        <div><b>危險：刺網｜塑膠｜填海陸地｜打樁台</b>
-        <small>每碰到一次危險就會失去 1 格體力，體力扣完就沒辦法繼續前進了，加油！</small></div>
+        <div><b>刺網、塑膠、填海陸地、打樁平台</b>
+        <small>撞到會受傷，體力少一格</small></div>
       </div>
       <div class="bfR good">
         <span class="bi">🐟</span>
-        <div><b>美味金色黃花魚</b>
-        <small>發光的金色黃花魚是白海豚的最愛，吃到牠就能補回 1 格體力，繼續向前游！</small></div>
+        <div><b>金色的黃花魚</b>
+        <small>吃到補回 1 格體力</small></div>
       </div>
       <div class="bfR warn">
         <span class="bi">🔊</span>
-        <div><b>打樁噪音</b>
-        <small>噪音蓋掉了聲波，讓白海豚抓不到魚、聽不見同伴求救。牠因為害怕不敢浮出海面，空氣消耗得更快了！</small></div>
+        <div><b>打樁噪音襲擊</b>
+        <small>吃不到魚，也無法換氣！</small></div>
       </div>
       <div class="bfR deep">
         <span class="bi">📏</span>
-        <div><b>不能游太深</b>
-        <small>白海豚只住在水深 30 米以內的淺海。游進太深的地方牠會受不了，撐太久就回不來了。</small></div>
+        <div><b>不要游太深</b>
+        <small>超過 30 米牠會受不了</small></div>
       </div>
       <div class="bfR task">
         <span class="bi">🐬</span>
-        <div><b>救援任務</b>
-        <small>路上看到被漁網纏住的同伴，趕快游過去救牠，解鎖「救援圖鑑」！</small></div>
+        <div><b>同伴被漁網纏住了</b>
+        <small>解救牠，解鎖白海豚圖鑑</small></div>
       </div>
     </div>
     <button class="bfB" id="briefGo">下一個</button>
@@ -1045,14 +1056,14 @@ const GOAL=SEG*ZONES.length, MAXD=38, SAFE=30, DEEP_TRIG=34, DEEP_LIMIT=4;
 
 const TH=[0,80,150], STAGES=['幼豚','少年豚','成年豚'], MAXHP=5;
 
-const PILE_R=250, PILE_EXT=.17;
+const PILE_R=180, PILE_EXT=.17;
 
 const S={};
 function reset(){Object.assign(S,{
   run:false,dist:0,spd:92,y:.45,life:MAXHP,inv:0,air:1,
   fish:0,gold:0,stage:0,deepTime:0,landT:0,fillPass:0,fillHit:0,noiseSec:0,plasticHit:0,netHit:0,propHit:0,
   land:.14,landTgt:.14,deep:.88,murk:0,murkTgt:0,
-  nAlert:0,airWarnCd:0,cheer:{},beep:99,tapAdv:false,rescued:[],friendT:24,ev:null,obs:[],hazT:2,fishT:1.2,fillT:8,pileT:11,goldT:14,pops:[],bub:[],spray:[],sonar:[],sonarT:0,
+  nAlert:0,airWarnCd:0,cheer:{},beep:99,tapAdv:false,noiseTip:false,noiseSrc:null,rescued:[],friendT:24,ev:null,obs:[],hazT:2,fishT:1.2,fillT:8,pileT:11,goldT:14,pops:[],bub:[],spray:[],sonar:[],sonarT:0,
   zone:-1,phase:'tut',tut:0,tutT:0,moved:false,shake:0,
   surf:null,noise:0,tutTotal:0,jitter:0,breathed:false
 });for(let i=0;i<22;i++)S.bub.push({x:Math.random()*W,y:Math.random()*H,r:1+Math.random()*3,s:7+Math.random()*12});}
@@ -1202,16 +1213,16 @@ function update(dt){
     if(S.tut===0){
       spotOn(null);
       document.getElementById('swipeHint').classList.add('on');
-      warn('<u>教學 1／3</u><br>手指在畫面上<span class="em">上下滑動</span><br>帶白海豚游上游下',14,true);
+      warn('<u>教學 1／3</u><br>手指<span class="em">上下滑動</span>',14,true);
       if(S.moved&&S.tutT>1.2){S.tut=1;S.tutT=0;hideWarn();
         document.getElementById('swipeHint').classList.remove('on');}}
     else if(S.tut===1){
       spotOn('hp');
-      warn('<u>教學 2／3</u><br>左上角亮起來的是<span class="em">體力</span><br>碰到危險會少一格，用完就結束了<br><small style="opacity:.85;font-size:12.5px">（點畫面繼續）</small>',14,true);
+      warn('<u>教學 2／3</u><br>這是<span class="em">體力</span><br><small style="opacity:.85;font-size:12.5px">點畫面繼續</small>',14,true);
       if(S.tutT>5||S.tapAdv){S.tut=2;S.tutT=0;S.tapAdv=false;hideWarn();S.air=Math.min(S.air,.42);}}
     else if(S.tut===2){
       spotOn('bubbleRing');hintEl.classList.add('on');
-      warn('<u>教學 3／3</u><br>快沒空氣了！<br>點<span class="em">左下角亮起來的圓鈕</span>浮上海面換氣',14,true);}
+      warn('<u>教學 3／3</u><br>快沒空氣了！<br>點<span class="em">圓鈕</span>換氣',14,true);}
     else{hideTip();hideWarn();hintEl.classList.remove('on');spotOff();
       document.getElementById('swipeHint').classList.remove('on');
       PLAYED=true;S.phase='brief';beginJourney();S.run=false;return;}
@@ -1307,19 +1318,34 @@ function update(dt){
   const px=PX(),py=S.y*H,pr=15;
   const fills=S.obs.filter(o=>o.t==='fill');
 
-  S.noise=0;
+  S.noise=0;S.noiseSrc=null;
   for(let i=S.obs.length-1;i>=0;i--){
     const o=S.obs[i];o.x+=((o.vx||0)-S.spd)*dt;
     if(o.warn&&o.x<W-24)o.warn=0;
     if(o.t==='pile'){
       o.rt-=dt;
       if(o.rt<=0&&o.x<W+140&&o.x>-160){o.rt=.62;o.rings.push({r:10,a:1});if(Math.abs(px-(o.x+o.w/2))<PILE_R)SFX.pile();}
-      for(let k=o.rings.length-1;k>=0;k--){const R=o.rings[k];R.r+=260*dt;R.a-=dt*.34;if(R.a<=0)o.rings.splice(k,1);}
       
+      for(let k=o.rings.length-1;k>=0;k--){const R=o.rings[k];
+        R.r+=260*dt;R.a-=dt*.34;
+        if(R.a<=0||R.r>PILE_R*1.15)o.rings.splice(k,1);}
+
       const hd=Math.abs(px-(o.x+o.w/2));
+      const baseY=(S.land+PILE_EXT)*H;
+      
+      const vd=Math.max(0,S.y*H-baseY)*1.6;
+      const dist=Math.sqrt(hd*hd+vd*vd);
       const alive=o.rings.length>0;
-      if(hd<PILE_R)S.noise=Math.max(S.noise,1-hd/PILE_R);
-      else if(alive&&hd<PILE_R*1.5)S.noise=Math.max(S.noise,.12);
+      if(dist<PILE_R){
+        const nv=1-dist/PILE_R;
+        if(nv>=S.noise)S.noiseSrc={x:o.x+o.w/2,y:baseY};
+        S.noise=Math.max(S.noise,nv);
+        if(!S.noiseTip){S.noiseTip=true;tip('好吵！<span class="em">往下潛</span>可以避開',3);}
+      }
+      else if(alive&&dist<PILE_R*1.4){
+        if(S.noise<=.1)S.noiseSrc={x:o.x+o.w/2,y:baseY};
+        S.noise=Math.max(S.noise,.1);
+      }
     }
     if(o.x<-260){S.obs.splice(i,1);continue;}
   }
@@ -1392,7 +1418,7 @@ function update(dt){
     else if(S.deepTime<=0)hideAlert();
   } else {S.nAlert=0;if(S.deepTime<=0)hideAlert();}
   if(S.noise>0){
-    S.noiseSec+=dt;S.shake=Math.max(S.shake,.18+S.noise*.5);
+    S.noiseSec+=dt;S.shake=Math.max(S.shake,S.noise*.55);   
     if(!S.surf){S.jitter=lerp(S.jitter,(Math.random()-.5)*.02*S.noise,.35);S.y=clamp(S.y+S.jitter,0,1);}
   } else S.jitter=0;
 
@@ -1458,16 +1484,33 @@ function draw(){
     vg.addColorStop(1,'rgba(232,69,47,'+(.18+k*.42).toFixed(3)+')');
     ctx.fillStyle=vg;ctx.fillRect(0,0,W,H);
   }
-  if(S.noise>0){
+  if(S.noise>0&&S.noiseSrc){
+    
+    const src=S.noiseSrc;
+    ctx.save();
+    ctx.beginPath();
+    ctx.rect(src.x-PILE_R,0,PILE_R*2,Math.max(0,src.y));
+    ctx.ellipse(src.x,src.y,PILE_R,PILE_R/1.6,0,0,7);
+    ctx.clip();
+
+    const g=ctx.createRadialGradient(src.x,src.y,PILE_R*.2,src.x,src.y,PILE_R*1.25);
     if(A11Y.flash){
-      ctx.fillStyle='rgba(255,255,255,'+(S.noise*.3).toFixed(3)+')';ctx.fillRect(0,0,W,H);
-      ctx.strokeStyle='rgba(255,255,255,'+(S.noise*.55).toFixed(2)+')';ctx.lineWidth=1;
-      for(let i=0;i<28;i++){const yy=Math.random()*H;
-        ctx.beginPath();ctx.moveTo(0,yy);ctx.lineTo(W,yy+(Math.random()-.5)*6);ctx.stroke();}
-      ctx.fillStyle='rgba(232,69,47,'+(S.noise*.14).toFixed(3)+')';ctx.fillRect(0,0,W,H);
+      g.addColorStop(0,'rgba(255,255,255,'+(S.noise*.34).toFixed(3)+')');
+      g.addColorStop(1,'rgba(255,255,255,0)');
+      ctx.fillStyle=g;ctx.fillRect(0,0,W,H);
+      ctx.strokeStyle='rgba(255,255,255,'+(S.noise*.5).toFixed(2)+')';ctx.lineWidth=1;
+      for(let i=0;i<16;i++){const yy=Math.random()*H;
+        ctx.beginPath();ctx.moveTo(src.x-PILE_R,yy);ctx.lineTo(src.x+PILE_R,yy+(Math.random()-.5)*6);ctx.stroke();}
+      const g2=ctx.createRadialGradient(src.x,src.y,PILE_R*.2,src.x,src.y,PILE_R*1.25);
+      g2.addColorStop(0,'rgba(232,69,47,'+(S.noise*.16).toFixed(3)+')');
+      g2.addColorStop(1,'rgba(232,69,47,0)');
+      ctx.fillStyle=g2;ctx.fillRect(0,0,W,H);
     } else {
-      ctx.fillStyle='rgba(214,226,232,'+(S.noise*.42).toFixed(3)+')';ctx.fillRect(0,0,W,H);
+      g.addColorStop(0,'rgba(214,226,232,'+(S.noise*.46).toFixed(3)+')');
+      g.addColorStop(1,'rgba(214,226,232,0)');
+      ctx.fillStyle=g;ctx.fillRect(0,0,W,H);
     }
+    ctx.restore();
   }
   ctx.restore();
   drawGauge();
@@ -1491,7 +1534,7 @@ function drawDeep(){
   for(let x=-10;x<W+20;x+=28)ctx.quadraticCurveTo(x+14,dy-10,x+28,dy);
   ctx.lineTo(W+20,H+16);ctx.lineTo(-10,H+16);ctx.fill();
   ctx.fillStyle='rgba(255,255,255,.62)';ctx.font='700 12px '+FF();ctx.textAlign='center';
-  ctx.fillText('水太深了！白海豚感覺不舒服',W/2,dy+28);ctx.textAlign='left';
+  ctx.fillText('這裡水太深了！白海豚感覺不舒服，不要太靠近！',W/2,dy+28);ctx.textAlign='left';
 }
 function rrect(x,y,w,h,r){ctx.beginPath();ctx.moveTo(x+r,y);ctx.arcTo(x+w,y,x+w,y+h,r);
   ctx.arcTo(x+w,y+h,x,y+h,r);ctx.arcTo(x,y+h,x,y,r);ctx.arcTo(x,y,x+w,y,r);ctx.closePath();}
@@ -1746,7 +1789,8 @@ causeEl.addEventListener('click',showResult);
   function frame(t){
     if(causeEl.classList.contains('on')){
       const dpr=Math.min(devicePixelRatio||1,2),w=cc.clientWidth,h=cc.clientHeight;
-      if(cc.width!==w*dpr||cc.height!==h*dpr){cc.width=w*dpr;cc.height=h*dpr;}
+      const cw=Math.round(w*dpr),ch=Math.round(h*dpr);
+      if(cc.width!==cw||cc.height!==ch){cc.width=cw;cc.height=ch;}
       g.setTransform(dpr,0,0,dpr,0,0);g.clearRect(0,0,w,h);
       const win=causeEl.classList.contains('win');
       const bob=win?-Math.abs(Math.sin(t/420))*14:Math.sin(t/900)*5;
@@ -2087,10 +2131,15 @@ function start(){
 function spotOn(id){
   document.getElementById('dim').classList.add('on');
   ['hp','bubbleRing'].forEach(function(x){document.getElementById(x).classList.remove('spot');});
+  
+  document.getElementById('hud').classList.toggle('spotHost',id==='hp');
+  document.getElementById('hpArrow').classList.toggle('on',id==='hp');
   if(id)document.getElementById(id).classList.add('spot');
 }
 function spotOff(){
   document.getElementById('dim').classList.remove('on');
+  document.getElementById('hud').classList.remove('spotHost');
+  document.getElementById('hpArrow').classList.remove('on');
   ['hp','bubbleRing'].forEach(function(x){document.getElementById(x).classList.remove('spot');});
 }
 function startTutorial(){
@@ -2124,7 +2173,7 @@ function bfRender(){
   });
   document.getElementById('bfStep').textContent=(bfStep+1)+' / '+rows.length;
   document.getElementById('briefGo').textContent=
-    (bfStep>=rows.length-1)?'知道了，開始教學':'下一個';
+    (bfStep>=rows.length-1)?'我記住了，出發！':'下一個';
 }
 function bfNext(){
   const rows=document.querySelectorAll('#brief .bfR');
@@ -2251,7 +2300,8 @@ function wakeAudio(){
   function frame(t){
     if(document.getElementById('intro').classList.contains('hidden')){requestAnimationFrame(frame);return;}
     const dpr=Math.min(devicePixelRatio||1,2),w=cc.clientWidth,h=cc.clientHeight;
-    if(cc.width!==w*dpr||cc.height!==h*dpr){cc.width=w*dpr;cc.height=h*dpr;}
+    const cw=Math.round(w*dpr),ch=Math.round(h*dpr);
+      if(cc.width!==cw||cc.height!==ch){cc.width=cw;cc.height=ch;}
     g.setTransform(dpr,0,0,dpr,0,0);g.clearRect(0,0,w,h);
     fishes.forEach(f=>{
       f.x-=f.sp/60;if(f.x<-.12)f.x=1.12;
