@@ -34,7 +34,9 @@ body,button,a,canvas,.ms,.chip,.dxCell{
 button{touch-action:manipulation}
 
 input,#certName{-webkit-user-select:text;user-select:text;-webkit-touch-callout:default}
-#wrap{position:relative;width:100%;height:100%;max-height:100dvh;overflow:hidden;background:var(--sea)}
+
+#wrap{position:relative;width:100%;height:100%;max-height:min(100dvh,1050px);
+  overflow:hidden;background:var(--sea)}
 canvas{display:block;width:100%;height:100%;touch-action:none}
 
 #hud{position:absolute;top:0;bottom:0;left:50%;transform:translateX(-50%);
@@ -1316,7 +1318,7 @@ function update(dt){
 }
   }
 
-  const px=PX(),py=S.y*H,pr=15;
+  const px=PX(),py=S.y*H,pr=15*vScale();
   const fills=S.obs.filter(o=>o.t==='fill');
 
   S.noise=0;S.noiseSrc=null;
@@ -1742,6 +1744,9 @@ function drawGauge(){
 }
 
 const FIN_SCALE = .46;
+
+const HREF = 760;
+function vScale(){ return clamp(H/HREF, .85, 1.45); }
 function dolphin(x,y){
   const blink = S.inv>0 && Math.floor(S.inv*12)%2===0;
   const up    = !!S.surf;
@@ -1750,7 +1755,7 @@ function dolphin(x,y){
   if(A11Y.flash && S.noise>.2) tilt += (Math.random()-.5)*.12*S.noise;
 
   ctx.globalAlpha = blink ? .4 : 1;
-  drawFin(ctx, x, y + Math.sin(t/280)*3, FIN_SCALE, tilt, Math.sin(t/230)*.16);
+  drawFin(ctx, x, y + Math.sin(t/280)*3, FIN_SCALE*vScale(), tilt, Math.sin(t/230)*.16);
   ctx.globalAlpha = 1;
 }
 
