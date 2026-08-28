@@ -1162,14 +1162,27 @@ function spawnHaz(){
   else S.obs.push({t:'plastic',x:W+40,y:laneY(),w:34,h:.062,vx:-6,warn:1,ph:Math.random()*6,kind:Math.floor(Math.random()*3)});
 }
 
-const REPEAT_RATE = .65;
+const RESCUE_PER_GAME = .72;
+const NEW_PACE = [0, 149, 106, 83, 61, 55, 46, 41, 31];   
+
+function gamesPerNew(left){
+  if(left<=0) return 1;
+  if(left<=8) return NEW_PACE[left];
+  return Math.max(6, Math.round(20*8/left));   
+}
+
 function pickFriend(){
-  const seen=ROSTER.filter(function(r){return DEX.counts[r.id];});
-  if(seen.length>=8 && Math.random()>=REPEAT_RATE){
-    return seen[Math.floor(Math.random()*seen.length)];
+  const left=ROSTER.filter(function(r){return !DEX.counts[r.id];});
+  const seen=ROSTER.filter(function(r){return  DEX.counts[r.id];});
+  const q = 1/(gamesPerNew(left.length)*RESCUE_PER_GAME);
+  
+  if(left.length && (seen.length<8 || Math.random()<q)){
+    return left[Math.floor(Math.random()*left.length)];
   }
+  if(seen.length) return seen[Math.floor(Math.random()*seen.length)];
   return ROSTER[Math.floor(Math.random()*ROSTER.length)];
 }
+
 function spawnFriend(){
   const who=pickFriend();
   S.obs.push({t:'friend',x:W+60,y:clamp(laneY(),S.land+.10,S.deep-.14),
