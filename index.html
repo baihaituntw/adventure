@@ -2393,11 +2393,15 @@ function wakeAudio(){
       g.restore();
     });
     const bob=Math.sin(t/700)*7, tilt=Math.sin(t/900)*.06;
-    
-    const cs=Math.min(w/230,1.35);
-    
-    drawDexAt(g,FIN_ID,w*.5,h*.62+bob,cs,tilt,Math.sin(t/320)*.16,'adult');
-    g.restore();
+
+    const ART_W=151, ART_H=84, ART_CX=-6, ART_CY=-11;
+    if(w>0&&h>0){
+      const cs=Math.min(w*0.86/ART_W, h*0.80/ART_H);
+      drawDexAt(g,FIN_ID,
+        w*.5 - ART_CX*cs,
+        h*.52 - ART_CY*cs + bob,
+        cs,tilt,Math.sin(t/320)*.16,'adult');
+    }
     g.fillStyle='rgba(255,255,255,.6)';
     for(let i=0;i<3;i++){
       const pt=((t/900)+i/3)%1;
