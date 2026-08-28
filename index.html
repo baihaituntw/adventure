@@ -568,11 +568,22 @@ font-family:var(--cjk);font-size:14.5px;font-weight:800;cursor:pointer;line-heig
 .fFront i{font-style:normal;font-size:11.5px;font-weight:800;opacity:.6;
   border:1.5px dashed currentColor;border-radius:14px;padding:5px 13px;margin-top:2px}
 
-.moreBtn{margin-top:12px;width:100%;border:2px dashed #E8B5A8;background:#FFF7F5;cursor:pointer;
-  border-radius:20px;padding:16px 14px;font-family:var(--cjk);font-size:14.5px;
-  font-weight:900;color:#A8402C;line-height:1.6}
-.moreBtn small{display:block;font-size:12px;font-weight:700;color:#B58A80;margin-top:5px}
-.moreBtn:active{transform:translateY(2px)}
+.moreBtn{margin-top:12px;width:100%;border:0;cursor:pointer;background:#FFEDE8;
+  border-radius:18px;padding:12px 14px;font-family:var(--cjk);text-align:left;
+  display:flex;align-items:center;gap:11px;box-shadow:0 3px 0 #F0CFC5}
+.moreBtn .mDot{flex:0 0 auto;width:9px;height:9px;border-radius:50%;background:#E8452F;
+  box-shadow:0 0 0 4px rgba(232,69,47,.18);animation:blink 1.6s infinite}
+.moreBtn .mTx{flex:1;min-width:0}
+.moreBtn b{display:block;font-size:14px;font-weight:900;color:#A8402C;line-height:1.4}
+.moreBtn small{display:block;font-size:11.5px;font-weight:700;color:#B58A80;margin-top:3px}
+
+.moreBtn .mChev{flex:0 0 auto;width:28px;height:28px;border-radius:50%;background:#E8452F;
+  display:flex;align-items:center;justify-content:center;
+  box-shadow:0 2px 6px rgba(232,69,47,.35);animation:bob 1.6s ease-in-out infinite}
+.moreBtn .mChev::before{content:"";width:9px;height:9px;margin-top:-4px;
+  border-right:2.5px solid #fff;border-bottom:2.5px solid #fff;
+  transform:rotate(45deg);border-radius:1px}
+.moreBtn:active{transform:translateY(3px);box-shadow:none}
 .real{margin-top:12px;background:#FFF7F5;border-radius:24px;padding:18px 16px;border:2px solid #F3DAD3}
 .rhT{font-size:17px;font-weight:900;color:#A8402C;letter-spacing:.02em}
 .rhS{font-size:13px;font-weight:700;color:#8A6A62;line-height:1.75;margin-top:7px}
@@ -858,8 +869,11 @@ font-family:var(--cjk);font-size:14.5px;font-weight:800;cursor:pointer;line-heig
 
     <div class="sect"><span>現實正在發生的搶救</span></div>
 
-    <button class="moreBtn" id="realMore">了解更多　台中港正在用廢土填海造陸 ›
-      <small>2022 年到現在的完整事件時間軸</small></button>
+    <button class="moreBtn" id="realMore">
+      <span class="mDot"></span>
+      <span class="mTx"><b>台中港正在用廢土填海造陸</b><small>看 2022 年到現在的事件時間軸</small></span>
+      <span class="mChev" aria-hidden="true"></span>
+    </button>
 
     <div class="real" id="realBox" style="display:none">
       <div class="rhT">台中港，正在用廢土填海造陸</div>
@@ -1145,9 +1159,7 @@ function spawnHaz(){
 }
 
 function pickFriend(){
-  const left=ROSTER.filter(function(r){return !DEX.counts[r.id];});
-  const pool=(left.length&&Math.random()<.3)?left:ROSTER;
-  return pool[Math.floor(Math.random()*pool.length)];
+  return ROSTER[Math.floor(Math.random()*ROSTER.length)];
 }
 function spawnFriend(){
   const who=pickFriend();
@@ -1262,7 +1274,7 @@ function update(dt){
     
     S.friendT-=dt;
     if(S.friendT<=0&&!S.obs.some(o=>o.t==='friend')){
-      S.friendT=(EV.k==='pod'?26:46)+Math.random()*18;spawnFriend();}
+      S.friendT=(EV.k==='pod'?34:60)+Math.random()*22;spawnFriend();}
   }
   if(!S.breathed&&S.air<.6&&!S.surf)hintEl.classList.add('on');
 
@@ -1323,6 +1335,7 @@ function update(dt){
   const px=PX(),py=S.y*H,pr=15*vScale();
   const fills=S.obs.filter(o=>o.t==='fill');
 
+  const wasNoisy=S.noise>0;
   S.noise=0;S.noiseSrc=null;
   for(let i=S.obs.length-1;i>=0;i--){
     const o=S.obs[i];o.x+=((o.vx||0)-S.spd)*dt;
@@ -1345,7 +1358,11 @@ function update(dt){
         const nv=1-dist/PILE_R;
         if(nv>=S.noise)S.noiseSrc={x:o.x+o.w/2,y:baseY};
         S.noise=Math.max(S.noise,nv);
-        if(!S.noiseTip){S.noiseTip=true;tip('好吵！<span class="em">往下潛</span>可以避開',3);}
+        
+        if(!S.noiseTip){
+          S.noiseTip=true;
+          warn('好吵！<span class="em">往下潛</span>就能躲開噪音',3.2);
+        }
       }
       else if(alive&&dist<PILE_R*1.4){
         if(S.noise<=.1)S.noiseSrc={x:o.x+o.w/2,y:baseY};
@@ -1425,7 +1442,10 @@ function update(dt){
   if(S.noise>0){
     S.noiseSec+=dt;S.shake=Math.max(S.shake,S.noise*.55);   
     if(!S.surf){S.jitter=lerp(S.jitter,(Math.random()-.5)*.02*S.noise,.35);S.y=clamp(S.y+S.jitter,0,1);}
-  } else S.jitter=0;
+  } else {
+    S.jitter=0;
+    if(wasNoisy)S.noiseTip=false;   
+  }
 
   S.sonarT-=dt;
   if(S.sonarT<=0){S.sonarT=S.noise>0?.35:1.1;S.sonar.push({r:6,a:1,bad:S.noise>.15});}
@@ -2069,35 +2089,43 @@ document.getElementById('shareImg').onclick=function(){
   const iab=inAppBrowser();
   track('share',{what:(isCert?'cert':'image')+(iab?'_iab':'')});
 
-  const c=(isCert?makeCertImage():makeShareImage()),url=c.toDataURL('image/png');
+  const c=(isCert?makeCertImage():makeShareImage());
   const name=(isCert?'台灣白海豚守護證書':'台灣白海豚大冒險')+'.png';
-  document.getElementById('shareImgEl').src=url;
+  const wrapEl=document.getElementById('shareCanvasWrap');
 
+  const canFileShare = !iab && navigator.canShare && c.toBlob &&
+                       /Mobi|Android|iPhone|iPad/i.test(navigator.userAgent);
+  if(canFileShare){
+    c.toBlob(function(b){
+      if(!b){showSharePreview(c,name,isCert);return;}
+      const f=new File([b],name,{type:'image/png'});
+      if(navigator.canShare({files:[f]})){
+        navigator.share({files:[f],
+          title:(isCert?'我把白海豚平安送回家了！':'台灣白海豚大冒險'),
+          text:'台灣白海豚只剩不到 50 隻，你能陪牠游多遠？'})
+          .catch(function(){showSharePreview(c,name,isCert);});
+      } else showSharePreview(c,name,isCert);
+    },'image/png');
+    return;
+  }
+  showSharePreview(c,name,isCert);
+};
+
+function showSharePreview(c,name,isCert){
+  const url=c.toDataURL('image/png');
+  document.getElementById('shareImgEl').src=url;
   const dl=document.getElementById('shareDl');
   dl.href=url;dl.setAttribute('download',name);
   dl.textContent=isCert?'下載守護證書':'下載成績圖';
-
-  const wrap=document.getElementById('shareCanvasWrap');
-  wrap.classList.add('on');
-
+  const wrapEl=document.getElementById('shareCanvasWrap');
+  wrapEl.classList.add('on');
   const blocked=showIabTip();
   document.getElementById('shareHint').textContent=blocked
     ? '在這裡長按圖片通常存不起來，請依上方說明改用外部瀏覽器'
     : '長按圖片可儲存，或按上面的下載鈕';
+  wrapEl.scrollIntoView({behavior:'smooth',block:'center'});
+}
 
-  wrap.scrollIntoView({behavior:'smooth',block:'center'});
-
-  if(!blocked&&navigator.canShare&&c.toBlob){
-    c.toBlob(b=>{
-      if(!b)return;
-      const f=new File([b],name,{type:'image/png'});
-      if(navigator.canShare({files:[f]}))
-        navigator.share({files:[f],
-          title:(isCert?'我把白海豚平安送回家了！':'台灣白海豚大冒險'),
-          text:'台灣白海豚只剩不到 50 隻，你能陪牠游多遠？'}).catch(()=>{});
-    },'image/png');
-  }
-};
 document.getElementById('shareLink').onclick=function(){
   SFX.tap();track('share',{what:'link'});
   const self=this;
