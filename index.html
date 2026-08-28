@@ -2784,17 +2784,18 @@ function dexConfig(i){
 
   var sc=[];
   if(stage==='elder'){                 
-    sc.push(SCARS[(i*3)%7]); sc.push(CUTS[(i*3)%5]);
-    if(r()<0.70) sc.push(SCARS[(i*5+2)%7]);
-    if(r()<0.50) sc.push('old');
+    if(r()<0.92){ sc.push(SCARS[(i*3)%7]);
+      if(r()<0.75) sc.push(CUTS[(i*3)%5]);
+      if(r()<0.55) sc.push(SCARS[(i*5+2)%7]);
+      if(r()<0.40) sc.push('old'); }
   } else if(stage==='adult'){
-    if(r()<0.90){ sc.push(SCARS[(i*3)%7]);
-      if(r()<0.72) sc.push(CUTS[(i*3)%5]);
-      if(r()<0.30) sc.push(SCARS[(i*5+2)%7]); }
+    if(r()<0.70){ sc.push(SCARS[(i*3)%7]);
+      if(r()<0.60) sc.push(CUTS[(i*3)%5]);
+      if(r()<0.25) sc.push(SCARS[(i*5+2)%7]); }
   } else if(stage==='teen'){
-    if(r()<0.70){ sc.push(SCARS[(i*3)%7]); if(r()<0.45) sc.push(CUTS[(i*7)%5]); }
+    if(r()<0.55){ sc.push(SCARS[(i*3)%7]); if(r()<0.40) sc.push(CUTS[(i*7)%5]); }
   } else {                             
-    if(r()<0.20) sc.push(['net','old'][i%2]);
+    if(r()<0.15) sc.push(['net','old'][i%2]);
   }
   sc = sc.filter(function(v,ix){ return sc.indexOf(v)===ix; });
   var nk = NICKS[(i*3)%5];
