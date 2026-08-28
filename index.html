@@ -1073,7 +1073,11 @@ const ZONES=[
 
 const GOAL=SEG*ZONES.length, MAXD=38, SAFE=30, DEEP_TRIG=34, DEEP_LIMIT=4;
 
-const TH=[0,80,150], STAGES=['幼豚','少年豚','成年豚'], MAXHP=5;
+const TH=[0,80,180,260], STAGES=['幼豚','少年豚','成年豚','老年豚'], MAXHP=5;
+const GROW_MSG=['',
+  '長大了！灰色慢慢褪掉，<span class="em">留下藍灰色斑點</span>',
+  '長成<span class="em">大人</span>了！體色轉粉白，斑點還留著',
+  '成為<span class="em">老前輩</span>了！一身的傷疤，都是活下來的證明'];
 
 const PILE_R=180, PILE_EXT=.17;
 
@@ -1251,8 +1255,8 @@ function update(dt){
     const EV=S.ev||{};
     S.fishT-=dt;
 
-    if(S.fishT<=0){S.fishT=((z==='river'?1.6:z==='ind'?2.9:2.3)
-                            +Math.random()*(z==='river'?.7:.85))
+    if(S.fishT<=0){S.fishT=((z==='river'?1.3:z==='ind'?2.35:1.85)
+                            +Math.random()*(z==='river'?.5:.6))
                           *(EV.k==='flood'&&z==='river'?.55:1);
       spawnSchool(z==='river'?6+Math.floor(Math.random()*3):4+Math.floor(Math.random()*2),z);}
     S.hazT-=dt;
@@ -1409,9 +1413,11 @@ function update(dt){
           updHUD();
         } else {
           SFX.eat();S.obs.splice(i,1);S.fish++;S.pops.push({x:o.x,y:oy,r:4,a:1});
-          const st=S.fish>=TH[2]?2:S.fish>=TH[1]?1:0;
+          
+          let st=0;
+          for(let k=TH.length-1;k>=0;k--){ if(S.fish>=TH[k]){st=k;break;} }
           if(st>S.stage){S.stage=st;SFX.grow();
-            tip(st===1?'長大了！灰色慢慢褪掉，<span class="em">留下藍灰色斑點</span>':'長成<span class="em">大人</span>了！體色轉粉白，斑點還留著',3);}
+            tip(GROW_MSG[st]||'長大了！',3.2);}
           updHUD();
         }
       } else if(o.t==='plastic'&&S.noise>0){
@@ -1467,9 +1473,10 @@ function updHUD(){
   const slots=Math.max(MAXHP,S.life);
   for(let i=0;i<slots;i++){const d=document.createElement('span');
     d.className='pip'+(i<S.life?'':' off');hp.appendChild(d);}
-  const lo=TH[S.stage],hi=S.stage>=2?TH[2]:TH[S.stage+1];
-  document.getElementById('growthFill').style.width=clamp(S.stage>=2?100:(S.fish-lo)/(hi-lo)*100,0,100)+'%';
-  document.getElementById('growthTxt').textContent=STAGES[S.stage]+'　🐟 '+S.fish+' / '+(S.stage>=2?350:hi);
+  const top=TH.length-1;
+  const lo=TH[S.stage],hi=S.stage>=top?TH[top]:TH[S.stage+1];
+  document.getElementById('growthFill').style.width=clamp(S.stage>=top?100:(S.fish-lo)/(hi-lo)*100,0,100)+'%';
+  document.getElementById('growthTxt').textContent=STAGES[S.stage]+'　🐟 '+S.fish+' / '+(S.stage>=top?TH[top]:hi);
 }
 
 function draw(){
@@ -3015,17 +3022,19 @@ function finLook(){
     if(kind==='fade'){ n=5; lo=3.4; hi=2.2; }        
     
     else if(kind==='molt'){ n=10; lo=2.0; hi=1.5; }
+    
+    else if(kind==='sparse'){ n=5; lo=1.0; hi=0.7; }
     else             { n=12; lo=1.1; hi=0.9; }       
     for(let k=0;k<n;k++) out.push([ -30+r()*58, -28+r()*24, lo+r()*hi ]);
     return out;
   }
-  function make(stage,pal,pat,spotKind,seed,bodyH){
+  function make(stage,pal,pat,spotKind,seed,bodyH,scars,nicks){
     return {
       idx:FIN_ID, stage:stage, pal:pal, pat:pat,
       spots: spotKind ? mkSpots(spotKind,seed) : [],
-      scars: [],                        
+      scars: scars || [],
       face: 'big',            
-      fin: base.fin, nicks: base.nicks, acc: 'none',
+      fin: base.fin, nicks: nicks || base.nicks, acc: 'none',
       bodyH: bodyH, arch: 0.004, rot: 0, swing: 0, scale: 1
     };
   }
@@ -3033,7 +3042,10 @@ function finLook(){
     make('calf' ,'slate','none',null   ,0    ,1.06),
     
     make('teen' ,'dove' ,'fade','molt' ,20250,1.00),
-    make('adult','pink' ,'dots','dots' ,20260,1.02)
+    make('adult','pink' ,'dots','dots' ,20260,1.02),
+    
+    make('elder','cream','dots','sparse',20270,1.04,
+         ['net','prop','old'], [[0.34,11],[0.62,8]])
   ];
   return FIN_CACHE;
 }
@@ -3051,7 +3063,7 @@ function drawDexAt(g,idx,cx,cy,sc,tilt,swing,stageOverride){
 }
 
 function drawFin(g,cx,cy,sc,tilt,swing){
-  const cfg = finLook()[Math.min(S.stage,2)];
+  const cfg = finLook()[Math.min(S.stage,finLook().length-1)];
   cfg.swing = swing || 0;
   g.save();
   g.translate(cx,cy);
