@@ -2215,10 +2215,16 @@ function makeCertImage(){
 
 function inAppBrowser(){
   const ua=navigator.userAgent||'';
-  if(/FBAN|FBAV|FB_IAB|FBIOS/i.test(ua))return 'Facebook';
+  
+  if(/Threads|Barcelona/i.test(ua))return 'Threads';
   if(/Instagram/i.test(ua))return 'Instagram';
-  if(/Threads/i.test(ua))return 'Threads';
+  if(/FBAN|FBAV|FB_IAB|FBIOS|FBDV/i.test(ua))return 'Facebook';
   if(/Line\//i.test(ua))return 'LINE';
+  if(/MicroMessenger/i.test(ua))return '微信';
+  if(/TikTok|musical_ly|BytedanceWebview/i.test(ua))return 'TikTok';
+  
+  const mobile=/Mobi|Android|iPhone|iPad|iPod/i.test(ua);
+  if(mobile&&!navigator.share)return 'App';
   return '';
 }
 function showIabTip(){
