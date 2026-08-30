@@ -3362,7 +3362,7 @@ loadDex();loadTop();
 
 let inviteShown=false;
 
-const INVITE_END = Date.UTC(2026, 7, 31, 4, 0, 0);   
+const INVITE_END = Date.UTC(2026, 7, 31, 16, 0, 0);   
 function inviteExpired(){ return Date.now() >= INVITE_END; }
 
 function showInvite(why){
@@ -3382,9 +3382,10 @@ document.getElementById('ivClose2').onclick=function(){SFX.tap();closeInvite('cl
 document.getElementById('ivYes').onclick=function(){
   SFX.gold();track('invite',{what:'yes'});
   
-  const d=new Date(), m=d.getMonth()+1, day=d.getDate();
+  const tw=new Date().toLocaleDateString('en-CA',{timeZone:'Asia/Taipei'});   
   document.getElementById('ivMeet').textContent=
-    (m===8&&day===31)?'今天現場見！':(m===8&&day===30)?'我們明天見！':'現場見！';
+    tw==='2026-08-31' ? '今天現場見！' :
+    tw==='2026-08-30' ? '我們明天見！' : '我們現場見！';
   document.getElementById('ivAsk').style.display='none';
   document.getElementById('ivDone').style.display='';
 };
