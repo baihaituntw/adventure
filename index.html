@@ -339,7 +339,7 @@ padding:28px 22px;text-align:center;z-index:20;overflow:hidden}
 #cause.win{background:linear-gradient(180deg,#2E86AE 0%,#4FB3C9 45%,#8FD8DE 100%)}
 #cause .cbb{position:absolute;bottom:-24px;width:12px;height:12px;border-radius:50%;
   background:rgba(255,255,255,.28);animation:rise 8s linear infinite;pointer-events:none}
-#cause canvas{width:210px;height:112px;display:block;margin:0 auto 6px}
+#cause canvas{width:340px;height:200px;display:block;margin:0 auto 6px}
 #cause .cbtn{margin-top:22px;border:0;border-radius:24px;padding:14px 32px;cursor:pointer;
   font-family:var(--cjk);font-size:16px;font-weight:900;letter-spacing:.08em;
   background:linear-gradient(135deg,#FFD86B,#FFB43F);color:#6B3E06;
@@ -430,6 +430,17 @@ font-family:var(--cjk);font-size:14.5px;font-weight:800;cursor:pointer;line-heig
 .g0{background:#EDF1F4;color:#5E6E7A}.g0 .gbar i{background:#8A99A5}
 .g1{background:#FAEEF2;color:#9A6A78}.g1 .gbar i{background:#C79CA9}
 .g2{background:#FFEFF4;color:#C9426B}.g2 .gbar i{background:#F79FB5}
+
+.top3{margin-top:14px;background:linear-gradient(160deg,#FFF6E0,#FFE9BF);
+  border-radius:22px;padding:15px 14px;box-shadow:0 4px 0 #EBD3A0}
+.top3 .tpT{font-size:14px;font-weight:900;color:#9A6B12;letter-spacing:.06em}
+.top3 .tpL{display:flex;gap:8px;margin-top:11px}
+.top3 .tpL div{flex:1;background:#fff;border-radius:16px;padding:10px 4px;text-align:center}
+.top3 .tpL span{display:block;font-size:19px;line-height:1}
+.top3 .tpL b{display:block;font-size:19px;font-weight:900;color:#8A5E0E;margin-top:3px}
+.top3 .tpL small{display:block;font-size:10.5px;font-weight:800;color:#B49A5E}
+.top3 .tpMe{margin-top:11px;font-size:12.5px;font-weight:800;color:#8A6B32;line-height:1.6}
+.top3 .tpMe b{color:#C9426B;font-size:14px}
 .chips3{margin-top:12px;display:grid;grid-template-columns:1fr 1fr;gap:8px}
 .chips3 div{background:#FFF1DE;border-radius:14px;padding:10px 6px;text-align:center}
 .chips3 span{display:block;font-size:10.5px;font-weight:800;color:#9C8873;letter-spacing:.04em}
@@ -817,6 +828,8 @@ font-family:var(--cjk);font-size:14.5px;font-weight:800;cursor:pointer;line-heig
       </div>
     </div>
     <div class="rescue" id="ovRescue" style="display:none"></div>
+    <div class="top3" id="ovTop" style="display:none"></div>
+
     <div class="sect"><span>這一趟的旅程</span></div>
     <div class="chips3" id="ovL"></div>
 
@@ -954,6 +967,36 @@ const ROSTER=(function(){
   });
 })();
 const DEX={counts:{},mine:{},err:'',loading:true};
+const TOP={list:[],loaded:false};
+
+function loadTop(){
+  if(!ANALYTICS_URL)return;
+  const cb='__top'+Math.random().toString(36).slice(2,8);
+  const sc=document.createElement('script');
+  window[cb]=function(d){
+    if(d&&d.top){TOP.list=d.top;TOP.loaded=true;renderTop();}
+    delete window[cb];sc.remove();
+  };
+  sc.src=ANALYTICS_URL+'?action=top&callback='+cb+'&t='+Date.now();
+  sc.onerror=function(){delete window[cb];sc.remove();};
+  document.head.appendChild(sc);
+}
+function renderTop(){
+  const el=document.getElementById('ovTop');
+  if(!el)return;
+  if(!TOP.loaded||!TOP.list.length){el.style.display='none';return;}
+  el.style.display='';
+  const medal=['🥇','🥈','🥉'];
+  const rank=TOP.list.findIndex(function(v){return S.fish>=v;});
+  el.innerHTML='<div class="tpT">吃魚排行榜</div>'+
+    '<div class="tpL">'+TOP.list.map(function(v,i){
+      return '<div><span>'+medal[i]+'</span><b>'+v+'</b><small>隻</small></div>';
+    }).join('')+'</div>'+
+    '<div class="tpMe">'+(rank>=0
+      ? '你這局吃了 <b>'+S.fish+'</b> 隻，擠進第 '+(rank+1)+' 名了！'
+      : '你這局吃了 <b>'+S.fish+'</b> 隻，離第三名還差 '+
+        Math.max(0,(TOP.list[2]||0)-S.fish)+' 隻')+'</div>';
+}
 
 const PILE_SITES=[
  {zone:0,name:'苗栗竹南 · 海洋風電 Formosa 1',note:'龍鳳漁港外海 2～6 公里'},
@@ -1179,7 +1222,14 @@ function pickFriend(){
   if(left.length && (seen.length<8 || Math.random()<q)){
     return left[Math.floor(Math.random()*left.length)];
   }
-  if(seen.length) return seen[Math.floor(Math.random()*seen.length)];
+  
+  if(seen.length){
+    let min=Infinity;
+    seen.forEach(function(r){min=Math.min(min,DEX.counts[r.id]||0);});
+    const cold=seen.filter(function(r){return (DEX.counts[r.id]||0)<=min+1;});
+    const pool=cold.length?cold:seen;
+    return pool[Math.floor(Math.random()*pool.length)];
+  }
   return ROSTER[Math.floor(Math.random()*ROSTER.length)];
 }
 
@@ -1588,7 +1638,7 @@ function drawDeep(){
   const avail=W-btnR-12;
   const txt='這裡水太深了！白海豚感覺不舒服，不要太靠近！';
   ctx.fillStyle='rgba(255,255,255,.62)';ctx.textAlign='center';
-  let fs=12*vScale();
+  let fs=12*tScale();
   ctx.font='700 '+fs.toFixed(1)+'px '+FF();
   while(fs>9&&ctx.measureText(txt).width>avail){fs-=.5;ctx.font='700 '+fs.toFixed(1)+'px '+FF();}
   if(ctx.measureText(txt).width>avail){
@@ -1614,7 +1664,7 @@ function drawLand(){
     const sx=PX()+(i*SEG-S.dist);
     if(sx>W+80||sx+SEG<-80)continue;
     const z=ZONES[i];drawSkyline(z.k,sx,Math.min(sx+SEG,W+40),ly);
-    if(sx>-360&&sx<W){ctx.save();ctx.font='800 '+(11*vScale()).toFixed(1)+'px '+FF();
+    if(sx>-360&&sx<W){ctx.save();ctx.font='800 '+(11*tScale()).toFixed(1)+'px '+FF();
       const tw=ctx.measureText(z.n).width,bx=clamp(sx+14,8,W-tw-24);
       ctx.fillStyle='rgba(91,70,54,.62)';rrect(bx,ly-24,tw+16,17,8);ctx.fill();
       ctx.fillStyle='#FFF6E8';ctx.fillText(z.n,bx+8,ly-11.5);ctx.restore();}
@@ -1668,7 +1718,7 @@ function drawObs(o){
     for(let k=0;k<Math.floor(o.w/44);k++){const bx=o.x+10+k*44,bh=18+((k*37)%14);
       ctx.fillStyle='#C9A97A';ctx.fillRect(bx,S.land*H-bh-4,26,bh);ctx.fillRect(bx+8,S.land*H-bh-20,6,17);
       ctx.fillStyle='rgba(255,255,255,.55)';ctx.beginPath();ctx.arc(bx+11,S.land*H-bh-26,6,0,7);ctx.fill();}
-    ctx.fillStyle='rgba(255,138,107,.95)';ctx.font='800 '+(11*vScale()).toFixed(1)+'px '+FF();ctx.textAlign='center';
+    ctx.fillStyle='rgba(255,138,107,.95)';ctx.font='800 '+(11*tScale()).toFixed(1)+'px '+FF();ctx.textAlign='center';
     ctx.fillText(o.big?'台中港 · 填海造陸':'填海造陸',o.x+o.w/2,bot+16);ctx.textAlign='left';return;
   }
   if(o.t==='friend'){
@@ -1685,7 +1735,7 @@ function drawObs(o){
       ctx.beginPath();ctx.moveTo(o.x+4,cy-14+k*7+sway);ctx.lineTo(o.x+o.w-4,cy-10+k*7+sway);ctx.stroke();
       ctx.beginPath();ctx.moveTo(o.x+4+k*9,cy-16+sway);ctx.lineTo(o.x+14+k*9,cy+16+sway);ctx.stroke();
     }
-    ctx.fillStyle='#FFF';ctx.font='800 '+(11*vScale()).toFixed(1)+'px '+FF();ctx.textAlign='center';
+    ctx.fillStyle='#FFF';ctx.font='800 '+(11*tScale()).toFixed(1)+'px '+FF();ctx.textAlign='center';
     ctx.fillText('救我！',o.x+o.w/2,cy-26+sway);ctx.textAlign='left';
     return;
   }
@@ -1704,7 +1754,7 @@ function drawObs(o){
     const punch=Math.abs(Math.sin(T*4.2))*10;
     ctx.fillStyle='#4E5B63';ctx.fillRect(cx-5,deck-74,10,48);
     ctx.fillStyle='#E8452F';ctx.fillRect(cx-12,deck-58+punch,24,20);
-    ctx.fillStyle='#FFF';ctx.font='800 '+(12*vScale()).toFixed(1)+'px '+FF();ctx.textAlign='center';
+    ctx.fillStyle='#FFF';ctx.font='800 '+(12*tScale()).toFixed(1)+'px '+FF();ctx.textAlign='center';
     ctx.fillText('🔊 打樁中',cx,deck-82);ctx.textAlign='left';return;
   }
   const y=o.y*H,h=o.h*H;
@@ -1725,7 +1775,7 @@ function drawObs(o){
     if(G){ctx.fillStyle='#E8A317';ctx.beginPath();ctx.moveTo(0,-4.2);ctx.lineTo(4,-8);ctx.lineTo(6,-4);ctx.closePath();ctx.fill();}
     ctx.fillStyle='#5B4636';ctx.beginPath();ctx.arc(5*s,-1.3*s,1.4*s,0,7);ctx.fill();
     ctx.restore();
-    if(G){ctx.fillStyle='rgba(255,255,255,.9)';ctx.font='800 '+(10*vScale()).toFixed(1)+'px '+FF();ctx.textAlign='center';
+    if(G){ctx.fillStyle='rgba(255,255,255,.9)';ctx.font='800 '+(10*tScale()).toFixed(1)+'px '+FF();ctx.textAlign='center';
       ctx.fillText('黃花魚',o.x+14,y-8);ctx.textAlign='left';}
     return;
   }
@@ -1793,14 +1843,14 @@ function drawGauge(){
   ctx.fillStyle='rgba(255,255,255,.5)';
   const y15=depthToY(15)*H,y30=depthToY(SAFE)*H;
   rrect(x-5,y15,10,y30-y15,5);ctx.fill();
-  ctx.font='700 '+(9*vScale()).toFixed(1)+'px '+FF();ctx.textAlign='right';
+  ctx.font='700 '+(9*tScale()).toFixed(1)+'px '+FF();ctx.textAlign='right';
   [0,15,30].forEach(m=>{const yy=depthToY(m)*H;
     ctx.strokeStyle='rgba(255,255,255,.6)';ctx.lineWidth=1;
     ctx.beginPath();ctx.moveTo(x-8,yy);ctx.lineTo(x-5,yy);ctx.stroke();
     ctx.fillStyle=m>SAFE?'#FFD9CE':'rgba(255,255,255,.85)';ctx.fillText(m+'m',x-10,yy+3);});
   ctx.fillStyle=depth()>SAFE?'#FF8A6B':'#FFF';
   ctx.beginPath();ctx.arc(x,clamp(S.y,0,1)*H,5.5,0,7);ctx.fill();
-  ctx.fillStyle='#FFF';ctx.font='800 '+(11*vScale()).toFixed(1)+'px '+FF();ctx.textAlign='center';
+  ctx.fillStyle='#FFF';ctx.font='800 '+(11*tScale()).toFixed(1)+'px '+FF();ctx.textAlign='center';
   ctx.fillText(Math.max(0,Math.round(depth()))+'m',x,top-8);ctx.textAlign='left';ctx.restore();
 }
 
@@ -1809,9 +1859,12 @@ const FIN_SCALE = .46;
 const HREF = 760;
 function vScale(){ return Math.max(.85, Math.min(1.45, H/HREF)); }
 
+const TREF = 620;
+function tScale(){ return Math.max(.95, Math.min(1.5, H/TREF)); }
+
 function syncUiScale(){
   if(!wrap||!wrap.clientHeight)return;
-  const v=Math.max(.85, Math.min(1.45, wrap.clientHeight/760));
+  const v=Math.max(.95, Math.min(1.5, wrap.clientHeight/620));
   wrap.style.setProperty('--ui', v.toFixed(3));
 }
 function dolphin(x,y){
@@ -1838,7 +1891,7 @@ const E={
 };
 const COMFORT='你已經很努力了！<br>白海豚每天都要面對這些挑戰。';
 const CAUSE={
- home :{t:'順利抵達雲林台西！',s:'你一路安全地陪著牠回到家。<br>謝謝你，守護隊長！'},
+ home :{t:'和家人團圓了！',s:'你一路安全地陪著牠回到家。<br>謝謝你，守護隊長！'},
  hurt :{t:'體力用完了',s:COMFORT},
  drown:{t:'來不及換氣……',s:COMFORT},
  deep :{t:'游進太深的海了',s:COMFORT}
@@ -1866,12 +1919,38 @@ causeEl.addEventListener('click',showResult);
       if(cc.width!==cw||cc.height!==ch){cc.width=cw;cc.height=ch;}
       g.setTransform(dpr,0,0,dpr,0,0);g.clearRect(0,0,w,h);
       const win=causeEl.classList.contains('win');
-      const bob=win?-Math.abs(Math.sin(t/420))*14:Math.sin(t/900)*5;
-      const tilt=win?-.22+Math.sin(t/420)*.12:.16;
-      drawFin(g,w*.5,h*.56+bob,1.05,tilt,Math.sin(t/300)*(win?.3:.12));
-      if(win){g.fillStyle='rgba(255,255,255,.7)';
+      if(win){
+        
+        const pal=function(id,x,y,sc,tilt,swing,flip){
+          g.save();
+          if(flip){g.translate(x*2,0);g.scale(-1,1);}
+          drawDexAt(g,id,x+6*sc,y+11*sc,sc,tilt,swing,'adult');
+          g.restore();
+        };
+        pal(11, w*.19, h*.70+Math.sin(t/760)*5,   .68,
+            -.10+Math.sin(t/520)*.05, Math.sin(t/340)*.22, false);
+        pal(27, w*.81, h*.66+Math.sin(t/700+2)*5, .68,
+            -.10+Math.sin(t/560+1)*.05, Math.sin(t/380+2)*.22, true);
+        const bob=-Math.abs(Math.sin(t/420))*12;
+        drawFin(g,w*.5+6*.85,h*.36+11*.85+bob,.85,
+                -.18+Math.sin(t/420)*.10,Math.sin(t/300)*.3);
+        
+        g.fillStyle='rgba(255,255,255,.7)';
         for(let i=0;i<5;i++){const pr=((t/700)+i/5)%1;
-          g.beginPath();g.arc(w*.5+18-i*9,h*.56+bob-16-pr*40,2+pr*3,0,7);g.fill();}}
+          g.beginPath();g.arc(w*.5+16-i*8,h*.36+bob-16-pr*34,2.4+pr*2.8,0,7);g.fill();}
+        
+        for(let i=0;i<3;i++){
+          const pr=((t/1500)+i/3)%1, hx=w*.5+(i-1)*62, hy=h*.52-pr*38, sz=6+pr*3.5;
+          g.fillStyle='rgba(255,190,205,'+((1-pr)*.85).toFixed(2)+')';
+          g.beginPath();
+          g.moveTo(hx,hy+sz*.7);
+          g.bezierCurveTo(hx-sz,hy-sz*.3,hx-sz*.45,hy-sz,hx,hy-sz*.35);
+          g.bezierCurveTo(hx+sz*.45,hy-sz,hx+sz,hy-sz*.3,hx,hy+sz*.7);
+          g.fill();
+        }
+      } else {
+        drawFin(g,w*.5,h*.56+Math.sin(t/900)*5,1.05,.16,Math.sin(t/300)*.12);
+      }
     }
     requestAnimationFrame(frame);
   }
@@ -1902,7 +1981,7 @@ function end(k){
     zone:ZONES[Math.max(S.zone,0)].n,zoneIdx:Math.max(S.zone,0),
     netHit:S.netHit,plasticHit:S.plasticHit,fillHit:S.fillHit,
     noiseSec:Math.round(S.noiseSec),durSec:Math.round((Date.now()-T0)/1000)});
-  loadDex();
+  loadDex();loadTop();renderTop();
   
   const cert=document.getElementById('ovCert');
   if(k==='home'){
@@ -3212,7 +3291,7 @@ document.getElementById('dxClose').onclick=function(){
   track('iab',{what:app});
 })();
 
-loadDex();
+loadDex();loadTop();
 
 document.querySelectorAll('.kb.flip').forEach(function(c){
   c.addEventListener('click',function(){
