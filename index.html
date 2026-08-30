@@ -176,6 +176,33 @@ text-shadow:0 6px 24px rgba(0,0,0,.35);pointer-events:none}
   background:linear-gradient(135deg,#FFD86B,#FFB43F);color:#6B3E06;box-shadow:0 5px 0 #D98F1E}
 .bfB:active{transform:translateY(4px);box-shadow:0 1px 0 #D98F1E}
 
+#invite{position:absolute;inset:0;display:none;align-items:center;justify-content:center;z-index:36;
+  background:rgba(10,44,67,.62);backdrop-filter:blur(3px);padding:22px 18px}
+#invite.on{display:flex}
+.ivIn{width:100%;max-width:360px;background:#FFFDF6;border-radius:26px;overflow:hidden;
+  box-shadow:0 14px 40px rgba(0,0,0,.4);animation:cin .42s cubic-bezier(.2,1.3,.4,1)}
+.ivTop{background:linear-gradient(135deg,#FF9E7A,#F2705A);padding:20px 18px 17px;text-align:center;position:relative}
+.ivWhen{display:inline-block;background:rgba(255,255,255,.9);color:#C1341F;border-radius:14px;
+  padding:5px 14px;font-size:12px;font-weight:900;letter-spacing:.1em}
+.ivT{font-size:21px;font-weight:900;color:#fff;margin-top:9px;line-height:1.45;text-shadow:0 2px 8px rgba(0,0,0,.18)}
+.ivX{position:absolute;right:12px;top:12px;border:0;background:rgba(255,255,255,.28);color:#fff;
+  width:28px;height:28px;border-radius:50%;font-size:16px;font-weight:900;cursor:pointer;line-height:1}
+.ivBody{padding:17px 18px 6px;text-align:center}
+.ivBody p{font-size:13.5px;font-weight:700;color:#6B5232;line-height:1.85}
+.ivBody b{color:#C1341F}
+.ivWhere{margin-top:13px;background:#FFF1EC;border-radius:16px;padding:11px 12px;
+  font-size:12.5px;font-weight:800;color:#A8402C;line-height:1.7}
+.ivBtns{display:flex;gap:9px;padding:15px 18px 18px}
+.ivBtns button,.ivBtns a{flex:1;border:0;border-radius:20px;padding:15px 8px;cursor:pointer;
+  font-family:var(--cjk);font-size:15px;font-weight:900;line-height:1.35;
+  display:flex;align-items:center;justify-content:center;text-decoration:none}
+.ivYes{background:linear-gradient(135deg,#FF9E7A,#F2705A);color:#fff;box-shadow:0 4px 0 #C9553F}
+.ivSign{background:#FFE9A8;color:#8A5E0E;box-shadow:0 4px 0 #DCBE72}
+.ivBtns button:active,.ivBtns a:active{transform:translateY(3px);box-shadow:none}
+.ivDone{padding:26px 20px 8px;text-align:center}
+.ivDone .dT{font-size:26px;font-weight:900;color:#C1341F;line-height:1.4}
+.ivDone p{font-size:13.5px;font-weight:700;color:#6B5232;line-height:1.9;margin-top:10px}
+
 #dex{position:absolute;inset:0;display:none;z-index:40;background:rgba(10,44,67,.88);
   backdrop-filter:blur(4px);padding:calc(env(safe-area-inset-top) + 16px) 14px 16px}
 #dex.on{display:block}
@@ -747,6 +774,43 @@ font-family:var(--cjk);font-size:14.5px;font-weight:800;cursor:pointer;line-heig
       <h4>使用建議</h4>
       <p>遊戲中的打樁段落有閃爍效果，若對光線敏感，請按右上角的 <b>💡</b> 關閉閃爍。<br>
          也建議由<b>家長或老師陪同遊玩</b>，結果頁的內容有大人一起討論，效果會更好。</p>
+    </div>
+  </div>
+</div>
+
+<div id="invite">
+  <div class="ivIn">
+    <div id="ivAsk">
+      <div class="ivTop">
+        <button class="ivX" id="ivClose" aria-label="關閉">×</button>
+        <span class="ivWhen">8 / 31（一）</span>
+        <div class="ivT">一起到行政院前<br>為白海豚發聲！</div>
+      </div>
+      <div class="ivBody">
+        <p>台中港正在<b>用廢土填海造陸</b>，<br>牠們的家一天天變小。<br>你站出來，就是牠們的聲音。</p>
+        <div class="ivWhere">📍 行政院前（台北市中正區忠孝東路一段 1 號）</div>
+      </div>
+      <div class="ivBtns">
+        <button class="ivYes" id="ivYes">我願意</button>
+        <button class="ivSign" id="ivSign">我可以連署</button>
+      </div>
+    </div>
+
+    <div id="ivDone" style="display:none">
+      <div class="ivTop">
+        <button class="ivX" id="ivClose2" aria-label="關閉">×</button>
+        <span class="ivWhen">8 / 31（一）</span>
+        <div class="ivT">謝謝你！</div>
+      </div>
+      <div class="ivDone">
+        <div class="dT" id="ivMeet">我們明天見！</div>
+        <p>現場見到你，白海豚就多一份力量。<br>也別忘了找一位朋友一起來。</p>
+      </div>
+      <div class="ivBtns">
+        <a class="ivSign" id="ivInfo"
+           href="https://www.facebook.com/sow.org.tw/posts/pfbid02qNT6GEs2r7ugeswiLA9nbqbSQHpfbdxu73faBBdpyLvC23BJAWXGZgPF3RiutWZ5l"
+           target="_blank" rel="noopener">查看活動資訊</a>
+      </div>
     </div>
   </div>
 </div>
@@ -1905,6 +1969,7 @@ function showResult(){
   document.getElementById('over').classList.remove('hidden');
   document.getElementById('shareCanvasWrap').classList.remove('on');
   document.getElementById('over').scrollTop=0;
+  armInvite();
   pendingResult=null;
 }
 document.getElementById('cGo').addEventListener('click',function(e){e.stopPropagation();SFX.tap();showResult();});
@@ -3292,6 +3357,53 @@ document.getElementById('dxClose').onclick=function(){
 })();
 
 loadDex();loadTop();
+
+let inviteShown=false;
+function showInvite(why){
+  if(inviteShown)return;
+  inviteShown=true;
+  document.getElementById('ivAsk').style.display='';
+  document.getElementById('ivDone').style.display='none';
+  document.getElementById('invite').classList.add('on');
+  track('invite',{what:'show',depth:why});
+}
+function closeInvite(what){
+  document.getElementById('invite').classList.remove('on');
+  if(what)track('invite',{what:what});
+}
+document.getElementById('ivClose').onclick =function(){SFX.tap();closeInvite('close');};
+document.getElementById('ivClose2').onclick=function(){SFX.tap();closeInvite('close_done');};
+document.getElementById('ivYes').onclick=function(){
+  SFX.gold();track('invite',{what:'yes'});
+  
+  const d=new Date(), m=d.getMonth()+1, day=d.getDate();
+  document.getElementById('ivMeet').textContent=
+    (m===8&&day===31)?'今天現場見！':(m===8&&day===30)?'我們明天見！':'現場見！';
+  document.getElementById('ivAsk').style.display='none';
+  document.getElementById('ivDone').style.display='';
+};
+document.getElementById('ivSign').onclick=function(){
+  SFX.tap();track('invite',{what:'sign'});
+  window.open('https://forms.gle/EP53e3d9rTYg2j1U7','_blank','noopener');
+  closeInvite(null);
+};
+document.getElementById('ivInfo').addEventListener('click',function(){
+  track('invite',{what:'info'});
+});
+
+function armInvite(){
+  inviteShown=false;
+  setTimeout(function(){
+    if(!document.getElementById('over').classList.contains('hidden'))showInvite('dwell');
+  },5000);
+  const act=document.querySelector('.act31');
+  if(act&&('IntersectionObserver' in window)){
+    const io=new IntersectionObserver(function(es){
+      es.forEach(function(en){ if(en.isIntersecting){showInvite('scroll');io.disconnect();} });
+    },{threshold:.4});
+    io.observe(act);
+  }
+}
 
 document.querySelectorAll('.kb.flip').forEach(function(c){
   c.addEventListener('click',function(){
