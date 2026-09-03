@@ -1058,6 +1058,7 @@ const ROSTER=(function(){
 })();
 const DEX={counts:{},mine:{},err:'',loading:true};
 const DAYS_TO_FULL = 5;   
+const MURK_SEC = 10;      
 const TOP={list:[],loaded:false};
 
 function loadTop(){
@@ -1210,7 +1211,7 @@ const ZONES=[
  {n:'台中 · 大甲溪口 · 高美濕地',k:'river',land:.23},
  {n:'台中港 · 填海造陸工程',k:'ind',big:true,land:.36},
  {n:'彰化 · 大肚溪口保護區',k:'river',land:.30},
- {n:'彰化 · 彰濱工業區',k:'ind',land:.33},
+ {n:'彰化 · 彰濱工業區',k:'ind',land:.33,cable:true},
  {n:'彰化 · 濁水溪口',k:'river',land:.29},
  {n:'雲林 · 麥寮六輕',k:'ind',land:.32},
  {n:'雲林 · 台西海岸',k:'wet',land:.28}];
@@ -1230,7 +1231,7 @@ function reset(){Object.assign(S,{
   run:false,dist:0,spd:92,y:.45,life:MAXHP,inv:0,air:1,
   fish:0,gold:0,stage:0,deepTime:0,landT:0,fillPass:0,fillHit:0,noiseSec:0,plasticHit:0,netHit:0,propHit:0,
   land:.14,landTgt:.14,deep:.88,murk:0,murkTgt:0,
-  nAlert:0,airWarnCd:0,cheer:{},beep:99,tapAdv:false,noiseTip:false,noiseSrc:null,rescued:[],friendT:24,ev:null,obs:[],hazT:2,fishT:1.2,fillT:8,pileT:11,goldT:14,pops:[],bub:[],spray:[],sonar:[],sonarT:0,
+  nAlert:0,airWarnCd:0,cheer:{},beep:99,tapAdv:false,noiseTip:false,noiseSrc:null,boatT:6,boatTip:false,boatSeen:false,cableT:5,cableSeen:false,murkSec:0,cableMurk:0,rescued:[],friendT:24,ev:null,obs:[],hazT:2,fishT:1.2,fillT:8,pileT:11,goldT:14,pops:[],bub:[],spray:[],sonar:[],sonarT:0,
   zone:-1,phase:'tut',tut:0,tutT:0,moved:false,shake:0,
   surf:null,noise:0,tutTotal:0,jitter:0,breathed:false
 });for(let i=0;i<22;i++)S.bub.push({x:Math.random()*W,y:Math.random()*H,r:1+Math.random()*3,s:7+Math.random()*12});}
@@ -1280,11 +1281,20 @@ const hintEl=document.getElementById('hint');
 function surfaceY(){return S.land+.045;}
 function blockedAbove(){const px=PX();
   return S.obs.some(o=>(o.t==='fill'||o.t==='pile')&&px+16>o.x&&px-16<o.x+o.w);}
+
+function boatAbove(){const px=PX();
+  return S.obs.some(o=>o.t==='boat'&&px+18>o.x&&px-18<o.x+o.w);}
 function breathe(){
   if(!S.run||S.surf)return;
   SFX.tap();
   if(S.noise>0){warn('太吵了，不敢浮上去',2);return;}
   if(blockedAbove()){warn('上面被擋住了',2);return;}
+  
+  if(boatAbove()){
+    warn('<span class="em">上面有船！</span><br>牠不敢浮上去，等船過再換氣',2.6);
+    track('boat',{what:'blocked'});
+    return;
+  }
   SFX.breath();S.surf={ph:0,t:0,from:S.y};S.breathed=true;hintEl.classList.remove('on');
   if(S.phase==='tut'&&S.tut===2){S.tut=3;S.tutT=0;}
 }
@@ -1339,6 +1349,14 @@ function spawnFriend(){
   S.obs.push({t:'friend',x:W+60,y:clamp(laneY(),S.land+.10,S.deep-.14),
     w:46,h:.10,vx:-4,warn:1,ph:Math.random()*6,who:who});
 }
+
+function spawnCable(){
+  S.obs.push({t:'cable',x:W+80,y:0,w:70,h:0,warn:0,ph:Math.random()*6,murk:0,age:0});
+}
+
+function spawnBoat(){
+  S.obs.push({t:'boat',x:W+120,y:0,w:96,h:0,vx:-46,warn:1,ph:Math.random()*6});
+}
 function spawnPile(){S.obs.push({t:'pile',x:W+120,w:104,rings:[],rt:0});warn('前方在打樁，先換好氣！',2.4);}
 function spawnFill(big){
   const base=.09+Math.min(S.dist/GOAL,1)*.12;
@@ -1378,6 +1396,8 @@ function update(dt){
     else{placeEl.textContent='📍 '+z.n;placeEl.classList.remove('zone');}
     placeEl.classList.add('show');placeT=3.4;
     if(z.land!==undefined)S.landTgt=z.land;
+    
+    if(z.cable)S.cableT=.6;
     if(z.big){S.murkTgt=.62;S.shake=.7;S.fillT=2.2;S.pileT=5;
       tip('台中港正在<span class="em">填海造陸</span>，家變小了',3);}
     else if(z.k==='ind'){S.murkTgt=.55;S.shake=.45;S.pileT=Math.min(S.pileT,4);}
@@ -1423,27 +1443,54 @@ function update(dt){
     const Z=ZONES[Math.max(S.zone,0)],z=Z.k;
     const EV=S.ev||{};
     S.fishT-=dt;
-
-    if(S.fishT<=0){S.fishT=((z==='river'?1.3:z==='ind'?2.35:1.85)
-                            +Math.random()*(z==='river'?.5:.6))
-                          *(EV.k==='flood'&&z==='river'?.55:1);
-      spawnSchool(z==='river'?6+Math.floor(Math.random()*3):4+Math.floor(Math.random()*2),z);}
+    
+    if(S.fishT<=0){S.fishT=((z==='river'?1.05:z==='ind'?1.73:1.32)
+                            +Math.random()*(z==='river'?.45:.55))
+                          *(EV.k==='flood'&&z==='river'?.7:1);
+      
+      if(S.cableMurk<=0)
+        spawnSchool(z==='river'?6+Math.floor(Math.random()*4):5+Math.floor(Math.random()*3),z);}
     S.hazT-=dt;
     if(S.hazT<=0){
-      
+
+      const boatOn=S.obs.some(o=>o.t==='boat')?1.3:1;
       S.hazT=((Z.big?1.8:z==='ind'?2.7:3.6)+Math.random()*(Z.big?.9:1.4))
-             *(EV.k==='rest'?1.8:EV.k==='trash'?.8:1);
+             *(EV.k==='rest'?1.8:EV.k==='trash'?.8:1)*boatOn;
       spawnHaz();
       if(Z.big&&Math.random()<.3)spawnHaz();
       else if(z==='ind'&&Math.random()<.22)spawnHaz();}
     S.fillT-=dt;
     if(S.fillT<=0){S.fillT=Z.big?6+Math.random()*2.2:(z==='ind'?12:18)+Math.random()*6;spawnFill(Z.big);}
+
+    if(Z.cable){
+      S.cableT-=dt;
+      
+      const zoneLeft=(S.zone+1)*SEG-S.dist;
+      if(S.cableT<=0&&zoneLeft>S.spd*11&&!S.obs.some(o=>o.t==='cable')){
+        S.cableT=17+Math.random()*7;
+        spawnCable();
+        if(!S.cableSeen){S.cableSeen=true;
+          tip('海纜施工用<span class="em">高壓水柱</span>沖開海床<br>泥沙揚起，魚都躲光了',3.4);}
+      }
+    }
+    S.boatT-=dt;
+    if(S.boatT<=0){
+      
+      const canBoat=!Z.big&&S.air>.25;
+      S.boatT=(canBoat?4.5+Math.random()*3.5:2.5);
+      if(canBoat&&!S.obs.some(o=>o.t==='boat')){
+        spawnBoat();
+        if(!S.boatSeen){S.boatSeen=true;tip('有船經過，<span class="em">別在船底下換氣</span>',3);}
+      }
+    }
     S.pileT-=dt;
     const atSite=EV.k==='pile'&&EV.site&&EV.site.zone===S.zone;
     if(S.pileT<=0&&!S.obs.some(o=>o.t==='pile')){
       S.pileT=(atSite?8:Z.big?9:z==='ind'?14:26)+Math.random()*5;spawnPile();}
     S.goldT-=dt;
-    if(S.goldT<=0){S.goldT=(S.life<MAXHP?9:17)+Math.random()*6;spawnGold();}
+    
+    if(S.goldT<=0){S.goldT=(S.life<MAXHP?9:17)+Math.random()*6;
+      if(S.cableMurk<=0)spawnGold();}
     
     S.friendT-=dt;
     if(S.friendT<=0&&!S.obs.some(o=>o.t==='friend')){
@@ -1469,8 +1516,11 @@ function update(dt){
   const ac=document.getElementById('airCircle'),C=2*Math.PI*45;
   ac.style.strokeDasharray=C;ac.style.strokeDashoffset=C*(1-Math.max(S.air,0));
   document.getElementById('airPct').textContent=Math.max(0,Math.round(S.air*100))+'%';
-  const bb=document.getElementById('bubbleBtn'),blk=S.noise>0||blockedAbove();
-  bb.classList.toggle('blocked',blk);bb.classList.toggle('urgent',S.air<.5&&!blk);
+  
+  const bb=document.getElementById('bubbleBtn');
+  bb.classList.remove('blocked');
+  bb.classList.toggle('urgent',S.air<.5);
+  const blk=S.noise>0||blockedAbove();
   if(S.phase==='play'&&!blk&&S.air<.25&&!S.surf)hintEl.classList.add('on');
   else if(S.phase==='play'&&(S.air>.45||blk))hintEl.classList.remove('on');
   
@@ -1508,6 +1558,24 @@ function update(dt){
   const px=PX(),py=S.y*H,pr=15*vScale();
   const fills=S.obs.filter(o=>o.t==='fill');
 
+  const wasCM=S.cableMurk>0;
+  S.cableMurk=0;
+  S.obs.forEach(function(o){
+    if(o.t!=='cable')return;
+    const x0=o.x+o.w+10, x1=x0+o.murk, px=PX();
+    if(px>x0-40&&px<x1){
+      const k=Math.min(1,(px-(x0-40))/90);        
+      S.cableMurk=Math.max(S.cableMurk,Math.min(k,1-(px-x0)/Math.max(x1-x0,1)*.35));
+    }
+  });
+  if(S.cableMurk>0){
+    S.murkSec+=dt;
+    
+    warn('海纜施工中！<span class="em">海水一片混濁</span><br>這一段完全找不到魚',1.5);
+  } else if(wasCM){
+    hideWarn();   
+  }
+
   const wasNoisy=S.noise>0;
   S.noise=0;S.noiseSrc=null;
   for(let i=S.obs.length-1;i>=0;i--){
@@ -1542,7 +1610,14 @@ function update(dt){
         S.noise=Math.max(S.noise,.1);
       }
     }
-    if(o.x<-260){S.obs.splice(i,1);continue;}
+    
+    if((o.t==='fish'||o.t==='gold')&&S.cableMurk>.3){S.obs.splice(i,1);continue;}
+    if(o.t==='cable'){
+      o.age+=dt;
+      
+      o.murk=Math.min(o.murk+S.spd*dt, S.spd*MURK_SEC);
+    }
+    if(o.x<-260-(o.murk||0)){S.obs.splice(i,1);continue;}
   }
 
   for(let i=S.obs.length-1;i>=0;i--){
@@ -1558,6 +1633,7 @@ function update(dt){
         else if(S.fillPass===5)tip('整條海岸都在填，<span class="em">牠能繞去哪？</span>',3);}
     } else if(o.t==='pile'){oy=0;oh=(S.land+PILE_EXT)*H;
       hit=px+pr>o.x&&px-pr<o.x+o.w&&py-pr<oh;}
+    else if(o.t==='boat'||o.t==='cable'){hit=false;}   
     else{oy=o.y*H;oh=o.h*H;hit=px+pr>o.x&&px-pr<o.x+o.w&&py+pr>oy&&py-pr<oy+oh;}
 
     if(hit){
@@ -1685,6 +1761,28 @@ function draw(){
     vg.addColorStop(1,'rgba(232,69,47,'+(.18+k*.42).toFixed(3)+')');
     ctx.fillStyle=vg;ctx.fillRect(0,0,W,H);
   }
+  
+  if(S.cableMurk>0){
+    
+    const T=performance.now()/1000;
+    const a=S.cableMurk;
+    ctx.fillStyle='rgba(150,120,84,'+(a*.46).toFixed(3)+')';
+    ctx.fillRect(0,0,W,H);
+    
+    ctx.fillStyle='rgba(190,164,120,'+(a*.5).toFixed(3)+')';
+    for(let i=0;i<26;i++){
+      const t2=(T*.35+i*.137)%1;
+      const xx=((i*97)%W)+Math.sin(T*.9+i)*14;
+      const yy=H-((t2*H*1.15)%H);
+      ctx.beginPath();ctx.arc(xx,yy,1.4+(i%3),0,7);ctx.fill();
+    }
+    
+    const vg=ctx.createRadialGradient(W/2,H/2,H*.2,W/2,H/2,H*.8);
+    vg.addColorStop(0,'rgba(110,88,58,0)');
+    vg.addColorStop(1,'rgba(110,88,58,'+(a*.34).toFixed(3)+')');
+    ctx.fillStyle=vg;ctx.fillRect(0,0,W,H);
+  }
+
   if(S.noise>0&&S.noiseSrc){
     
     const src=S.noiseSrc;
@@ -1797,7 +1895,75 @@ function drawSkyline(kind,x0,x1,ly){
 }
 function drawObs(o){
   const T=performance.now()/1000;
-  if(o.warn&&o.t!=='fill'&&o.t!=='pile'){ctx.fillStyle='#FF8A6B';
+
+  if(o.t==='cable'){
+    const sy=S.land*H, by=S.deep*H;          
+    const cx=o.x+o.w/2;
+
+    ctx.fillStyle='#6B5A46';
+    ctx.beginPath();
+    ctx.moveTo(o.x-6,sy-2);ctx.lineTo(o.x+o.w+6,sy-2);
+    ctx.lineTo(o.x+o.w-4,sy+11);ctx.lineTo(o.x+4,sy+11);
+    ctx.closePath();ctx.fill();
+    ctx.fillStyle='#FFF9F0';ctx.fillRect(o.x+14,sy-15,26,13);
+    
+    ctx.strokeStyle='rgba(60,48,38,.75)';ctx.lineWidth=2;
+    ctx.beginPath();ctx.moveTo(cx,sy+6);ctx.lineTo(cx-10,by-26);ctx.stroke();
+
+    ctx.fillStyle='#8A7B66';
+    ctx.fillRect(cx-24,by-26,46,18);
+    ctx.fillStyle='#5B4636';ctx.fillRect(cx-24,by-30,46,5);
+    ctx.strokeStyle='rgba(255,255,255,.8)';ctx.lineWidth=2;
+    for(let k=0;k<5;k++){
+      const jx=cx-19+k*10, jl=10+Math.abs(Math.sin(T*7+k))*9;
+      ctx.beginPath();ctx.moveTo(jx,by-8);ctx.lineTo(jx-2,by-8+jl);ctx.stroke();
+    }
+    
+    ctx.fillStyle='rgba(150,120,84,.55)';
+    for(let k=0;k<7;k++){
+      const pr=((T*.7)+k/7)%1;
+      ctx.beginPath();
+      ctx.arc(cx+14+pr*26, by+4-pr*46, 4+pr*7, 0, 7);
+      ctx.fill();
+    }
+
+    ctx.fillStyle='rgba(255,255,255,.95)';
+    ctx.font='800 '+(11*tScale()).toFixed(1)+'px '+FF();ctx.textAlign='center';
+    ctx.fillText('海纜施工',cx,sy+30);ctx.textAlign='left';
+    return;
+  }
+
+  if(o.t==='boat'){
+    const sy=S.land*H;                       
+    const cx=o.x+o.w/2, bob=Math.sin(T*2+o.ph)*1.6;
+    
+    const g=ctx.createLinearGradient(0,sy,0,sy+46);
+    g.addColorStop(0,'rgba(20,60,86,.30)');g.addColorStop(1,'rgba(20,60,86,0)');
+    ctx.fillStyle=g;ctx.fillRect(o.x,sy,o.w,46);
+    
+    ctx.save();ctx.translate(0,bob);
+    ctx.fillStyle='#5B4636';
+    ctx.beginPath();
+    ctx.moveTo(o.x,sy-6);ctx.lineTo(o.x+o.w,sy-6);
+    ctx.lineTo(o.x+o.w-14,sy+7);ctx.lineTo(o.x+12,sy+7);
+    ctx.closePath();ctx.fill();
+    ctx.fillStyle='#FFF9F0';ctx.fillRect(o.x+26,sy-24,34,19);
+    ctx.fillStyle='#7C6450';ctx.fillRect(o.x+34,sy-34,5,11);
+    ctx.fillStyle='#FF8A6B';ctx.fillRect(o.x+o.w-30,sy-14,12,8);
+    ctx.restore();
+    
+    ctx.strokeStyle='rgba(255,255,255,.65)';ctx.lineWidth=2;
+    for(let k=0;k<3;k++){
+      const wx=o.x+o.w+8+k*16, ww=10+Math.sin(T*3+k)*3;
+      ctx.beginPath();ctx.moveTo(wx,sy+2+k*3);ctx.lineTo(wx+ww,sy+2+k*3);ctx.stroke();
+    }
+    ctx.fillStyle='rgba(255,255,255,.92)';
+    ctx.font='800 '+(11*tScale()).toFixed(1)+'px '+FF();ctx.textAlign='center';
+    ctx.fillText('漁船',cx,sy+28);ctx.textAlign='left';
+    return;
+  }
+
+  if(o.warn&&o.t!=='fill'&&o.t!=='pile'&&o.t!=='boat'){ctx.fillStyle='#FF8A6B';
     const wy=o.y*H+o.h*H/2;
     ctx.beginPath();ctx.moveTo(W-8,wy);ctx.lineTo(W-21,wy-9);ctx.lineTo(W-21,wy+9);ctx.fill();}
   if(o.t==='fill'){
@@ -2082,7 +2248,8 @@ function end(k){
   track('end',{kind:k,fish:S.fish,gold:S.gold,stage:S.stage,
     zone:ZONES[Math.max(S.zone,0)].n,zoneIdx:Math.max(S.zone,0),
     netHit:S.netHit,plasticHit:S.plasticHit,fillHit:S.fillHit,
-    noiseSec:Math.round(S.noiseSec),durSec:Math.round((Date.now()-T0)/1000)});
+    noiseSec:Math.round(S.noiseSec),durSec:Math.round((Date.now()-T0)/1000),
+    what:Math.round(S.murkSec)});   
   loadDex();loadTop();renderTop();
   
   const cert=document.getElementById('ovCert');
@@ -2435,7 +2602,7 @@ function beginJourney(){
     
     S.surf=null;drag=null;S.jitter=0;S.y=depthToY(18);S.air=1;S.breathed=false;
     S.dist=0;S.zone=-1;S.obs=[];S.phase='play';
-    S.hazT=1.8;S.fishT=1.2;S.fillT=8;S.pileT=9;S.goldT=10;S.friendT=24;
+    S.hazT=1.8;S.fishT=1.2;S.fillT=8;S.pileT=9;S.goldT=10;S.friendT=24;S.boatT=8;S.cableT=6;
     updHUD();S.run=true;
     track('start',{what:S.ev.k});
   });
