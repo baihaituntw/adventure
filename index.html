@@ -1291,7 +1291,7 @@ function breathe(){
   if(blockedAbove()){warn('上面被擋住了',2);return;}
   
   if(boatAbove()){
-    warn('<span class="em">上面有船！</span><br>牠不敢浮上去，等船過再換氣',2.6);
+    warn('<span class="em">上面有船！</span><br>等船過去再換氣',2.6);
     track('boat',{what:'blocked'});
     return;
   }
@@ -1470,7 +1470,7 @@ function update(dt){
         S.cableT=17+Math.random()*7;
         spawnCable();
         if(!S.cableSeen){S.cableSeen=true;
-          tip('海纜施工用<span class="em">高壓水柱</span>沖開海床<br>泥沙揚起，魚都躲光了',3.4);}
+          tip('海纜施工<span class="em">沖開海床</span><br>泥沙揚起，魚躲光了',3.4);}
       }
     }
     S.boatT-=dt;
@@ -1571,7 +1571,7 @@ function update(dt){
   if(S.cableMurk>0){
     S.murkSec+=dt;
     
-    warn('海纜施工中！<span class="em">海水一片混濁</span><br>這一段完全找不到魚',1.5);
+    warn('<span class="em">海纜施工中！</span><br>海水混濁，找不到魚',1.5);
   } else if(wasCM){
     hideWarn();   
   }
